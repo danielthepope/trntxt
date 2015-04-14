@@ -25,12 +25,9 @@ var stations = getStations();
 var errorStation = {stationName: "error", stationCode: "ERR"};
  
 app.get('/', function (req, res) {
-    // res.set('Content-Type', 'text/html');
     var content = util.format('Station CSV: %s<br>', stationCsv);
-    // for (var i = 0; i < stations.length; i += 1) {
-    //     content += util.format('%s : %s<br>', stations[i].stationName, stations[i].stationCode);
-    // }
     content += 'Go to /dep/:from/:to<br>';
+    content += 'This isn\'t working yet. Follow <a href="https://twitter.com/danielthepope">@danielthepope</a> for news.<br>';
     res.send(content);
 });
 
