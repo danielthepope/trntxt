@@ -9,7 +9,8 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.12.3"
+    "express": "^4.12.3",
+    "soap": "^0.8.0"
   },
   "devDependencies": {
     "gulp": "^3.8.11",

@@ -1,11 +1,14 @@
 var express = require('express');
 var fs = require('fs');
 var util = require('util');
+var soap = require('soap');
 
 var port = process.env.PORT || 3000;
 var apiKey = process.env.APIKEY;
 var apiUser = process.env.APIUSER;
 var stationCsv = process.env.STATIONCSV || 'resources/station_codes.csv';
+var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
+var footer = '----<br><br><small><a href="/">About mtrain</a><br><br>Powered by <a href="http://www.nationalrail.co.uk/">National Rail Enquiries</a>.</small><br>';
 
 var app = express();
 var stations = getStations();
@@ -35,8 +38,15 @@ app.get('/dep/:from', function (req, res) {
         res.send('Invalid station name entered');
         return;
     }
-    // TODO
-    res.send(util.format('Finding departure board for %s<br>TODO', fromStation.stationName));
+    
+    soap.createClient(soapUrl, function(err, client) {
+        client.addSoapHeader(util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey));
+        return client.GetDepartureBoard({numRows: 10, crs: fromStation.stationCode}, function(err, result) {
+            res.send(util.format('Departure board for %s (%s)<br><br>%s', fromStation.stationName, fromStation.stationCode, formatStationData(result, fromStation.stationName)));
+            return console.log(JSON.stringify(result));
+        });
+    });
+
 });
 
 app.get('/arr/:to/:from', function (req, res) {
@@ -123,4 +133,28 @@ function findStation(input) {
 
     console.log("No match found");
     return errorStation;
+}
+
+function formatStationData(oStationBoard, stationName) {
+    var aServices = oStationBoard.GetStationBoardResult.trainServices.service;
+    var i;
+    var output = '';
+    for (i = 0; i < aServices.length; i += 1) {
+        output += '----<br><br>';
+        output += aServices[i].origin.location[0].locationName + ' --&gt; <strong>' + aServices[i].destination.location[0].locationName + '</strong><br>';
+        if (aServices[i].etd !== 'On time') output += '<del>';
+        output += aServices[i].std;
+        if (aServices[i].etd !== 'On time') output += '</del>';
+        output += ' (' + aServices[i].etd + ')<br>';
+        if (aServices[i].platform !== undefined) {
+            output += 'Platform ' + aServices[i].platform + '<br>';
+        } else {
+            output += 'No platform information available<br>';
+        }
+        output += '<br>';
+    }
+
+    // output += JSON.stringify(oStationBoard);
+    output += footer
+    return output;
 }
