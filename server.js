@@ -8,44 +8,35 @@ var apiKey = process.env.APIKEY;
 var apiUser = process.env.APIUSER;
 var stationCsv = process.env.STATIONCSV || 'resources/station_codes.csv';
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
-var footer = '----<br><br><small><a href="/">About mtrain</a><br><br>Powered by <a href="http://www.nationalrail.co.uk/">National Rail Enquiries</a>.</small><br>';
+var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey);
 
 var app = express();
 var stations = getStations();
 var errorStation = {stationName: "error", stationCode: "XXX"};
 
-app.get('/dep/:from/:to', function (req, res) {
-    var fromStation = findStation(req.params.from);
-    var toStation = findStation(req.params.to);
-    if (fromStation.stationCode === "XXX" || toStation.stationCode === "XXX") {
-        res.send('One or more invalid parameters');
+app.get('/dep/:from/:to', function (request, response) {
+    var fromStation = findStation(request.params.from);
+    var toStation = findStation(request.params.to);
+    if (fromStation.stationCode === errorStation.stationCode || toStation.stationCode === errorStation.stationCode) {
+        response.send('One or more invalid parameters');
         return;
     }
-    // TODO
-    res.send(util.format('Finding departure times from %s to %s<br>TODO', fromStation.stationName, toStation.stationName));
+    getDepartures(response, fromStation, toStation);
 });
 
-app.get('/dep/:from', function (req, res) {
-    var fromStation = findStation(req.params.from);
-    if (fromStation.stationCode === "XXX") {
-        res.send('Invalid station name entered');
+app.get('/dep/:from', function (request, response) {
+    var fromStation = findStation(request.params.from);
+    if (fromStation.stationCode === errorStation.stationCode) {
+        response.send('Invalid station name entered');
         return;
     }
-    
-    soap.createClient(soapUrl, function(err, client) {
-        client.addSoapHeader(util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey));
-        return client.GetDepartureBoard({numRows: 10, crs: fromStation.stationCode}, function(err, result) {
-            res.send(util.format('Departure board for %s (%s)<br><br>%s', fromStation.stationName, fromStation.stationCode, formatStationData(result, fromStation.stationName)));
-            return console.log(JSON.stringify(result));
-        });
-    });
-
+    getDepartures(response, fromStation);
 });
 
 app.get('/arr/:to/:from', function (req, res) {
     var toStation = findStation(req.params.to);
     var fromStation = findStation(req.params.from);
-    if (toStation.stationCode === "XXX" || fromStation.stationCode === "XXX") {
+    if (toStation.stationCode === errorStation.stationCode || fromStation.stationCode === errorStation.stationCode) {
         res.send('One or more invalid parameters');
         return;
     }
@@ -55,7 +46,7 @@ app.get('/arr/:to/:from', function (req, res) {
 
 app.get('/arr/:to', function (req, res) {
     var toStation = findStation(req.params.to);
-    if (toStation.stationCode === "XXX") {
+    if (toStation.stationCode === errorStation.stationCode) {
         res.send('Invalid station name entered');
         return;
     }
@@ -128,10 +119,46 @@ function findStation(input) {
     return errorStation;
 }
 
-function formatStationData(oStationBoard, stationName) {
-    var aServices = oStationBoard.GetStationBoardResult.trainServices.service;
+function getDepartures(response, fromStation, toStation) {
+    var options = {
+        numRows: 10,
+        crs: fromStation.stationCode
+    }
+    var output = util.format('Departure board for %s (%s)', fromStation.stationName, fromStation.stationCode);
+    if (toStation !== undefined) {
+        options.filterCrs = toStation.stationCode;
+        output += util.format(' calling at %s (%s)', toStation.stationName, toStation.stationCode);
+    }
+
+    soap.createClient(soapUrl, function(err, client) {
+        client.addSoapHeader(soapHeader);
+        return client.GetDepartureBoard(options, function(err, result) {
+            console.log(JSON.stringify(result));
+            fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
+                if (err) {
+                    return console.log(err);
+                }
+            })
+            var formattedData = '';
+            try {
+                formattedData = formatStationData(result);
+            } catch (err) {
+                formattedData = 'There was an error processing your request: ' + err.message;
+                console.log(err.stack);
+            }
+            response.send(util.format('%s<br><br>%s<br>%s', output, formattedData, footer()));
+        });
+    });
+}
+
+function formatStationData(oStationBoard) {
+    var oTrainServices = oStationBoard.GetStationBoardResult.trainServices;
+    var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
     var i;
     var output = '';
+    if (aServices.length === 0) {
+        output += 'No services found.'
+    }
     for (i = 0; i < aServices.length; i += 1) {
         output += '----<br><br>';
         output += aServices[i].origin.location[0].locationName + ' --&gt; <strong>' + aServices[i].destination.location[0].locationName + '</strong><br>';
@@ -146,8 +173,11 @@ function formatStationData(oStationBoard, stationName) {
         }
         output += '<br>';
     }
-
-    // output += JSON.stringify(oStationBoard);
-    output += footer
     return output;
+}
+
+function footer() {
+    var d = new Date();
+    return '<br>----<br><small>Page loaded at ' + d.getHours() + ':' + d.getMinutes() + '<br><br>'
+        + '<a href="/">About trntxt</a><br><br>Powered by <a href="http://www.nationalrail.co.uk/">National Rail Enquiries</a>.</small><br>';
 }
