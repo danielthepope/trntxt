@@ -2,27 +2,14 @@ var express = require('express');
 var fs = require('fs');
 var util = require('util');
 
-var port = process.env.PORT || 1337;
+var port = process.env.PORT || 3000;
 var apiKey = process.env.APIKEY;
 var apiUser = process.env.APIUSER;
 var stationCsv = process.env.STATIONCSV || 'resources/station_codes.csv';
 
-/**
- * Returns an array of station objects, each with stationName and stationCode
- */
-function getStations() {
-    var result = fs.readFileSync(stationCsv, 'utf8').split('\n');
-    result = result.slice(1, result.length);
-    var output = [];
-    for (var i = 0; i < result.length; i += 1) {
-        if (result[i].split(',').length === 2) output.push({stationName: result[i].split(',')[0].trim(), stationCode: result[i].split(',')[1].trim()});
-    }
-    return output;
-}
-
 var app = express();
 var stations = getStations();
-var errorStation = {stationName: "error", stationCode: "ERR"};
+var errorStation = {stationName: "error", stationCode: "XXX"};
  
 app.get('/', function (req, res) {
     var content = util.format('Station CSV: %s<br>', stationCsv);
@@ -31,51 +18,109 @@ app.get('/', function (req, res) {
     res.send(content);
 });
 
-app.get('/teststation/', function (req, res) {
-    var testData = ['didcot', 'Didcot', 'did', 'bath'];
-    var content = '';
-    for(var i = 0; i < testData.length; i += 1) {
-        var station = findStation(testData[i]);
-        content += util.format('%s = %s (%s)<br>', testData[i], station.stationName, station.stationCode);
+app.get('/dep/:from/:to', function (req, res) {
+    var fromStation = findStation(req.params.from);
+    var toStation = findStation(req.params.to);
+    if (fromStation.stationCode === "XXX" || toStation.stationCode === "XXX") {
+        res.send('One or more invalid parameters');
+        return;
     }
-    res.send(content);
+    // TODO
+    res.send(util.format('Finding departure times from %s to %s<br>TODO', fromStation.stationName, toStation.stationName));
 });
 
-app.get('/dep/:from/:to', function (req, res) {
-    var fromStation = findStation(req.params.from).stationName;
-    var toStation = findStation(req.params.to).stationName;
-    res.send(util.format('Finding departure times from %s to %s', fromStation, toStation));
-})
+app.get('/dep/:from', function (req, res) {
+    var fromStation = findStation(req.params.from);
+    if (fromStation.stationCode === "XXX") {
+        res.send('Invalid station name entered');
+        return;
+    }
+    // TODO
+    res.send(util.format('Finding departure board for %s<br>TODO', fromStation.stationName));
+});
+
+app.get('/arr/:to/:from', function (req, res) {
+    var toStation = findStation(req.params.to);
+    var fromStation = findStation(req.params.from);
+    if (toStation.stationCode === "XXX" || fromStation.stationCode === "XXX") {
+        res.send('One or more invalid parameters');
+        return;
+    }
+    // TODO
+    res.send(util.format('Finding arrival times to %s from %s<br>TODO', toStation.stationName, fromStation.stationName));
+});
+
+app.get('/arr/:to', function (req, res) {
+    var toStation = findStation(req.params.to);
+    if (toStation.stationCode === "XXX") {
+        res.send('Invalid station name entered');
+        return;
+    }
+    // TODO
+    res.send(util.format('Finding arrival board for %s<br>TODO', toStation.stationName));
+});
+
+app.use(express.static('public'));
  
 var server = app.listen(port, function () {
     console.log('listening on port %s', port);
 });
 
+/**
+ * Returns an array of station objects, each with stationName and stationCode
+ */
+function getStations() {
+    var i;
+    var result = fs.readFileSync(stationCsv, 'utf8').split('\n');
+    result = result.slice(1, result.length);
+    var output = [];
+    for (i = 0; i < result.length; i += 1) {
+        if (result[i].split(',').length === 2) output.push({stationName: result[i].split(',')[0].trim(), stationCode: result[i].split(',')[1].trim()});
+    }
+    return output;
+}
+
 function findStation(input) {
+    var i;
+    var bestMatch = {
+        stationNumber: -1,
+        matchIndex: -1
+    }
+    var position;
+
     console.log("Finding station for input " + input);
     if (input.length == 3) {
         console.log("Checking station codes");
-        for(var i = 0; i < stations.length; i++) {
+        for(i = 0; i < stations.length; i++) {
             if (stations[i].stationCode.toUpperCase() === input.toUpperCase()) {
-                console.log("Found station " + i + ": " + stations[i].stationName + " (" + stations[i].stationCode + ")");
+                console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
                 return stations[i];
             }
         }
     }
+
     console.log("Checking station name equality");
-    for(var i = 0; i < stations.length; i++) {
+    for(i = 0; i < stations.length; i++) {
         if (stations[i].stationName.replace(' ','').toUpperCase() === input.toUpperCase()) {
-            console.log("Found station " + i + ": " + stations[i].stationName + " (" + stations[i].stationCode + ")");
+            console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
             return stations[i];
         }
     }
+
     console.log("Checking station name matches");
-    for(var i = 0; i < stations.length; i++) {
-        if (stations[i].stationName.replace(' ','').toUpperCase().indexOf(input.toUpperCase()) != -1) {
-            console.log("Found station " + i + ": " + stations[i].stationName + " (" + stations[i].stationCode + ")");
-            return stations[i]; // Do something cleverer
+    for(i = 0; i < stations.length; i++) {
+        position = stations[i].stationName.replace(' ','').toUpperCase().indexOf(input.toUpperCase());
+        if (position != -1) {
+            console.log(util.format("Found station %d: %s (%s) at position %d", i, stations[i].stationName, stations[i].stationCode, position));
+            if (bestMatch.stationNumber === -1 || bestMatch.matchIndex > position) {
+                console.log('new best match!');
+                bestMatch.stationNumber = i;
+                bestMatch.matchIndex = position;
+            }
         }
     }
+    if (bestMatch.stationNumber !== -1) return stations[bestMatch.stationNumber];
+
     console.log("No match found");
     return errorStation;
 }
