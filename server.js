@@ -13,13 +13,6 @@ var footer = '----<br><br><small><a href="/">About mtrain</a><br><br>Powered by 
 var app = express();
 var stations = getStations();
 var errorStation = {stationName: "error", stationCode: "XXX"};
- 
-app.get('/', function (req, res) {
-    var content = util.format('Station CSV: %s<br>', stationCsv);
-    content += 'Go to /dep/:from/:to<br>';
-    content += 'This isn\'t working yet. Follow <a href="https://twitter.com/danielthepope">@danielthepope</a> for news.<br>';
-    res.send(content);
-});
 
 app.get('/dep/:from/:to', function (req, res) {
     var fromStation = findStation(req.params.from);
