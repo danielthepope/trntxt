@@ -14,7 +14,7 @@ gulp.task('server:start', function() {
 });
 
 gulp.task('server:restart', function() {
-	gulp.watch('./server.js', server.restart);
+	gulp.watch('./*.js', server.restart);
 })
 
 // Watch files for changes
