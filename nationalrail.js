@@ -11,9 +11,11 @@ if (apiKey === undefined) {
 }
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey);
+var header = '<!DOCTYPE html>\n<html>\n<head>\n<title>trntxt</title>\n</head>\n<body style="font-family:sans-serif;background-color:#eee;color:222">\n'
 
-exports.findStation = findStation; // function findStation()
+exports.findStation   = findStation;   // function findStation()
 exports.getDepartures = getDepartures; // function getDepartures(response, fromStation, toStation)
+exports.getArrivals   = getArrivals;   // function getArrivals(response, atStation, fromStation)
 
 /**
  * Returns an array of station objects, each with stationName and stationCode
@@ -96,19 +98,19 @@ function getDepartures(response, fromStation, toStation) {
             })
             var formattedData = '';
             try {
-                formattedData = formatStationData(result, fromStation);
+                formattedData = formatDepartureData(result, fromStation);
             } catch (err) {
                 formattedData = 'There was an error processing your request: ' + err.message;
                 console.log(err.stack);
             }
-            response.send(util.format('%s<br><br>%s<br>%s',
-                output, formattedData, 
+            response.send(util.format('%s%s<br><br>%s<br>%s',
+                header, output, formattedData, 
                 footer(new Date(Date.parse(result.GetStationBoardResult.generatedAt)))));
         });
     });
 }
 
-function formatStationData(oStationBoard, fromStation) {
+function formatDepartureData(oStationBoard, fromStation) {
     var oTrainServices = oStationBoard.GetStationBoardResult.trainServices;
     var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
     var i;
@@ -134,10 +136,20 @@ function formatStationData(oStationBoard, fromStation) {
     return output;
 }
 
+function getArrivals(response, atStation, fromStation) {
+    response.send(util.format('This will find arrival times at %s from %s.<br>It doesn\'t yet.',
+        atStation.stationName, fromStation === undefined ? "anywhere" : fromStation.stationName));
+}
+
+function formatArrivalData(oStationBoard, atStation) {
+    return "";
+}
+
 function footer(date) {
     return sprintf('<br>----<br><br><small>'
         + 'Page loaded at %02d:%02d UTC<br><br>'
         + '<a href="/">About trntxt</a><br><br>'
-        + 'Powered by <a href="http://www.nationalrail.co.uk/">National Rail Enquiries</a>.</small><br>',
-        date.getHours(), date.getMinutes());
+        + 'Powered by <a href="http://www.nationalrail.co.uk/">National Rail Enquiries</a>.</small><br>'
+        + '</body></html>'
+        , date.getHours(), date.getMinutes());
 }

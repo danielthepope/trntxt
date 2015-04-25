@@ -26,25 +26,23 @@ app.get('/dep/:from', function (request, response) {
     nr.getDepartures(response, fromStation);
 });
 
-app.get('/arr/:to/:from', function (req, res) {
-    var toStation = nr.findStation(req.params.to);
-    var fromStation = nr.findStation(req.params.from);
-    if (toStation.stationCode === errorStation.stationCode || fromStation.stationCode === errorStation.stationCode) {
-        res.send('One or more invalid parameters');
+app.get('/arr/:from/:at', function (request, response) {
+    var atStation = nr.findStation(request.params.at);
+    var fromStation = nr.findStation(request.params.from);
+    if (atStation.stationCode === errorStation.stationCode || fromStation.stationCode === errorStation.stationCode) {
+        response.send('One or more invalid parameters');
         return;
     }
-    // TODO
-    res.send(util.format('This will find arrival times to %s from %s<br>It doesn\'t yet.', toStation.stationName, fromStation.stationName));
+    nr.getArrivals(response, atStation, fromStation);
 });
 
-app.get('/arr/:to', function (req, res) {
-    var toStation = nr.findStation(req.params.to);
-    if (toStation.stationCode === errorStation.stationCode) {
-        res.send('Invalid station name entered');
+app.get('/arr/:at', function (request, response) {
+    var atStation = nr.findStation(request.params.at);
+    if (atStation.stationCode === errorStation.stationCode) {
+        response.send('Invalid station name entered');
         return;
     }
-    // TODO
-    res.send(util.format('This will find the arrival board for %s<br>It doesn\'t yet.', toStation.stationName));
+    nr.getArrivals(response, atStation);
 });
 
 app.use(express.static('public'));
