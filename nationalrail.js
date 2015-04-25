@@ -4,6 +4,10 @@ var soap = require('soap');
 
 var stations = getStations('resources/station_codes.csv');
 var apiKey = process.env.APIKEY;
+if (apiKey === undefined) {
+    console.log('process.env.APIKEY not set!');
+    process.exit(0);
+}
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey);
 
