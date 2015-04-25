@@ -95,7 +95,7 @@ function getDepartures(response, fromStation, toStation) {
             })
             var formattedData = '';
             try {
-                formattedData = formatStationData(result);
+                formattedData = formatStationData(result, fromStation);
             } catch (err) {
                 formattedData = 'There was an error processing your request: ' + err.message;
                 console.log(err.stack);
@@ -105,7 +105,7 @@ function getDepartures(response, fromStation, toStation) {
     });
 }
 
-function formatStationData(oStationBoard) {
+function formatStationData(oStationBoard, fromStation) {
     var oTrainServices = oStationBoard.GetStationBoardResult.trainServices;
     var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
     var i;
@@ -116,10 +116,11 @@ function formatStationData(oStationBoard) {
     for (i = 0; i < aServices.length; i += 1) {
         output += '----<br><br>';
         output += aServices[i].origin.location[0].locationName + ' --&gt; <strong>' + aServices[i].destination.location[0].locationName + '</strong><br>';
+        output += 'Departs ' + fromStation.stationName + ' at <strong>';
         if (aServices[i].etd !== 'On time') output += '<del>';
         output += aServices[i].std;
         if (aServices[i].etd !== 'On time') output += '</del>';
-        output += ' (' + aServices[i].etd + ')<br>';
+        output += ' (' + aServices[i].etd + ')</strong><br>';
         if (aServices[i].platform !== undefined) {
             output += 'Platform ' + aServices[i].platform + '<br>';
         } else {
