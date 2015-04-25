@@ -1,6 +1,7 @@
 var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
+var sprintf = require('sprintf-js').sprintf;
 
 var stations = getStations('resources/station_codes.csv');
 var apiKey = process.env.APIKEY;
@@ -100,7 +101,9 @@ function getDepartures(response, fromStation, toStation) {
                 formattedData = 'There was an error processing your request: ' + err.message;
                 console.log(err.stack);
             }
-            response.send(util.format('%s<br><br>%s<br>%s', output, formattedData, footer()));
+            response.send(util.format('%s<br><br>%s<br>%s',
+                output, formattedData, 
+                footer(new Date(Date.parse(result.GetStationBoardResult.generatedAt)))));
         });
     });
 }
@@ -131,8 +134,10 @@ function formatStationData(oStationBoard, fromStation) {
     return output;
 }
 
-function footer() {
-    var d = new Date();
-    return '<br>----<br><small>Page loaded at ' + d.getHours() + ':' + d.getMinutes() + '<br><br>'
-        + '<a href="/">About trntxt</a><br><br>Powered by <a href="http://www.nationalrail.co.uk/">National Rail Enquiries</a>.</small><br>';
+function footer(date) {
+    return sprintf('<br>----<br><br><small>'
+        + 'Page loaded at %02d:%02d UTC<br><br>'
+        + '<a href="/">About trntxt</a><br><br>'
+        + 'Powered by <a href="http://www.nationalrail.co.uk/">National Rail Enquiries</a>.</small><br>',
+        date.getHours(), date.getMinutes());
 }

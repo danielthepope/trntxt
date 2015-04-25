@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "express": "^4.12.3",
-    "soap": "^0.8.0"
+    "soap": "^0.8.0",
+    "sprintf-js": "^1.0.2"
   },
   "devDependencies": {
     "gulp": "^3.8.11",
