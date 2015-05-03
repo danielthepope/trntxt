@@ -1,5 +1,9 @@
+/* global process */
+
 var express = require('express');
 var util = require('util');
+var jade = require('jade');
+var extend = require('extend');
 var nr = require('./nationalrail.js');
 
 var port = process.env.PORT || 3000;
@@ -7,42 +11,42 @@ var port = process.env.PORT || 3000;
 var app = express();
 var errorStation = nr.errorStation;
 
-app.get('/dep/:from/:to', function (request, response) {
-    var fromStation = nr.findStation(request.params.from);
-    var toStation = nr.findStation(request.params.to);
-    if (fromStation.stationCode === errorStation.stationCode || toStation.stationCode === errorStation.stationCode) {
+var jadeOptions = {pretty:true};
+var jadeGlobals = {};
+jadeGlobals.pageTitle = 'trntxt';
+jadeGlobals.loadTime = function() {
+    return new Date().toLocaleTimeString();
+};
+
+function compile(locals) {
+    var fn = jade.compileFile('resources/template.jade', jadeOptions);
+    return fn(extend({}, jadeGlobals, locals));
+}
+
+app.get('/:from/:to', function (request, response) {
+    var stations = {};
+    stations.fromStation = nr.findStation(request.params.from);
+    stations.toStation = nr.findStation(request.params.to);
+    if (stations.fromStation.stationCode === errorStation.stationCode
+            || stations.toStation.stationCode === errorStation.stationCode) {
         response.send('One or more invalid parameters');
         return;
     }
-    nr.getDepartures(response, fromStation, toStation);
+    nr.getDepartures(stations, function(output) {
+        response.send(compile(output));
+    });
 });
 
-app.get('/dep/:from', function (request, response) {
-    var fromStation = nr.findStation(request.params.from);
-    if (fromStation.stationCode === errorStation.stationCode) {
+app.get('/:from', function (request, response) {
+    var stations = {};
+    stations.fromStation = nr.findStation(request.params.from);
+    if (stations.fromStation.stationCode === errorStation.stationCode) {
         response.send('Invalid station name entered');
         return;
     }
-    nr.getDepartures(response, fromStation);
-});
-
-app.get('/arr/:from/:at', function (request, response) {
-    var atStation = nr.findStation(request.params.at);
-    var fromStation = nr.findStation(request.params.from);
-    if (atStation.stationCode === errorStation.stationCode || fromStation.stationCode === errorStation.stationCode) {
-        response.send('One or more invalid parameters');
-        return;
-    }
-    nr.getArrivals(response, atStation, fromStation);
-});
-
-app.get('/arr/:at', function (request, response) {
-    var atStation = nr.findStation(request.params.at);
-    if (atStation.stationCode === errorStation.stationCode) {
-        response.send('Invalid station name entered');
-        return;
-    }
-    nr.getArrivals(response, atStation);
+    nr.getDepartures(stations, function(output) {
+        response.send(compile(output));
+    });
 });
 
 app.use(express.static('public'));

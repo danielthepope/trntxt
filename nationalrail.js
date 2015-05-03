@@ -11,7 +11,6 @@ if (apiKey === undefined) {
 }
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey);
-var header = '<!DOCTYPE html>\n<html>\n<head>\n<title>trntxt</title>\n</head>\n<body style="font-family:sans-serif;background-color:#eee;color:222">\n';
 var errorStation = {stationName: "error", stationCode: "XXX"};
 
 exports.findStation   = findStation;   // function findStation()
@@ -78,16 +77,18 @@ function findStation(input) {
     return errorStation;
 }
 
-function getDepartures(response, fromStation, toStation) {
+function getDepartures(stations, callback) {
     var options = {
         numRows: 10,
-        crs: fromStation.stationCode
+        crs: stations.fromStation.stationCode
     }
-    var output = util.format('Departure board for %s (%s)', fromStation.stationName, fromStation.stationCode);
-    if (toStation !== undefined) {
-        options.filterCrs = toStation.stationCode;
-        output += util.format(' calling at %s (%s)', toStation.stationName, toStation.stationCode);
+    var output = util.format('<strong>Departure board for %s (%s)',
+        stations.fromStation.stationName, stations.fromStation.stationCode);
+    if (stations.toStation !== undefined) {
+        options.filterCrs = stations.toStation.stationCode;
+        output += util.format(' calling at %s (%s)', stations.toStation.stationName, stations.toStation.stationCode);
     }
+    output += '</strong>';
 
     soap.createClient(soapUrl, function(err, client) {
         client.addSoapHeader(soapHeader);
@@ -97,17 +98,23 @@ function getDepartures(response, fromStation, toStation) {
                 if (err) {
                     return console.log(err);
                 }
-            })
+            });
             var formattedData = '';
             try {
-                formattedData = formatDepartureData(result, fromStation);
+                formattedData = formatDepartureData(result, stations.fromStation);
             } catch (err) {
                 formattedData = 'There was an error processing your request: ' + err.message;
                 console.log(err.stack);
             }
-            response.send(util.format('%s%s<br><br>%s<br>%s',
-                header, output, formattedData, 
-                footer(new Date(Date.parse(result.GetStationBoardResult.generatedAt)))));
+            var cb = {
+                content: util.format('%s<br><br>%s', output, formattedData),
+                pageTitle: 'trntxt: '
+            };
+            cb.pageTitle += stations.fromStation.stationCode;
+            if (stations.toStation !== undefined) {
+                cb.pageTitle += ' > '+stations.toStation.stationCode;
+            }
+            callback(cb);
         });
     });
 }
@@ -138,20 +145,11 @@ function formatDepartureData(oStationBoard, fromStation) {
     return output;
 }
 
-function getArrivals(response, atStation, fromStation) {
-    response.send(util.format('This will find arrival times at %s from %s.<br>It doesn\'t yet.',
-        atStation.stationName, fromStation === undefined ? "anywhere" : fromStation.stationName));
+function getArrivals(atStation, fromStation) {
+    return util.format('This will find arrival times at %s from %s.<br>It doesn\'t yet.',
+        atStation.stationName, fromStation === undefined ? "anywhere" : fromStation.stationName);
 }
 
 function formatArrivalData(oStationBoard, atStation) {
     return "";
-}
-
-function footer(date) {
-    return sprintf('<br>----<br><br><small>'
-        + 'Page loaded at %02d:%02d UTC<br><br>'
-        + '<a href="/">About trntxt</a><br><br>'
-        + 'Powered by <a href="http://www.nationalrail.co.uk/">National Rail Enquiries</a>.</small><br>'
-        + '</body></html>'
-        , date.getHours(), date.getMinutes());
 }
