@@ -11,11 +11,13 @@ if (apiKey === undefined) {
 }
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey);
-var header = '<!DOCTYPE html>\n<html>\n<head>\n<title>trntxt</title>\n</head>\n<body style="font-family:sans-serif;background-color:#eee;color:222">\n'
+var header = '<!DOCTYPE html>\n<html>\n<head>\n<title>trntxt</title>\n</head>\n<body style="font-family:sans-serif;background-color:#eee;color:222">\n';
+var errorStation = {stationName: "error", stationCode: "XXX"};
 
 exports.findStation   = findStation;   // function findStation()
 exports.getDepartures = getDepartures; // function getDepartures(response, fromStation, toStation)
 exports.getArrivals   = getArrivals;   // function getArrivals(response, atStation, fromStation)
+exports.errorStation  = errorStation;
 
 /**
  * Returns an array of station objects, each with stationName and stationCode

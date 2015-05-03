@@ -5,7 +5,7 @@ var nr = require('./nationalrail.js');
 var port = process.env.PORT || 3000;
 
 var app = express();
-var errorStation = {stationName: "error", stationCode: "XXX"};
+var errorStation = nr.errorStation;
 
 app.get('/dep/:from/:to', function (request, response) {
     var fromStation = nr.findStation(request.params.from);
