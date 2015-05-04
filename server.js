@@ -11,7 +11,7 @@ var port = process.env.PORT || 3000;
 var app = express();
 var errorStation = nr.errorStation;
 
-var jadeOptions = {pretty:true,doctype:'html'};
+var jadeOptions = {doctype:'html'};
 var jadeGlobals = {};
 jadeGlobals.pageTitle = 'trntxt';
 
