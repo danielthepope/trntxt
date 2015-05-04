@@ -11,17 +11,23 @@ var port = process.env.PORT || 3000;
 var app = express();
 var errorStation = nr.errorStation;
 
-var jadeOptions = {pretty:true};
+var jadeOptions = {pretty:true,doctype:'html'};
 var jadeGlobals = {};
 jadeGlobals.pageTitle = 'trntxt';
-jadeGlobals.loadTime = function() {
-    return new Date().toLocaleTimeString();
-};
 
 function compile(locals) {
     var fn = jade.compileFile('resources/template.jade', jadeOptions);
     return fn(extend({}, jadeGlobals, locals));
 }
+
+app.get('/(|index.html)', function(request, response) {
+    response.send(jade.renderFile('resources/homepage.jade', jadeOptions));
+});
+
+app.get('/test', function (request, response) {
+    var output = {content:'TESTING'};
+    response.send(compile(output));
+});
 
 app.get('/:from/:to', function (request, response) {
     var stations = {};
@@ -37,7 +43,7 @@ app.get('/:from/:to', function (request, response) {
     });
 });
 
-app.get('/:from', function (request, response) {
+app.get('/:from(\\w+)', function (request, response) {
     var stations = {};
     stations.fromStation = nr.findStation(request.params.from);
     if (stations.fromStation.stationCode === errorStation.stationCode) {

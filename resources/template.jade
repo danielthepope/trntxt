@@ -1,21 +1,8 @@
-doctype html
 html
 	head
-		title= pageTitle
-	body(style="font-family:sans-serif;background-color:#eee;color:222")
+		include head.jade
+	body
 		p
-			em trntxt
+			em trntxt.uk
 		!= content
-		hr
-		p
-			small Page loaded at 
-				= loadTime()
-		p
-			small
-				a(href="/") About trntxt
-		p
-			small Created by 
-				a(href="https://twitter.com/danielthepope") @danielthepope
-		p
-			small Powered by 
-				a(href="http://www.nationalrail.co.uk/") National Rail Enquiries
+		include footer.jade
