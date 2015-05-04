@@ -1,22 +1,16 @@
+/* global process */
+
 var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
 
 var stations = getStations('resources/station_codes.csv');
-var apiKey = process.env.APIKEY;
-if (apiKey === undefined) {
-    console.log('process.env.APIKEY not set!');
-    process.exit(0);
-}
+var apiKey = process.env.APIKEY; // Imported from Azure
+
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey);
 var errorStation = {stationName: "error", stationCode: "XXX"};
-
-exports.findStation   = findStation;   // function findStation()
-exports.getDepartures = getDepartures; // function getDepartures(response, fromStation, toStation)
-exports.getArrivals   = getArrivals;   // function getArrivals(response, atStation, fromStation)
-exports.errorStation  = errorStation;
 
 /**
  * Returns an array of station objects, each with stationName and stationCode
@@ -78,10 +72,16 @@ function findStation(input) {
 }
 
 function getDepartures(stations, callback) {
+    if (apiKey === undefined) {
+        console.error('No API key set!');
+        var cb = {pageTitle:'trntxt: ERROR', content:'<p>Error: No API key set.</p>'};
+        callback(cb);
+        return;
+    }
     var options = {
         numRows: 10,
         crs: stations.fromStation.stationCode
-    }
+    };
     var output = util.format('<strong>Departure board for %s (%s)',
         stations.fromStation.stationName, stations.fromStation.stationCode);
     if (stations.toStation !== undefined) {
@@ -145,11 +145,6 @@ function formatDepartureData(oStationBoard, fromStation) {
     return output;
 }
 
-function getArrivals(atStation, fromStation) {
-    return util.format('This will find arrival times at %s from %s.<br>It doesn\'t yet.',
-        atStation.stationName, fromStation === undefined ? "anywhere" : fromStation.stationName);
-}
-
-function formatArrivalData(oStationBoard, atStation) {
-    return "";
-}
+exports.findStation   = findStation;   // function findStation()
+exports.getDepartures = getDepartures; // function getDepartures(response, fromStation, toStation)
+exports.errorStation  = errorStation;
