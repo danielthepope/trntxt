@@ -1,4 +1,4 @@
-/* global process */
+/// <reference path="typings/node/node.d.ts"/>
 
 var express = require('express');
 var util = require('util');
@@ -20,8 +20,8 @@ function compile(locals) {
 	return fn(extend({}, jadeGlobals, locals));
 }
 
-app.get('/(|index.html)', function(request, response) {
-	response.send(jade.renderFile('resources/homepage.jade', jadeOptions));
+app.get('/defaultsite', function(request, response) {
+	response.sendFile('index.html', {root:'./public'});
 });
 
 app.get('/test', function (request, response) {
@@ -29,7 +29,7 @@ app.get('/test', function (request, response) {
 	response.send(compile(output));
 });
 
-app.get('/:from/:to', function (request, response) {
+app.get('/:from(\\w+)/:to(\\w+)', function (request, response) {
 	var stations = {};
 	stations.fromStation = nr.findStation(request.params.from);
 	stations.toStation = nr.findStation(request.params.to);

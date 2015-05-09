@@ -6,7 +6,8 @@
     "url": "git://github.com/danielthepope/mtrain.git"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "prestart": "gulp build"
   },
   "dependencies": {
     "express": "^4.12.3",
@@ -17,6 +18,10 @@
   },
   "devDependencies": {
     "gulp": "^3.8.11",
-    "gulp-develop-server": "^0.4.2"
+    "gulp-cssmin": "^0.1.7",
+    "gulp-develop-server": "^0.4.2",
+    "gulp-jade": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "mkdirp": "^0.5.0"
   }
 }

@@ -1,5 +1,3 @@
-/* global process */
-
 var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
@@ -125,7 +123,7 @@ function formatDepartureData(oStationBoard, fromStation) {
 	var i;
 	var output = '';
 	if (aServices.length === 0) {
-		output += 'No services found.'
+		output += 'No services found.';
 	}
 	for (i = 0; i < aServices.length; i += 1) {
 		output += '----<br><br>';
