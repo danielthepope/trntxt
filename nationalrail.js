@@ -1,3 +1,4 @@
+var deasync = require('deasync');
 var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
@@ -99,7 +100,7 @@ function getDepartures(stations, callback) {
 			});
 			var formattedData = '';
 			try {
-				formattedData = formatDepartureData(result, stations.fromStation);
+				formattedData = formatDepartureData(result, stations.fromStation, stations.toStation);
 			} catch (err) {
 				formattedData = 'There was an error processing your request: ' + err.message;
 				console.log(err.stack);
@@ -117,7 +118,7 @@ function getDepartures(stations, callback) {
 	});
 }
 
-function formatDepartureData(oStationBoard, fromStation) {
+function formatDepartureData(oStationBoard, fromStation, toStation) {
 	var oTrainServices = oStationBoard.GetStationBoardResult.trainServices;
 	var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
 	var i;
@@ -129,20 +130,77 @@ function formatDepartureData(oStationBoard, fromStation) {
 		output += '----<br><br>';
 		output += aServices[i].origin.location[0].locationName + ' --&gt; <strong>' + aServices[i].destination.location[0].locationName + '</strong><br>';
 		output += 'Departs ' + fromStation.stationName + ' at <strong>';
-		if (aServices[i].etd !== 'On time') output += '<del>';
-		output += aServices[i].std;
-		if (aServices[i].etd !== 'On time') output += '</del>';
-		output += ' (' + aServices[i].etd + ')</strong><br>';
-		if (aServices[i].platform !== undefined) {
-			output += 'Platform ' + aServices[i].platform + '<br>';
+		// If the train is delayed, strike out the original departure time
+		if (aServices[i].etd !== 'On time') {
+			output += '<del>';
+			output += aServices[i].std;
+			output += '</del>';
 		} else {
-			output += 'No platform information available<br>';
+			output += aServices[i].std;
+		}
+		// Show the estimated departure time: If train is on time it will say 'On time'
+		output += ' (' + aServices[i].etd + ')</strong>, ';
+		if (aServices[i].platform !== undefined) {
+			output += 'platform ' + aServices[i].platform + '<br>';
+		} else {
+			output += '<small>(no platform information available)</small><br>';
+		}
+		if (toStation !== undefined) {
+			output += "Arriving at " + toStation.stationName + " at <strong>";
+			output += getArrivalTimeForService(aServices[i], fromStation, toStation) + "</strong><br>";
 		}
 		output += '<br>';
 	}
 	return output;
 }
 
+function getArrivalTimeForService(service, fromStation, toStation) {
+	console.log("------ A SERVICE ------");
+	var serviceID = service.serviceID;
+	console.log(serviceID);
+	var options = {serviceID:serviceID};
+	var output;
+	var done = false;
+	soap.createClient(soapUrl, function(err, client) {
+		console.log(JSON.stringify(service));
+		client.addSoapHeader(soapHeader);
+		return client.GetServiceDetails(options, function(err, result) {
+			var callingPointArray = result.GetServiceDetailsResult.subsequentCallingPoints.callingPointList[0].callingPoint;
+			for (var i = 0; i < callingPointArray.length; i++) {
+				if (callingPointArray[i].crs === toStation.stationCode) {
+					var st = callingPointArray[i].st;
+					var et = callingPointArray[i].et;
+					if (et === "On time") {
+						output = st + " (" + et + ")";
+					} else {
+						output = "<del>" + st + "</del> (" + et + ")";
+					}
+					done = true;
+					return;
+				}
+			}
+			output = "actually it doesn't";
+			done = true;
+		});
+	});
+	while (!done) {
+		deasync.runLoopOnce();
+	}
+	return output;
+}
+
+function getServiceDetails(serviceId, callback) {
+	return soap.createClient(soapUrl, function(err, client) {
+		client.addSoapHeader(soapHeader);
+		if (err) console.log("ERR1" + err);
+		var options = {serviceID: serviceId};
+		return client.GetServiceDetails(options, function(result) {
+			return callback(result);
+		});
+	});
+}
+
 exports.findStation   = findStation;   // function findStation()
 exports.getDepartures = getDepartures; // function getDepartures(response, fromStation, toStation)
-exports.errorStation  = errorStation;
+exports.errorStation  = errorStation;  // A station object which can be used when an error occurrs.
+exports.getServiceDetails = getServiceDetails;

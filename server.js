@@ -12,8 +12,7 @@ var app = express();
 var errorStation = nr.errorStation;
 
 var jadeOptions = {doctype:'html'};
-var jadeGlobals = {};
-jadeGlobals.pageTitle = 'trntxt';
+var jadeGlobals = {pageTitle:'trntxt'};
 
 function compile(locals) {
 	var fn = jade.compileFile('resources/template.jade', jadeOptions);
@@ -52,6 +51,13 @@ app.get('/:from(\\w+)', function (request, response) {
 	}
 	nr.getDepartures(stations, function(output) {
 		response.send(compile(output));
+	});
+});
+
+app.get('/details/:serviceId', function (request, response) {
+	nr.getServiceDetails(request.params.serviceId, function(data) {
+		console.log(data);
+		response.send(data);
 	});
 });
 
