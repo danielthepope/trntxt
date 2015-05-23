@@ -3,16 +3,18 @@ var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
+var _ = require('lodash');
 
 var configPath = './config/config.js';
-
-var config = (function() {
-		try {
-			return require.resolve.apply(null, arguments);
-		} catch($) {}
-	})(configPath)
-	&& require(configPath)
-	|| require(configPath.replace(/\.js$/, ".example.js"));
+var config = _.extend(
+	require(configPath.replace(/\.js$/, ".example.js")),
+		(function() {
+			try {
+				return require.resolve.apply(null, arguments);
+			} catch(ໆ) {}
+		})(configPath)
+		&& require(configPath)
+	);
 
 var stations = getStations('resources/station_codes.csv');
 
