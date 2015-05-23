@@ -30,3 +30,5 @@ node_modules
 
 # mtrain repository specific
 public/lastrequest.txt
+
+config/config.js
