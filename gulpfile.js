@@ -4,7 +4,9 @@ var server = require('gulp-develop-server');
 var jade = require('gulp-jade');
 var cssmin = require('gulp-cssmin');
 var rename = require('gulp-rename');
+var newer = require('gulp-newer');
 var mkdirp = require('mkdirp');
+var util = require('util');
 
 gulp.task('server:start', function() {
 	server.listen( { path: './server.js' } );
@@ -21,7 +23,16 @@ gulp.task('watch', function() {
 	gulp.watch('./resources/static/*.jade', ['build']);
 });
 
-gulp.task('build', ['mkdir', 'minifycss', 'staticjade']);
+var configSrcDir = './config';
+var configDestDir = configSrcDir;
+gulp.task('copy', function(){
+	gulp.src(util.format('%s/config.example.js', configSrcDir), {base:configSrcDir})
+		.pipe(rename('config.js'))
+		.pipe(newer(configDestDir))
+		.pipe(gulp.dest(configDestDir));
+});
+
+gulp.task('build', ['mkdir', 'minifycss', 'staticjade', 'copy']);
 
 gulp.task('mkdir', function() {
 	return mkdirp.sync('./public');

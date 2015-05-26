@@ -3,12 +3,24 @@ var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
+var extend = require('extend');
+
+var configPath = './config/config.js';
+var config = extend(
+	require(configPath.replace(/\.js$/, ".example.js")),
+		(function() {
+			try {
+				return require.resolve.apply(null, arguments);
+			} catch(e) {}
+		})(configPath)
+		&& require(configPath)
+	);
 
 var stations = getStations('resources/station_codes.csv');
-var apiKey = process.env.APIKEY; // Imported from Azure
 
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
-var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', apiKey);
+var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
+	|| console.error("No API key provided. Received: "+config.apiKey));
 var errorStation = {stationName: "error", stationCode: "XXX"};
 
 /**
@@ -71,7 +83,7 @@ function findStation(input) {
 }
 
 function getDepartures(stations, callback) {
-	if (apiKey === undefined) {
+	if (config.apiKey === undefined) {
 		console.error('No API key set!');
 		var cb = {pageTitle:'trntxt: ERROR', content:'<p>Error: No API key set.</p>'};
 		callback(cb);
