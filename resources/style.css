@@ -1,4 +1,7 @@
-body{
-	font-family:sans-serif;
-	color:#333;
+body {
+	font-family: sans-serif;
+	color: #333;
+	max-width: 500px;
+	padding: 5px;
+	margin: auto;
 }
