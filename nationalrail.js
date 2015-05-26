@@ -1,4 +1,3 @@
-var deasync = require('deasync');
 var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
@@ -89,116 +88,159 @@ function getDepartures(stations, callback) {
 		callback(cb);
 		return;
 	}
+	
+	getDepartureObject(stations, function(departureObject) {
+		console.log(stations);
+		var jadeResponse = {
+			content: generateDepartureHtml(departureObject),
+			pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode
+		};
+		if (departureObject.toStation !== undefined) {
+			jadeResponse.pageTitle += ' -> ' + departureObject.toStation.stationCode;
+		}
+		callback(jadeResponse);
+	});
+}
+
+function getDepartureObject(stations, callback) {
+	var output = {};
+	output.fromStation = stations.fromStation;
+	if (stations.toStation !== undefined) output.toStation = stations.toStation;
+	output.trainServices = [];
+	// TODO output.busServices = [];
+	
 	var options = {
 		numRows: 10,
 		crs: stations.fromStation.stationCode
 	};
-	var output = util.format('<strong>Departure board for %s (%s)',
-		stations.fromStation.stationName, stations.fromStation.stationCode);
 	if (stations.toStation !== undefined) {
 		options.filterCrs = stations.toStation.stationCode;
-		output += util.format(' calling at %s (%s)', stations.toStation.stationName, stations.toStation.stationCode);
 	}
-	output += '</strong>';
-
+	
 	soap.createClient(soapUrl, function(err, client) {
 		client.addSoapHeader(soapHeader);
 		return client.GetDepartureBoard(options, function(err, result) {
 			console.log(JSON.stringify(result));
 			fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
-				if (err) {
-					return console.log(err);
-				}
+				if (err) return console.log(err);
 			});
-			var formattedData = '';
-			try {
-				formattedData = formatDepartureData(result, stations.fromStation, stations.toStation);
-			} catch (err) {
-				formattedData = 'There was an error processing your request: ' + err.message;
-				console.log(err.stack);
-			}
-			var cb = {
-				content: util.format('%s<br><br>%s', output, formattedData),
-				pageTitle: 'trntxt: '
-			};
-			cb.pageTitle += stations.fromStation.stationCode;
-			if (stations.toStation !== undefined) {
-				cb.pageTitle += ' > '+stations.toStation.stationCode;
-			}
-			callback(cb);
-		});
-	});
-}
-
-function formatDepartureData(oStationBoard, fromStation, toStation) {
-	var oTrainServices = oStationBoard.GetStationBoardResult.trainServices;
-	var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
-	var i;
-	var output = '';
-	if (aServices.length === 0) {
-		output += 'No services found.';
-	}
-	for (i = 0; i < aServices.length; i += 1) {
-		output += '----<br><br>';
-		output += aServices[i].origin.location[0].locationName + ' --&gt; <strong>' + aServices[i].destination.location[0].locationName + '</strong><br>';
-		output += 'Departs ' + fromStation.stationName + ' at <strong>';
-		// If the train is delayed, strike out the original departure time
-		if (aServices[i].etd !== 'On time') {
-			output += '<del>';
-			output += aServices[i].std;
-			output += '</del>';
-		} else {
-			output += aServices[i].std;
-		}
-		// Show the estimated departure time: If train is on time it will say 'On time'
-		output += ' (' + aServices[i].etd + ')</strong>, ';
-		if (aServices[i].platform !== undefined) {
-			output += 'platform ' + aServices[i].platform + '<br>';
-		} else {
-			output += '<small>(no platform information available)</small><br>';
-		}
-		if (toStation !== undefined) {
-			output += "Arriving at " + toStation.stationName + " at <strong>";
-			output += getArrivalTimeForService(aServices[i], fromStation, toStation) + "</strong><br>";
-		}
-		output += '<br>';
-	}
-	return output;
-}
-
-function getArrivalTimeForService(service, fromStation, toStation) {
-	console.log("------ A SERVICE ------");
-	var serviceID = service.serviceID;
-	console.log(serviceID);
-	var options = {serviceID:serviceID};
-	var output;
-	var done = false;
-	soap.createClient(soapUrl, function(err, client) {
-		console.log(JSON.stringify(service));
-		client.addSoapHeader(soapHeader);
-		return client.GetServiceDetails(options, function(err, result) {
-			var callingPointArray = result.GetServiceDetailsResult.subsequentCallingPoints.callingPointList[0].callingPoint;
-			for (var i = 0; i < callingPointArray.length; i++) {
-				if (callingPointArray[i].crs === toStation.stationCode) {
-					var st = callingPointArray[i].st;
-					var et = callingPointArray[i].et;
-					if (et === "On time") {
-						output = st + " (" + et + ")";
-					} else {
-						output = "<del>" + st + "</del> (" + et + ")";
-					}
-					done = true;
-					return;
+			
+			
+			var oTrainServices = result.GetStationBoardResult.trainServices;
+			var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
+			var i;
+			var aPromises = [];
+			for (i = 0; i < aServices.length; i += 1) {
+				console.log("Service ", i);
+				output.trainServices[i] = {};
+				output.trainServices[i].originStation = {
+					stationName: aServices[i].origin.location[0].locationName
+				};
+				output.trainServices[i].destinationStation = {
+					stationName: aServices[i].destination.location[0].locationName
+				};
+				output.trainServices[i].std = aServices[i].std;
+				output.trainServices[i].etd = aServices[i].etd;
+				if (aServices[i].platform !== undefined) {
+					output.trainServices[i].platform = aServices[i].platform;
+				} else {
+					output.trainServices[i].platform = null;
 				}
+				output.trainServices[i].serviceID = aServices[i].serviceID;
+				if (output.toStation !== undefined) aPromises.push(makePromiseForService(output.trainServices[i].serviceID));
 			}
-			output = "actually it doesn't";
-			done = true;
+			console.log("Promises: ", aPromises);
+			Promise.all(aPromises).then(function(detailedServices) {
+				console.log("All details received");
+				for (var i = 0; i < detailedServices.length; i++) {
+					var arrival = getArrivalTimeForService(detailedServices[i], output.toStation);
+					output.trainServices[i].sta = arrival.sta;
+					output.trainServices[i].eta = arrival.eta;
+				}
+				return callback(output);
+			}, function(error) {
+				console.log("WAAAAAAH", error);
+				throw error;
+			});
 		});
 	});
-	while (!done) {
-		deasync.runLoopOnce();
+}
+
+function generateDepartureHtml(oDepartures) {
+	var output = util.format('<strong>Departure board for %s (%s)',
+		oDepartures.fromStation.stationName, oDepartures.fromStation.stationCode);
+	if (oDepartures.toStation !== undefined) {
+		output += util.format(' calling at %s (%s)',
+			oDepartures.toStation.stationName, oDepartures.toStation.stationCode);
+	}
+	output += '</strong><br><br>';
+	if (oDepartures.trainServices.length === 0) {
+		output += 'No services found.';
+	} else {
+		oDepartures.trainServices.forEach(function(service) {
+			output += '----<br><br>';
+			output += service.originStation.stationName + ' -&gt; <strong>';
+			output += service.destinationStation.stationName + '</strong><br>';
+			output += 'Departs ' + oDepartures.fromStation.stationName + ' at <strong>';
+			// If the train is delayed, strike out the original departure time
+			if (service.etd !== 'On time') {
+				output += '<del>';
+				output += service.std;
+				output += '</del>';
+			} else {
+				output += service.std;
+			}
+			// Show the estimated departure time: if train is on time it will say 'On time'
+			output += ' (' + service.etd + ')</strong>, ';
+			if (service.platform !== null) {
+				output += 'platform ' + service.platform + '<br>';
+			} else {
+				output += '<small>no platform information available</small><br>';
+			}
+			if (oDepartures.toStation !== undefined) {
+				output += 'Arriving at ' + oDepartures.toStation.stationName + ' at <strong>';
+				if (service.eta !== 'On time') {
+					output += '<del>' + service.sta + '</del>';
+				} else {
+					output += service.sta;
+				}
+				output += ' (' + service.eta + ')';
+				output += '</strong><br>';
+			}
+			output += '<br>';
+		});
 	}
 	return output;
+}
+
+function getArrivalTimeForService(service, toStation) {
+	var output = {};
+	var callingPointArray = service.GetServiceDetailsResult.subsequentCallingPoints.callingPointList[0].callingPoint;
+	for (var i = 0; i < callingPointArray.length; i++) {
+		if (callingPointArray[i].crs === toStation.stationCode) {
+			output.sta = callingPointArray[i].st;
+			output.eta = callingPointArray[i].et;
+			break;
+		}
+	}
+	return output;
+}
+
+function makePromiseForService(serviceId) {
+	console.log("Making promise for service ", serviceId);
+	var options = { serviceID: serviceId };
+	return new Promise(function(resolve, reject) {
+		soap.createClient(soapUrl, function(err, client) {
+			console.log("Making request with options: ", options);
+			client.addSoapHeader(soapHeader);
+			client.GetServiceDetails(options, function(err, result) {
+				if (err) return reject(err);
+				console.log("Success!");
+				console.log(JSON.stringify(result));
+				return resolve(result);
+			});
+		});
+	});
 }
 
 function getServiceDetails(serviceId, callback) {
