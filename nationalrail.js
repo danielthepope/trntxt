@@ -4,16 +4,12 @@ var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
 var extend = require('extend');
 
-var configPath = './config/config.js';
-var config = extend(
-	require(configPath.replace(/\.js$/, ".example.js")),
-		(function() {
-			try {
-				return require.resolve.apply(null, arguments);
-			} catch(e) {}
-		})(configPath)
-		&& require(configPath)
-	);
+var defaultConfig = require('./config/config.example.js');
+var customConfig = {};
+try {
+	customConfig = require('./config/config.js');
+} catch (e) {}
+var config = extend(defaultConfig, customConfig);
 
 var stations = getStations('resources/station_codes.csv');
 

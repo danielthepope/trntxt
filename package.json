@@ -9,7 +9,6 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "deasync": "0.0.10",
     "express": "^4.12.3",
     "extend": "^2.0.1",
     "jade": "^1.9.2",
