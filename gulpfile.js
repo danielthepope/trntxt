@@ -26,10 +26,10 @@ gulp.task('watch', function() {
 var configSrcDir = './config';
 var configDestDir = configSrcDir;
 gulp.task('copy', function(){
-  gulp.src(util.format('%s/config.example.js', configSrcDir), {base:configSrcDir})
-    .pipe(rename('config.js'))
-    .pipe(newer(configDestDir))
-    .pipe(gulp.dest(configDestDir));
+	gulp.src(util.format('%s/config.example.js', configSrcDir), {base:configSrcDir})
+		.pipe(rename('config.js'))
+		.pipe(newer(configDestDir))
+		.pipe(gulp.dest(configDestDir));
 });
 
 gulp.task('build', ['mkdir', 'minifycss', 'staticjade', 'copy']);

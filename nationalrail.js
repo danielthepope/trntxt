@@ -3,15 +3,15 @@ var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
-var _ = require('lodash');
+var extend = require('extend');
 
 var configPath = './config/config.js';
-var config = _.extend(
+var config = extend(
 	require(configPath.replace(/\.js$/, ".example.js")),
 		(function() {
 			try {
 				return require.resolve.apply(null, arguments);
-			} catch(ໆ) {}
+			} catch(e) {}
 		})(configPath)
 		&& require(configPath)
 	);

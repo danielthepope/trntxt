@@ -20,8 +20,6 @@ If you want to run this program locally, you will need to register for a Nationa
 
 Once you have a key, paste it into `./config/config.js`; this file is generated based on the template `./config/config.example.js` at build-time.
 
-> _I'm using [Visual Studio Code](http://code.visualstudio.com) to develop this app. You should be able to set `process.env` using the `launch.json` file, but as of version 0.1, [this doesn't work](http://stackoverflow.com/questions/29962529/environment-variables-not-working-in-microsoft-visual-studio-code)._
-
 Install the required packages using `npm install` in the command line. You also need to install the gulp command line interface globally, if you haven't already done so: `npm install -g gulp-cli`
 
 To run the server, just type `gulp`. The server runs, then restarts if any of the JavaScript files are changed.
