@@ -1,10 +1,8 @@
-// Include gulp
 var gulp = require('gulp');
 var server = require('gulp-develop-server');
 var jade = require('gulp-jade');
 var cssmin = require('gulp-cssmin');
 var rename = require('gulp-rename');
-var mkdirp = require('mkdirp');
 var util = require('util');
 var fs = require('fs');
 
@@ -34,20 +32,16 @@ gulp.task('copy', function(){
 	});
 });
 
-gulp.task('build', ['mkdir', 'minifycss', 'staticjade', 'copy']);
+gulp.task('build', ['minifycss', 'staticjade', 'copy']);
 
-gulp.task('mkdir', function() {
-	return mkdirp.sync('./public');
-});
-
-gulp.task('minifycss', ['mkdir'], function() {
+gulp.task('minifycss', function() {
 	return gulp.src('./resources/*.css')
 		.pipe(cssmin())
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest('./public'));
 });
 
-gulp.task('staticjade', ['mkdir', 'minifycss'], function() {
+gulp.task('staticjade', ['minifycss'], function() {
 	return gulp.src('./resources/static/*.jade')
 		.pipe(jade({
 			doctype: 'html',
