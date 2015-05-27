@@ -3,11 +3,11 @@ html
 		include head.jade
 	body
 		p
-			em trntxt.uk
+			em trntxt.uk 
 				small (beta)
 		!= content
 
-		if toStation != undefined and fromStation != undefined
+		if toStation != undefined && fromStation != undefined
 			p
 				a(href='/'+toStation+'/'+fromStation) Switch Direction
 

@@ -90,11 +90,11 @@ function getDepartures(stations, callback) {
 		var jadeResponse = {
 			content: generateDepartureHtml(departureObject),
 			pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode,
-			fromStation: departureObject.fromStation.stationCode,
-			toStation: departureObject.toStation.stationCode
+			fromStation: departureObject.fromStation.stationCode
 		};
 		if (departureObject.toStation !== undefined) {
 			jadeResponse.pageTitle += ' -> ' + departureObject.toStation.stationCode;
+			jadeResponse.toStation = departureObject.toStation.stationCode;
 		}
 		callback(jadeResponse);
 	});
