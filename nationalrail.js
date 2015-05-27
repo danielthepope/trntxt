@@ -84,12 +84,14 @@ function getDepartures(stations, callback) {
 		callback(cb);
 		return;
 	}
-	
+
 	getDepartureObject(stations, function(departureObject) {
 		console.log(stations);
 		var jadeResponse = {
 			content: generateDepartureHtml(departureObject),
-			pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode
+			pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode,
+			fromStation: departureObject.fromStation.stationCode,
+			toStation: departureObject.toStation.stationCode
 		};
 		if (departureObject.toStation !== undefined) {
 			jadeResponse.pageTitle += ' -> ' + departureObject.toStation.stationCode;
@@ -104,7 +106,7 @@ function getDepartureObject(stations, callback) {
 	if (stations.toStation !== undefined) output.toStation = stations.toStation;
 	output.trainServices = [];
 	// TODO output.busServices = [];
-	
+
 	var options = {
 		numRows: 10,
 		crs: stations.fromStation.stationCode
@@ -112,7 +114,7 @@ function getDepartureObject(stations, callback) {
 	if (stations.toStation !== undefined) {
 		options.filterCrs = stations.toStation.stationCode;
 	}
-	
+
 	soap.createClient(soapUrl, function(err, client) {
 		client.addSoapHeader(soapHeader);
 		return client.GetDepartureBoard(options, function(err, result) {
@@ -120,8 +122,8 @@ function getDepartureObject(stations, callback) {
 			fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
 				if (err) return console.log(err);
 			});
-			
-			
+
+
 			var oTrainServices = result.GetStationBoardResult.trainServices;
 			var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
 			var i;
