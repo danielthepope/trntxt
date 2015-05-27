@@ -23,9 +23,16 @@ If you want to run this program locally, you will need to register for a Nationa
 
 Once you have a key, paste it into `./config/config.js`; this file is generated based on the template `./config/config.example.js` at build-time.
 
+*config/config.js should look like this*
+```javascript
+module.exports = {
+	apiKey: 'your-api-key-here'
+};
+```
+
 Install the required packages using `npm install` in the command line. You also need to install the gulp command line interface globally, if you haven't already done so: `npm install -g gulp-cli`
 
 To run the server, just type `gulp`. The server runs, then restarts if any of the JavaScript files are changed.
 
 ## To do
-There are still a few things I'd like to do with trntxt, such as adding arrival times and interpreting the data for rail replacement bus servies. They'll happen soon :)
+There are still a few things I'd like to do with trntxt. Check out the [issues page](https://github.com/danielthepope/trntxt/issues) for things to do.
