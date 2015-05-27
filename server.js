@@ -19,35 +19,44 @@ function compile(locals) {
 	return fn(extend({}, jadeGlobals, locals));
 }
 
+function getStationsFromRequest(request) {
+	var output = {};
+	var errors = [];
+	if (request.params.from !== undefined) {
+		output.fromStation = nr.findStation(request.params.from);
+		if (output.fromStation.stationCode === errorStation.stationCode) {
+			errors.push(request.params.from);
+		}
+	}
+	if (request.params.to !== undefined) {
+		output.toStation = nr.findStation(request.params.to);
+		if (output.toStation.stationCode === errorStation.stationCode) {
+			errors.push(request.params.to);
+		}
+	}
+	if (errors.length === 0) return output;
+	else {
+		output = "Invalid station name";
+		if (errors.length > 1) output += "s: ";
+		else output += ": ";
+		errors.forEach(function(name) {
+			output += name + ", ";
+		});
+		output = output.replace(/, $/,"");
+		throw output;
+	}
+}
+
 app.get('/defaultsite', function(request, response) {
 	response.sendFile('index.html', {root:'./public'});
 });
 
-app.get('/test', function (request, response) {
-	var output = {content:'TESTING'};
-	response.send(compile(output));
-});
-
-app.get('/:from(\\w+)/:to(\\w+)', function (request, response) {
+app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	var stations = {};
-	stations.fromStation = nr.findStation(request.params.from);
-	stations.toStation = nr.findStation(request.params.to);
-	if (stations.fromStation.stationCode === errorStation.stationCode
-			|| stations.toStation.stationCode === errorStation.stationCode) {
-		response.send('One or more invalid parameters');
-		return;
-	}
-	nr.getDepartures(stations, function(output) {
-		response.send(compile(output));
-	});
-});
-
-app.get('/:from(\\w+)', function (request, response) {
-	var stations = {};
-	stations.fromStation = nr.findStation(request.params.from);
-	if (stations.fromStation.stationCode === errorStation.stationCode) {
-		response.send('Invalid station name entered');
-		return;
+	try {
+		stations = getStationsFromRequest(request);
+	} catch (e) {
+		return response.send(e);
 	}
 	nr.getDepartures(stations, function(output) {
 		response.send(compile(output));
