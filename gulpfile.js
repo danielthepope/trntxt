@@ -4,9 +4,9 @@ var server = require('gulp-develop-server');
 var jade = require('gulp-jade');
 var cssmin = require('gulp-cssmin');
 var rename = require('gulp-rename');
-var newer = require('gulp-newer');
 var mkdirp = require('mkdirp');
 var util = require('util');
+var fs = require('fs');
 
 gulp.task('server:start', function() {
 	server.listen( { path: './server.js' } );
@@ -14,6 +14,7 @@ gulp.task('server:start', function() {
 
 gulp.task('server:restart', function() {
 	gulp.watch('./*.js', server.restart);
+	gulp.watch('./config/*.js', server.restart);
 });
 
 // Watch files for changes
@@ -23,13 +24,14 @@ gulp.task('watch', function() {
 	gulp.watch('./resources/static/*.jade', ['build']);
 });
 
-var configSrcDir = './config';
-var configDestDir = configSrcDir;
 gulp.task('copy', function(){
-	gulp.src(util.format('%s/config.example.js', configSrcDir), {base:configSrcDir})
-		.pipe(rename('config.js'))
-		.pipe(newer(configDestDir))
-		.pipe(gulp.dest(configDestDir));
+	fs.exists('./config/config.js', function (exists) {
+		if (exists) return;
+		else {
+			fs.createReadStream('./config/config.example.js')
+				.pipe(fs.createWriteStream('./config/config.js'));
+		}
+	});
 });
 
 gulp.task('build', ['mkdir', 'minifycss', 'staticjade', 'copy']);

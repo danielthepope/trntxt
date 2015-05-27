@@ -20,7 +20,6 @@
     "gulp-cssmin": "^0.1.7",
     "gulp-develop-server": "^0.4.2",
     "gulp-jade": "^1.0.0",
-    "gulp-newer": "^0.5.0",
     "gulp-rename": "^1.2.2",
     "mkdirp": "^0.5.0"
   }
