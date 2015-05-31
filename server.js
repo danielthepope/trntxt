@@ -5,6 +5,7 @@ var util = require('util');
 var jade = require('jade');
 var extend = require('extend');
 var nr = require('./nationalrail.js');
+var iconGenerator = require('./iconGenerator.js');
 
 var port = process.env.PORT || 3000;
 
@@ -47,10 +48,16 @@ function getStationsFromRequest(request) {
 	}
 }
 
+app.all('*', function(request, response, next) {
+	console.log('Got request for', request.originalUrl);
+	next();
+})
+
 app.get('/defaultsite', function(request, response) {
 	response.sendFile('index.html', {root:'./public'});
 });
 
+// Regex matches letters (no dots), ? means 'to' is optional
 app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	var stations = {};
 	try {
@@ -58,8 +65,12 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	} catch (e) {
 		return response.send(e);
 	}
+	
+	var locals = { path: '/' + stations.fromStation.stationCode + '/' };
+	if (stations.toStation) locals.path += stations.toStation.stationCode + '/';
+	
 	nr.getDepartures(stations, function(output) {
-		response.send(compile(output));
+		response.send(compile(extend({}, locals, output)));
 	});
 });
 
@@ -70,8 +81,44 @@ app.get('/details/:serviceId', function (request, response) {
 	});
 });
 
+app.get('/:from(\\w+)/:to(\\w+)?/:image(*.png)', function (request, response) {
+	var image = iconGenerator.getIcon(request.params.from, request.params.to, request.params.image);
+	response.sendFile(image, {root:'./'});
+});
+
+app.get('/favicon-16x16.png', function (request, response) {
+	response.sendFile('favicon-16x16.png', {root:'./public'});
+});
+
+app.get('/:image(*.png)', function (request, response) {
+	var image = iconGenerator.getIcon('TRN', 'TXT', request.params.image);
+	response.sendFile(image, {root:'./'});
+});
+
+app.get('*/browserconfig.xml', function (request, response) {
+	console.log('CONFIG');
+	var jadeOptions = {pretty: true};
+	var fn = jade.compileFile('resources/browserconfig.jade', jadeOptions);
+	var locals = { path: '/' };
+	var urlElements = request.originalUrl.split('/');
+	console.log(urlElements);
+	urlElements.forEach(function(element) {
+		if (element !== 'browserconfig.xml' && element !== '') {
+			var station = nr.findStation(element);
+			if (station.stationCode !== errorStation.stationCode) {
+				locals.path += station.stationCode + '/';
+			}
+		}
+	});
+	response.format({
+		'application/xml': function() {
+			response.send(fn(locals));
+		}
+	});
+});
+
 app.use(express.static('public'));
- 
+
 var server = app.listen(port, function () {
 	console.log('listening on port %s', port);
 });
