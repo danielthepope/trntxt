@@ -92,35 +92,14 @@ app.get('/favicon-16x16.png', function (request, response) {
 
 app.get('*/manifest.json', function (request, response) {
 	var manifest = {};
-	var stations = [];
-	var path = '/';
-	var urlElements = request.originalUrl.split('/');
-	urlElements.forEach(function(element) {
-		if (element !== 'manifest.json' && element !== '') {
-			var station = nr.findStation(element);
-			stations.push(station);
-			if (station.stationCode !== errorStation.stationCode) {
-				path += station.stationCode + '/';
-			}
-		}
-	});
+	var path = request.originalUrl.split('manifest.json')[0];
 
 	manifest.lang = 'en';
 	manifest.name = 'trntxt';
 	manifest.short_name = 'trntxt';
-
-	if (stations.length > 0) {
-		manifest.name += ': ' + stations[0].stationCode;
-		manifest.short_name = stations[0].stationCode;
-		if (stations.length > 1) {
-			manifest.name += ' > ' + stations[1].stationCode;
-			manifest.short_name += '>' + stations[1].stationCode;
-		}
-	}
-
+	manifest.start_url = path;
 	manifest.display = 'browser';
 	manifest.icons = [];
-
 	var resolutions = ['36','48','72','96','144','192'];
 	var densities = ['0.75','1.0','1.5','2.0','3.0','4.0'];
 	for (var i = 0; i < 6; i++) {
