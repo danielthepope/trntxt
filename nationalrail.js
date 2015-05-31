@@ -118,7 +118,6 @@ function getDepartureObject(stations, callback) {
 	soap.createClient(soapUrl, function(err, client) {
 		client.addSoapHeader(soapHeader);
 		return client.GetDepartureBoard(options, function(err, result) {
-			console.log(JSON.stringify(result));
 			fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
 				if (err) return console.log(err);
 			});
@@ -129,7 +128,6 @@ function getDepartureObject(stations, callback) {
 			var i;
 			var aPromises = [];
 			for (i = 0; i < aServices.length; i += 1) {
-				console.log("Service ", i);
 				output.trainServices[i] = {};
 				output.trainServices[i].originStation = {
 					stationName: aServices[i].origin.location[0].locationName
@@ -147,7 +145,6 @@ function getDepartureObject(stations, callback) {
 				output.trainServices[i].serviceID = aServices[i].serviceID;
 				if (output.toStation !== undefined) aPromises.push(makePromiseForService(output.trainServices[i].serviceID));
 			}
-			console.log("Promises: ", aPromises);
 			Promise.all(aPromises).then(function(detailedServices) {
 				console.log("All details received");
 				for (var i = 0; i < detailedServices.length; i++) {
@@ -225,16 +222,12 @@ function getArrivalTimeForService(service, toStation) {
 }
 
 function makePromiseForService(serviceId) {
-	console.log("Making promise for service ", serviceId);
 	var options = { serviceID: serviceId };
 	return new Promise(function(resolve, reject) {
 		soap.createClient(soapUrl, function(err, client) {
-			console.log("Making request with options: ", options);
 			client.addSoapHeader(soapHeader);
 			client.GetServiceDetails(options, function(err, result) {
 				if (err) return reject(err);
-				console.log("Success!");
-				console.log(JSON.stringify(result));
 				return resolve(result);
 			});
 		});
@@ -244,7 +237,7 @@ function makePromiseForService(serviceId) {
 function getServiceDetails(serviceId, callback) {
 	return soap.createClient(soapUrl, function(err, client) {
 		client.addSoapHeader(soapHeader);
-		if (err) console.log("ERR1" + err);
+		if (err) throw err;
 		var options = {serviceID: serviceId};
 		return client.GetServiceDetails(options, function(result) {
 			return callback(result);
