@@ -51,7 +51,7 @@ function getStationsFromRequest(request) {
 app.all('*', function(request, response, next) {
 	console.log('Got request for', request.originalUrl);
 	next();
-})
+});
 
 app.get('/defaultsite', function(request, response) {
 	response.sendFile('index.html', {root:'./public'});
@@ -90,18 +90,65 @@ app.get('/favicon-16x16.png', function (request, response) {
 	response.sendFile('favicon-16x16.png', {root:'./public'});
 });
 
+app.get('*/manifest.json', function (request, response) {
+	var manifest = {};
+	var stations = [];
+	var path = '/';
+	var urlElements = request.originalUrl.split('/');
+	urlElements.forEach(function(element) {
+		if (element !== 'manifest.json' && element !== '') {
+			var station = nr.findStation(element);
+			stations.push(station);
+			if (station.stationCode !== errorStation.stationCode) {
+				path += station.stationCode + '/';
+			}
+		}
+	});
+
+	manifest.lang = 'en';
+	manifest.name = 'trntxt';
+	manifest.short_name = 'trntxt';
+
+	if (stations.length > 0) {
+		manifest.name += ': ' + stations[0].stationCode;
+		manifest.short_name = stations[0].stationCode;
+		if (stations.length > 1) {
+			manifest.name += ' > ' + stations[1].stationCode;
+			manifest.short_name += '>' + stations[1].stationCode;
+		}
+	}
+
+	manifest.display = 'browser';
+	manifest.icons = [];
+
+	var resolutions = ['36','48','72','96','144','192'];
+	var densities = ['0.75','1.0','1.5','2.0','3.0','4.0'];
+	for (var i = 0; i < 6; i++) {
+		var icon = {};
+		icon.src = path + 'android-chrome-' + resolutions[i] + 'x' + resolutions[i] + '.png';
+		icon.sizes = resolutions[i] + 'x' + resolutions[i];
+		icon.type = 'image/png';
+		icon.density = densities[i];
+		manifest.icons.push(icon);
+	}
+
+	response.format({
+		json: function() {
+			response.send(manifest);
+		}
+	});
+});
+
 app.get('/:image(*.png)', function (request, response) {
 	var image = iconGenerator.getIcon('TRN', 'TXT', request.params.image);
 	response.sendFile(image, {root:'./'});
 });
 
 app.get('*/browserconfig.xml', function (request, response) {
-	console.log('CONFIG');
 	var jadeOptions = {pretty: true};
 	var fn = jade.compileFile('resources/browserconfig.jade', jadeOptions);
 	var locals = { path: '/' };
 	var urlElements = request.originalUrl.split('/');
-	console.log(urlElements);
 	urlElements.forEach(function(element) {
 		if (element !== 'browserconfig.xml' && element !== '') {
 			var station = nr.findStation(element);
