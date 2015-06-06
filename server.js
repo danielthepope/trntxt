@@ -1,13 +1,12 @@
 /// <reference path="typings/node/node.d.ts"/>
 
 var express = require('express');
-var util = require('util');
-var jade = require('jade');
 var extend = require('extend');
-var nr = require('./nationalrail.js');
+var jade = require('jade');
+var util = require('util');
+var config = require('./trntxtconfig.js');
 var iconGenerator = require('./iconGenerator.js');
-
-var port = process.env.PORT || 3000;
+var nr = require('./nationalrail.js');
 
 var app = express();
 var errorStation = nr.errorStation;
@@ -145,6 +144,6 @@ app.get('*/browserconfig.xml', function (request, response) {
 
 app.use(express.static('public'));
 
-var server = app.listen(port, function () {
-	console.log('listening on port %s', port);
+var server = app.listen(config.port, function () {
+	console.log('listening on port %s', config.port);
 });

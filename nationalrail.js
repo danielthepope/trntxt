@@ -2,14 +2,7 @@ var fs = require('fs');
 var util = require('util');
 var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
-var extend = require('extend');
-
-var defaultConfig = require('./config/config.example.js');
-var customConfig = {};
-try {
-	customConfig = require('./config/config.js');
-} catch (e) {}
-var config = extend(defaultConfig, customConfig);
+var config = require('./trntxtconfig.js');
 
 var stations = getStations('resources/station_codes.csv');
 
