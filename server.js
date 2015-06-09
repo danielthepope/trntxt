@@ -48,7 +48,12 @@ function getStationsFromRequest(request) {
 }
 
 app.all('*', function(request, response, next) {
-	console.log('Got request for', request.originalUrl);
+	var obj = {};
+	obj.headers = request.headers;
+	obj.url = request.originalUrl;
+	obj.ip = request.ip;
+	
+	console.log('Got request for ', request.originalUrl, '\nAgent ', obj.headers['user-agent'], '\n');
 	next();
 });
 

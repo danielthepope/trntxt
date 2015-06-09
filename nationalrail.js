@@ -33,32 +33,32 @@ function findStation(input) {
 	}
 	var position;
 
-	console.log("Finding station for input " + input);
+	// console.log("Finding station for input " + input);
 	if (input.length == 3) {
-		console.log("Checking station codes");
+		// console.log("Checking station codes");
 		for(i = 0; i < stations.length; i++) {
 			if (stations[i].stationCode.toUpperCase() === input.toUpperCase()) {
-				console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
+				// console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
 				return stations[i];
 			}
 		}
 	}
 
-	console.log("Checking station name equality");
+	// console.log("Checking station name equality");
 	for(i = 0; i < stations.length; i++) {
 		if (stations[i].stationName.toUpperCase().replace(/[^A-Z]/g,'') === input.toUpperCase()) {
-			console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
+			// console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
 			return stations[i];
 		}
 	}
 
-	console.log("Checking station name matches");
+	// console.log("Checking station name matches");
 	for(i = 0; i < stations.length; i++) {
 		position = stations[i].stationName.toUpperCase().replace(/[^A-Z]/g,'').indexOf(input.toUpperCase());
 		if (position != -1) {
-			console.log(util.format("Found station %d: %s (%s) at position %d", i, stations[i].stationName, stations[i].stationCode, position));
+			// console.log(util.format("Found station %d: %s (%s) at position %d", i, stations[i].stationName, stations[i].stationCode, position));
 			if (bestMatch.stationNumber === -1 || bestMatch.matchIndex > position) {
-				console.log('new best match!');
+				// console.log('new best match!');
 				bestMatch.stationNumber = i;
 				bestMatch.matchIndex = position;
 			}
@@ -66,7 +66,7 @@ function findStation(input) {
 	}
 	if (bestMatch.stationNumber !== -1) return stations[bestMatch.stationNumber];
 
-	console.log("No match found");
+	console.error("No match found");
 	return errorStation;
 }
 
@@ -79,7 +79,7 @@ function getDepartures(stations, callback) {
 	}
 
 	getDepartureObject(stations, function(departureObject) {
-		console.log(stations);
+		// console.log(stations);
 		var jadeResponse = {
 			content: generateDepartureHtml(departureObject),
 			pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode,
@@ -112,7 +112,7 @@ function getDepartureObject(stations, callback) {
 		client.addSoapHeader(soapHeader);
 		return client.GetDepartureBoard(options, function(err, result) {
 			fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
-				if (err) return console.log(err);
+				if (err) return console.error(err);
 			});
 
 
@@ -139,7 +139,7 @@ function getDepartureObject(stations, callback) {
 				if (output.toStation !== undefined) aPromises.push(makePromiseForService(output.trainServices[i].serviceID));
 			}
 			Promise.all(aPromises).then(function(detailedServices) {
-				console.log("All details received");
+				// console.log("All details received");
 				for (var i = 0; i < detailedServices.length; i++) {
 					var arrival = getArrivalTimeForService(detailedServices[i], output.toStation);
 					output.trainServices[i].sta = arrival.sta;
@@ -147,7 +147,7 @@ function getDepartureObject(stations, callback) {
 				}
 				return callback(output);
 			}, function(error) {
-				console.log("WAAAAAAH", error);
+				console.error("WAAAAAAH", error);
 				throw error;
 			});
 		});
