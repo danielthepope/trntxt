@@ -7,9 +7,18 @@ var config = require('./trntxtconfig.js');
 var stations = getStations('resources/station_codes.csv');
 
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
+var altSoapUrl = 'http://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
 	|| console.error("No API key provided. Received: "+config.apiKey));
 var errorStation = {stationName: "error", stationCode: "XXX"};
+
+// Check HTTPS is available. If it throws an error, use HTTP instead.
+soap.createClient(soapUrl, function(err, client) {
+	if (err && err.code === 'CERT_HAS_EXPIRED') {
+		console.error('Darwin HTTPS certificate expired. Using HTTP instead');
+		soapUrl = altSoapUrl;
+	}
+});
 
 /**
  * Returns an array of station objects, each with stationName and stationCode
@@ -109,12 +118,12 @@ function getDepartureObject(stations, callback) {
 	}
 
 	soap.createClient(soapUrl, function(err, client) {
+		if (err) return console.error(err);
 		client.addSoapHeader(soapHeader);
 		return client.GetDepartureBoard(options, function(err, result) {
 			fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
 				if (err) return console.error(err);
 			});
-
 
 			var oTrainServices = result.GetStationBoardResult.trainServices;
 			var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
