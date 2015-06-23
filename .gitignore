@@ -28,9 +28,9 @@ node_modules
 .lock-wscript
 
 
-# mtrain repository specific
+# trntxt repository specific
 public/lastrequest.txt
-
 config/config.js
-
 resources/iconGenerator/*.generated.png
+typings
+.settings/launch.json

@@ -1,9 +1,9 @@
 {
-  "name": "mtrain",
+  "name": "trntxt",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/danielthepope/mtrain.git"
+    "url": "git://github.com/danielthepope/trntxt.git"
   },
   "scripts": {
     "start": "node server.js"
