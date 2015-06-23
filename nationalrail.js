@@ -95,7 +95,7 @@ function getDepartures(stations, callback) {
 			fromStation: departureObject.fromStation.stationCode
 		};
 		if (departureObject.toStation !== undefined) {
-			jadeResponse.pageTitle += ' -> ' + departureObject.toStation.stationCode;
+			jadeResponse.pageTitle += ' > ' + departureObject.toStation.stationCode;
 			jadeResponse.toStation = departureObject.toStation.stationCode;
 		}
 		callback(jadeResponse);
@@ -176,7 +176,7 @@ function generateDepartureHtml(oDepartures) {
 	} else {
 		oDepartures.trainServices.forEach(function(service) {
 			output += '----<br><br>';
-			output += service.originStation.stationName + ' -&gt; <strong>';
+			output += service.originStation.stationName + ' &gt; <strong>';
 			output += service.destinationStation.stationName + '</strong><br>';
 			output += 'Departs ' + oDepartures.fromStation.stationName + ' at <strong>';
 			// If the train is delayed, strike out the original departure time
