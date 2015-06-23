@@ -47,6 +47,13 @@ function getStationsFromRequest(request) {
 	}
 }
 
+function getDeviceFromAgent(agentString) {
+	if (agentString.indexOf('Android') !== -1) return 'android';
+	if (agentString.indexOf('iPhone OS') !== -1) return 'ios';
+	if (agentString.indexOf('MSIE') !== -1) return 'ie';
+	else return 'other';
+}
+
 app.all('*', function(request, response, next) {
 	var obj = {};
 	obj.headers = request.headers;
@@ -72,6 +79,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	
 	var locals = { path: '/' + stations.fromStation.stationCode + '/' };
 	if (stations.toStation) locals.path += stations.toStation.stationCode + '/';
+	locals.agent = getDeviceFromAgent(request.headers['user-agent']);
 	
 	nr.getDepartures(stations, function(output) {
 		response.send(compile(extend({}, locals, output)));
