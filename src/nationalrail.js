@@ -10,7 +10,7 @@ var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=
 var altSoapUrl = 'http://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
 	|| console.error("No API key provided. Received: "+config.apiKey));
-var errorStation = {stationName: "error", stationCode: "XXX"};
+var oErrorStation = {stationName: "error", stationCode: "XXX"};
 
 // Check HTTPS is available. If it throws an error, use HTTP instead.
 soap.createClient(soapUrl, function(err, client) {
@@ -34,7 +34,7 @@ function getStations(stationCsv) {
 	return output;
 }
 
-function findStation(input) {
+function fnFindStation(input) {
 	var i;
 	var bestMatch = {
 		stationNumber: -1,
@@ -55,7 +55,7 @@ function findStation(input) {
 
 	// console.log("Checking station name equality");
 	for(i = 0; i < stations.length; i++) {
-		if (stations[i].stationName.toUpperCase().replace(/[^A-Z]/g,'') === input.toUpperCase()) {
+		if (sanitise(stations[i].stationName) === sanitise(input)) {
 			// console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
 			return stations[i];
 		}
@@ -63,7 +63,7 @@ function findStation(input) {
 
 	// console.log("Checking station name matches");
 	for(i = 0; i < stations.length; i++) {
-		position = stations[i].stationName.toUpperCase().replace(/[^A-Z]/g,'').indexOf(input.toUpperCase());
+		position = sanitise(stations[i].stationName).indexOf(sanitise(input));
 		if (position != -1) {
 			// console.log(util.format("Found station %d: %s (%s) at position %d", i, stations[i].stationName, stations[i].stationCode, position));
 			if (bestMatch.stationNumber === -1 || bestMatch.matchIndex > position) {
@@ -79,7 +79,11 @@ function findStation(input) {
 	return errorStation;
 }
 
-function getDepartures(stations, callback) {
+function sanitise(input) {
+	return input.toUpperCase().replace(/[^A-Z]/g,'');
+}
+
+function fnGetDepartures(stations, callback) {
 	if (config.apiKey === undefined) {
 		console.error('No API key set!');
 		var cb = {pageTitle:'trntxt: ERROR', content:'<p>Error: No API key set.</p>'};
@@ -236,7 +240,7 @@ function makePromiseForService(serviceId) {
 	});
 }
 
-function getServiceDetails(serviceId, callback) {
+function fnGetServiceDetails(serviceId, callback) {
 	return soap.createClient(soapUrl, function(err, client) {
 		client.addSoapHeader(soapHeader);
 		if (err) throw err;
@@ -247,7 +251,7 @@ function getServiceDetails(serviceId, callback) {
 	});
 }
 
-exports.findStation   = findStation;   // function findStation()
-exports.getDepartures = getDepartures; // function getDepartures(response, fromStation, toStation)
-exports.errorStation  = errorStation;  // A station object which can be used when an error occurrs.
-exports.getServiceDetails = getServiceDetails;
+exports.findStation   = fnFindStation;           // function findStation()
+exports.getDepartures = fnGetDepartures;         // function getDepartures(response, fromStation, toStation)
+exports.errorStation  = oErrorStation;           // A station object which can be used when an error occurrs.
+exports.getServiceDetails = fnGetServiceDetails; // function getServiceDetails(serviceId, callback)
