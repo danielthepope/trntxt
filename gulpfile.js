@@ -8,7 +8,7 @@ var util = require('util');
 var fs = require('fs');
 
 gulp.task('server:start', function() {
-	server.listen( { path: './src/server.js' } );
+	server.listen( { path: './server.js' } );
 });
 
 gulp.task('server:restart', function() {
@@ -23,6 +23,7 @@ gulp.task('watch', function() {
 	gulp.watch('./resources/static/*.jade', ['build']);
 	gulp.watch('./src/**/*.js', ['test']);
 	gulp.watch('./test/**/*.js', ['test']);
+	gulp.watch('./server.js', ['test']);
 });
 
 gulp.task('copy', function(){

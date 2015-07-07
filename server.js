@@ -2,9 +2,9 @@ var express = require('express');
 var extend = require('extend');
 var jade = require('jade');
 var util = require('util');
-var config = require('./trntxtconfig.js');
-var iconGenerator = require('./iconGenerator.js');
-var nr = require('./nationalrail.js');
+var config = require('./src/trntxtconfig.js');
+var iconGenerator = require('./src/iconGenerator.js');
+var nr = require('./src/nationalrail.js');
 
 var app = express();
 var errorStation = nr.errorStation;
