@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-var nr = require('../nationalrail.js');
+var nr = require('../src/nationalrail.js');
 
 describe('Valid inputs for findStation()', function() {
 	var tests = {

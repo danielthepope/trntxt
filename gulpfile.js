@@ -8,12 +8,12 @@ var util = require('util');
 var fs = require('fs');
 
 gulp.task('server:start', function() {
-	server.listen( { path: './server.js' } );
+	server.listen( { path: './src/server.js' } );
 });
 
 gulp.task('server:restart', function() {
-	gulp.watch('./*.js', server.restart);
-	gulp.watch('./config/*.js', server.restart);
+	gulp.watch('./src/**/*.js', server.restart);
+	gulp.watch('./config/**/*.js', server.restart);
 });
 
 // Watch files for changes
@@ -21,7 +21,8 @@ gulp.task('watch', function() {
 	gulp.watch('./resources/*.css', ['build']);
 	gulp.watch('./resources/*.jade', ['build']);
 	gulp.watch('./resources/static/*.jade', ['build']);
-	gulp.watch('./*.js', ['test']);
+	gulp.watch('./src/**/*.js', ['test']);
+	gulp.watch('./test/**/*.js', ['test']);
 });
 
 gulp.task('copy', function(){
@@ -59,4 +60,4 @@ gulp.task('test', ['build'], function() {
 });
 
 // Default task
-gulp.task('default', ['build', 'watch', 'server:start', 'server:restart']);
+gulp.task('default', ['build', 'watch', 'test', 'server:start', 'server:restart']);
