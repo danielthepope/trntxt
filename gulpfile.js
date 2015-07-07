@@ -3,6 +3,7 @@ var server = require('gulp-develop-server');
 var jade = require('gulp-jade');
 var cssmin = require('gulp-cssmin');
 var rename = require('gulp-rename');
+var mocha = require('gulp-mocha');
 var util = require('util');
 var fs = require('fs');
 
@@ -20,6 +21,7 @@ gulp.task('watch', function() {
 	gulp.watch('./resources/*.css', ['build']);
 	gulp.watch('./resources/*.jade', ['build']);
 	gulp.watch('./resources/static/*.jade', ['build']);
+	gulp.watch('./*.js', ['test']);
 });
 
 gulp.task('copy', function(){
@@ -50,6 +52,10 @@ gulp.task('staticjade', ['minifycss'], function() {
 			}
 		}))
 		.pipe(gulp.dest('./public'));
+});
+
+gulp.task('test', ['build'], function() {
+	return gulp.src(['test/**/*.js']).pipe(mocha());
 });
 
 // Default task

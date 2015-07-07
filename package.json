@@ -6,7 +6,8 @@
     "url": "git://github.com/danielthepope/trntxt.git"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha ./test -R spec"
   },
   "dependencies": {
     "express": "^4.12.3",
@@ -17,10 +18,13 @@
     "sprintf-js": "^1.0.2"
   },
   "devDependencies": {
+    "chai": "^3.0.0",
     "gulp": "^3.8.11",
     "gulp-cssmin": "^0.1.7",
     "gulp-develop-server": "^0.4.2",
     "gulp-jade": "^1.0.0",
-    "gulp-rename": "^1.2.2"
+    "gulp-mocha": "^2.1.2",
+    "gulp-rename": "^1.2.2",
+    "mocha": "^2.2.5"
   }
 }
