@@ -1,10 +1,11 @@
 var fs = require('fs');
+var path = require('path');
 var util = require('util');
 var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
 var config = require('./trntxtconfig.js');
 
-var stations = getStations('resources/station_codes.csv');
+var stations = getStations('../resources/station_codes.csv');
 
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var altSoapUrl = 'http://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
@@ -25,7 +26,7 @@ soap.createClient(soapUrl, function(err, client) {
  */
 function getStations(stationCsv) {
 	var i;
-	var result = fs.readFileSync(stationCsv, 'utf8').split('\n');
+	var result = fs.readFileSync(path.join(__dirname, stationCsv), 'utf8').split('\n');
 	result = result.slice(1, result.length);
 	var output = [];
 	for (i = 0; i < result.length; i += 1) {
