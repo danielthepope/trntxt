@@ -176,7 +176,7 @@ function generateDepartureHtml(oDepartures) {
 	}
 	output += '</strong><br><br>';
 	if (oDepartures.trainServices.length === 0) {
-		output += 'No services found.';
+		output += 'No services found. Trntxt currently does not display information for replacement bus services or routes requiring changes.';
 	} else {
 		oDepartures.trainServices.forEach(function(service) {
 			output += '----<br><br>';
