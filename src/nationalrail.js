@@ -56,7 +56,7 @@ function fnFindStation(input) {
 
 	// console.log("Checking station name equality");
 	for(i = 0; i < stations.length; i++) {
-		if (sanitise(stations[i].stationName) === sanitise(input)) {
+		if (fnSanitise(stations[i].stationName) === fnSanitise(input)) {
 			// console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
 			return stations[i];
 		}
@@ -64,7 +64,7 @@ function fnFindStation(input) {
 
 	// console.log("Checking station name matches");
 	for(i = 0; i < stations.length; i++) {
-		position = sanitise(stations[i].stationName).indexOf(sanitise(input));
+		position = fnSanitise(stations[i].stationName).indexOf(fnSanitise(input));
 		if (position != -1) {
 			// console.log(util.format("Found station %d: %s (%s) at position %d", i, stations[i].stationName, stations[i].stationCode, position));
 			if (bestMatch.stationNumber === -1 || bestMatch.matchIndex > position) {
@@ -77,11 +77,12 @@ function fnFindStation(input) {
 	if (bestMatch.stationNumber !== -1) return stations[bestMatch.stationNumber];
 
 	console.error("No match found");
-	return errorStation;
+	return oErrorStation;
 }
 
-function sanitise(input) {
-	return input.toUpperCase().replace(/[^A-Z]/g,'');
+function fnSanitise(input) {
+	if (input || input === '') return input.toUpperCase().replace(/[^A-Z]/g,'');
+	else return null;
 }
 
 function fnGetDepartures(stations, callback) {
@@ -255,7 +256,8 @@ function fnGetServiceDetails(serviceId, callback) {
 	});
 }
 
-exports.findStation   = fnFindStation;           // function findStation()
-exports.getDepartures = fnGetDepartures;         // function getDepartures(response, fromStation, toStation)
-exports.errorStation  = oErrorStation;           // A station object which can be used when an error occurrs.
+exports.findStation       = fnFindStation;       // function findStation()
+exports.getDepartures     = fnGetDepartures;     // function getDepartures(response, fromStation, toStation)
+exports.errorStation      = oErrorStation;       // A station object which can be used when an error occurrs.
 exports.getServiceDetails = fnGetServiceDetails; // function getServiceDetails(serviceId, callback)
+exports.sanitise          = fnSanitise;
