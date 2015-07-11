@@ -36,6 +36,8 @@ function getStations(stationCsv) {
 }
 
 function fnFindStation(input) {
+	if (!input || input.length < 3) return oErrorStation;
+	
 	var i;
 	var bestMatch = {
 		stationNumber: -1,
@@ -76,7 +78,6 @@ function fnFindStation(input) {
 	}
 	if (bestMatch.stationNumber !== -1) return stations[bestMatch.stationNumber];
 
-	console.error("No match found");
 	return oErrorStation;
 }
 
