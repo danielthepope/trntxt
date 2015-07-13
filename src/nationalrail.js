@@ -17,7 +17,6 @@ var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=
 var altSoapUrl = 'http://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
 	|| console.error("No API key provided. Received: "+config.apiKey));
-var oErrorStation = {stationName: "error", stationCode: "XXX"};
 
 // Check HTTPS is available. If it throws an error, use HTTP instead.
 soap.createClient(soapUrl, function(err, client) {
@@ -28,7 +27,7 @@ soap.createClient(soapUrl, function(err, client) {
 });
 
 function fnFindStation(input) {
-	if (!input || input.length < 3) return oErrorStation;
+	if (!input || input.length < 3) return [];
 	
 	var i;
 	var bestMatch = {
@@ -43,7 +42,7 @@ function fnFindStation(input) {
 		for(i = 0; i < stations.length; i++) {
 			if (stations[i].stationCode.toUpperCase() === input.toUpperCase()) {
 				// console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
-				return stations[i];
+				return [stations[i]];
 			}
 		}
 	}
@@ -52,7 +51,7 @@ function fnFindStation(input) {
 	for(i = 0; i < stations.length; i++) {
 		if (fnSanitise(stations[i].stationName) === fnSanitise(input)) {
 			// console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
-			return stations[i];
+			return [stations[i]];
 		}
 	}
 
@@ -68,13 +67,19 @@ function fnFindStation(input) {
 			}
 		}
 	}
-	if (bestMatch.stationNumber !== -1) return stations[bestMatch.stationNumber];
+	if (bestMatch.stationNumber !== -1) {
+		return [stations[bestMatch.stationNumber]];
+	}
 
-	return oErrorStation;
+	return [];
 }
 
 function fnSanitise(input) {
-	if (input || input === '') return input.toUpperCase().replace(/[^A-Z]/g,'');
+	if (input || input === '') {
+		return input
+			.toUpperCase()
+			.replace(/[^A-Z]/g,'');
+	}
 	else return null;
 }
 
@@ -251,6 +256,5 @@ function fnGetServiceDetails(serviceId, callback) {
 
 exports.findStation       = fnFindStation;       // function findStation()
 exports.getDepartures     = fnGetDepartures;     // function getDepartures(response, fromStation, toStation)
-exports.errorStation      = oErrorStation;       // A station object which can be used when an error occurrs.
 exports.getServiceDetails = fnGetServiceDetails; // function getServiceDetails(serviceId, callback)
 exports.sanitise          = fnSanitise;

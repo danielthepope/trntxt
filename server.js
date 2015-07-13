@@ -7,7 +7,6 @@ var iconGenerator = require('./src/iconGenerator.js');
 var nr = require('./src/nationalrail.js');
 
 var app = express();
-var errorStation = nr.errorStation;
 
 var jadeOptions = {doctype:'html'};
 var jadeGlobals = {pageTitle:'trntxt'};
@@ -21,14 +20,18 @@ function getStationsFromRequest(request) {
 	var output = {};
 	var errors = [];
 	if (request.params.from !== undefined) {
-		output.fromStation = nr.findStation(request.params.from);
-		if (output.fromStation.stationCode === errorStation.stationCode) {
+		var results = nr.findStation(request.params.from);
+		if (results.length > 0) {
+			output.fromStation = results[0];
+		} else {
 			errors.push(request.params.from);
 		}
 	}
 	if (request.params.to !== undefined) {
-		output.toStation = nr.findStation(request.params.to);
-		if (output.toStation.stationCode === errorStation.stationCode) {
+		var results = nr.findStation(request.params.to);
+		if (results.length > 0) {
+			output.toStation = results[0];
+		} else {
 			errors.push(request.params.to);
 		}
 	}
@@ -140,9 +143,9 @@ app.get('*/browserconfig.xml', function (request, response) {
 	var urlElements = request.originalUrl.split('/');
 	urlElements.forEach(function(element) {
 		if (element !== 'browserconfig.xml' && element !== '') {
-			var station = nr.findStation(element);
-			if (station.stationCode !== errorStation.stationCode) {
-				locals.path += station.stationCode + '/';
+			var results = nr.findStation(element);
+			if (results.length > 0) {
+				locals.path += results[0].stationCode + '/';
 			}
 		}
 	});

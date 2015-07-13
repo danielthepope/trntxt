@@ -27,35 +27,31 @@ describe('Valid inputs for findStation()', function() {
 		'heathrow123':'HXX', // "Heathrow Airport Terminals 1, 2 and 3"
 	};
 	Object.keys(tests).forEach(function(key) {
-		console.log(key + ':' + tests[key]);
 		it('should return "' + tests[key] + '" with input "' + key + '"', function() {
-			expect(nr.findStation(key)).to.have.property('stationCode').that.equals(tests[key]);
+			var result = nr.findStation(key);
+			expect(result).to.be.an('array');
+			expect(result[0]).to.have.property('stationCode').that.equals(tests[key]);
 		});
 	});
 });
 
 describe('Invalid inputs for findStation()', function() {
-	// All the following inputs should return the error station code 'XXX'
-	
-	// First, check there doesn't exist a station with the same code as the error station.
-	it('The error station should have a unique code', function() {
-		expect(nr.findStation(nr.errorStation.stationCode)).to.have.property('stationName').that.equals(nr.errorStation.stationName);
+	// All the following inputs should return an empty array
+	it('should return an empty array for an undefined input', function() {
+		expect(nr.findStation()).to.be.an('array').and.to.be.empty;
 	});
-	it('should return the error station for an undefined input', function() {
-		expect(nr.findStation()).to.have.property('stationCode').that.equals(nr.errorStation.stationCode);
+	it('should return an empty array for a null input', function() {
+		expect(nr.findStation('')).to.be.an('array').and.to.be.empty;
 	});
-	it('should return the error station for a null input', function() {
-		expect(nr.findStation(null)).to.have.property('stationCode').that.equals(nr.errorStation.stationCode);
+	it('should return an empty array for an empty input', function() {
+		expect(nr.findStation(null)).to.be.an('array').and.to.be.empty;
 	});
-	it('should return the error station for an empty input', function() {
-		expect(nr.findStation('')).to.have.property('stationCode').that.equals(nr.errorStation.stationCode);
+	it('should return an empty array for an input of less than 3 characters', function() {
+		expect(nr.findStation('d')).to.be.an('array').and.to.be.empty;
+		expect(nr.findStation('di')).to.be.an('array').and.to.be.empty;
 	});
-	it('should return the error station for an input of less than 3 characters', function() {
-		expect(nr.findStation('d')).to.have.property('stationCode').that.equals(nr.errorStation.stationCode);
-		expect(nr.findStation('di')).to.have.property('stationCode').that.equals(nr.errorStation.stationCode);
-	});
-	it('should return the error station for an input that clearly isn\'t a name of a station', function() {
-		expect(nr.findStation('ClearlyNotARealStationName')).to.have.property('stationCode').that.equals(nr.errorStation.stationCode);
+	it('should return an empty array for an input that clearly isn\'t a name of a station', function() {
+		expect(nr.findStation('ClearlyNotARealStationName')).to.be.an('array').and.to.be.empty;
 	});
 });
 
@@ -68,7 +64,6 @@ describe('Testing sanitiseText()', function() {
 		' odd9 typ0o  ':'ODDTYPO'
 	};
 	Object.keys(tests).forEach(function(key) {
-		console.log(key + ':' + tests[key]);
 		it('should return "' + tests[key] + '" with input "' + key + '"', function() {
 			expect(nr.sanitise(key)).to.equal(tests[key]);
 		});
