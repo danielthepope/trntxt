@@ -29,7 +29,7 @@ describe('Valid inputs for findStation()', function() {
 	Object.keys(tests).forEach(function(key) {
 		it('should return "' + tests[key] + '" with input "' + key + '"', function() {
 			var result = nr.findStation(key);
-			expect(result).to.be.an('array');
+			expect(result).to.be.an('array').and.have.length.above(0);
 			expect(result[0]).to.have.property('stationCode').that.equals(tests[key]);
 		});
 	});
@@ -61,7 +61,7 @@ describe('Testing sanitiseText()', function() {
 		'':'',
 		'didcot parkway':'DIDCOTPARKWAY',
 		'Weston-Super-Mare':'WESTONSUPERMARE',
-		' odd9 typ0o  ':'ODDTYPO'
+		' odd9 typ0o  ':'ODD9TYP0O'
 	};
 	Object.keys(tests).forEach(function(key) {
 		it('should return "' + tests[key] + '" with input "' + key + '"', function() {

@@ -78,7 +78,7 @@ function fnSanitise(input) {
 	if (input || input === '') {
 		return input
 			.toUpperCase()
-			.replace(/[^A-Z]/g,'');
+			.replace(/[^A-Z0-9]/g,'');
 	}
 	else return null;
 }
