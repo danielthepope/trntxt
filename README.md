@@ -1,6 +1,6 @@
 # trntxt
 
-[![Join the chat at https://gitter.im/danielthepope/trntxt](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/danielthepope/trntxt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/danielthepope/trntxt](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/danielthepope/trntxt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/danielthepope/trntxt.svg)](https://travis-ci.org/danielthepope/trntxt)
 
 Pronounced "train text" and currently live at [trntxt.uk](http://trntxt.uk), this is a GPRS-friendly UK train times web service.
 
