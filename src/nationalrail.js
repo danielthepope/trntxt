@@ -50,7 +50,8 @@ function fnFindStation(input) {
 	results = stations.filter(function(station) {
 		var stationName = fnSanitise(station.stationName);
 		// console.log('testing against ' + stationName);
-		var firstIndex = stationName.indexOf(input[0]);
+		station.firstIndex = stationName.indexOf(input[0]);
+		station.biggestChunk = biggestChunk(stationName, input);
 		// console.log('index of ' + input[0] + ' is ' + firstIndex)
 		for (var i = 0; i < input.length; i++) {
 			var index = stationName.indexOf(input[i]);
@@ -62,7 +63,27 @@ function fnFindStation(input) {
 		return true;
 	});
 	
+	results = results.sort(function(stationA, stationB) {
+		if (stationA.firstIndex === stationB.firstIndex) {
+			if (stationA.biggestChunk === stationB.biggestChunk) {
+				return stationA.stationName.replace(/\(.*\)/,'').length - stationB.stationName.replace(/\(.*\)/,'').length;
+			} else {
+				return stationB.biggestChunk - stationA.biggestChunk;
+			}
+			return stationB.biggestChunk - stationA.biggestChunk;
+		} else {
+			return stationB.firstIndex - stationA.firstIndex;
+		}
+	});
+	
 	return results;
+}
+
+function biggestChunk(stationName, input) {
+	for (var i = input.length; i > 0; i--) {
+		if (stationName.indexOf(input.substring(0,i-1)) > -1) return i;
+	}
+	return 0;
 }
 
 function fnSanitise(input) {
