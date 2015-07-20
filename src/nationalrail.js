@@ -27,57 +27,49 @@ soap.createClient(soapUrl, function(err, client) {
 });
 
 function fnFindStation(input) {
-	if (!input || input.length < 3) return [];
+	var results = [];
+	// console.log(input);
+	input = fnSanitise(input);
+	// console.log(input);
+	if (!input || input.length < 3) return results;
 	
-	var i;
-	var bestMatch = {
-		stationNumber: -1,
-		matchIndex: -1
-	}
-	var position;
-
-	// console.log("Finding station for input " + input);
-	if (input.length == 3) {
-		// console.log("Checking station codes");
-		for(i = 0; i < stations.length; i++) {
-			if (stations[i].stationCode.toUpperCase() === input.toUpperCase()) {
-				// console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
-				return [stations[i]];
-			}
+	// Find stations whose code matches the input.
+	if (input.length === 3) {
+		// console.log('LENGTH IS 3');
+		results = stations.filter(function(station) {
+			return station.stationCode === input;
+		});
+		if (results.length > 0) {
+			// console.log('FOUND A RESULT');
+			return results;
 		}
 	}
-
-	// console.log("Checking station name equality");
-	for(i = 0; i < stations.length; i++) {
-		if (fnSanitise(stations[i].stationName) === fnSanitise(input)) {
-			// console.log(util.format("Found station %d: %s (%s)", i, stations[i].stationName, stations[i].stationCode));
-			return [stations[i]];
+	
+	// Results array is still empty. Try and compare names.
+	// Filter station list to find station names containing all characters in the right order.
+	results = stations.filter(function(station) {
+		var stationName = fnSanitise(station.stationName);
+		// console.log('testing against ' + stationName);
+		var firstIndex = stationName.indexOf(input[0]);
+		// console.log('index of ' + input[0] + ' is ' + firstIndex)
+		for (var i = 0; i < input.length; i++) {
+			var index = stationName.indexOf(input[i]);
+			if (index === -1) return false;
+			stationName = stationName.substring(index+1);
 		}
-	}
-
-	// console.log("Checking station name matches");
-	for(i = 0; i < stations.length; i++) {
-		position = fnSanitise(stations[i].stationName).indexOf(fnSanitise(input));
-		if (position != -1) {
-			// console.log(util.format("Found station %d: %s (%s) at position %d", i, stations[i].stationName, stations[i].stationCode, position));
-			if (bestMatch.stationNumber === -1 || bestMatch.matchIndex > position) {
-				// console.log('new best match!');
-				bestMatch.stationNumber = i;
-				bestMatch.matchIndex = position;
-			}
-		}
-	}
-	if (bestMatch.stationNumber !== -1) {
-		return [stations[bestMatch.stationNumber]];
-	}
-
-	return [];
+		// if (stationName === '') return true;
+		// else return false;
+		return true;
+	});
+	
+	return results;
 }
 
 function fnSanitise(input) {
 	if (input || input === '') {
 		return input
 			.toUpperCase()
+			.replace('&','AND')
 			.replace(/[^A-Z0-9]/g,'');
 	}
 	else return null;
