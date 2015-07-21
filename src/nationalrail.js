@@ -9,17 +9,8 @@ var config = require('./trntxtconfig.js');
 var stations = loadStations('../resources/station_codes.csv');
 
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
-var altSoapUrl = 'http://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
 	|| console.error("No API key provided. Received: "+config.apiKey));
-
-// Check HTTPS is available. If it throws an error, use HTTP instead.
-soap.createClient(soapUrl, function(err, client) {
-	if (err && err.code === 'CERT_HAS_EXPIRED') {
-		console.error('Darwin HTTPS certificate expired. Using HTTP instead');
-		soapUrl = altSoapUrl;
-	}
-});
 
 function loadStations(filePath) {
 	var stationFile = fs.readFileSync(path.join(__dirname, filePath), {encoding:'utf-8'});
