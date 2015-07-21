@@ -1,4 +1,4 @@
-var csv = require('csv-parser');
+var csv = require('csv-string');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -6,12 +6,7 @@ var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
 var config = require('./trntxtconfig.js');
 
-var stations = [];
-fs.createReadStream(path.join(__dirname, '../resources/station_codes.csv'))
-	.pipe(csv())
-	.on('data', function (data) {
-		stations.push(data)
-	});
+var stations = loadStations('../resources/station_codes.csv');
 
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var altSoapUrl = 'http://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
@@ -25,6 +20,19 @@ soap.createClient(soapUrl, function(err, client) {
 		soapUrl = altSoapUrl;
 	}
 });
+
+function loadStations(filePath) {
+	var stationFile = fs.readFileSync(path.join(__dirname, filePath), {encoding:'utf-8'});
+	var csvArray = csv.parse(stationFile);
+	var output = csvArray.map(function(arr) {
+		return {
+			stationName: arr[0],
+			stationCode: arr[1]
+		}
+	});
+	output.shift();
+	return output;
+}
 
 function fnFindStation(input) {
 	var results = [];
