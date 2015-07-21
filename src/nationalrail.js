@@ -98,15 +98,19 @@ function fnSanitise(input) {
 function fnGetDepartures(stations, callback) {
 	if (config.apiKey === undefined) {
 		console.error('No API key set!');
-		var cb = {pageTitle:'trntxt: ERROR', content:'<p>Error: No API key set.</p>'};
+		var cb = {pageTitle:'trntxt: ERROR', errorMessage:'Error: No API key set.'};
 		callback(cb);
 		return;
 	}
 
-	getDepartureObject(stations, function(departureObject) {
-		// console.log(stations);
+	getDepartureObject(stations, function(err, departureObject) {
+		if (err) {
+			console.error(err);
+			var errorObject = {pageTitle:'trntxt: ERROR', errorMessage:'Error: Getting departures failed.'};
+			return callback(errorObject);
+		}
 		var jadeResponse = {
-			content: generateDepartureHtml(departureObject),
+			departureObject: departureObject,
 			pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode,
 			fromStation: departureObject.fromStation.stationCode
 		};
@@ -134,9 +138,10 @@ function getDepartureObject(stations, callback) {
 	}
 
 	soap.createClient(soapUrl, function(err, client) {
-		if (err) return console.error(err);
+		if (err) return callback(err);
 		client.addSoapHeader(soapHeader);
 		return client.GetDepartureBoard(options, function(err, result) {
+			if (err) return callback(err);
 			fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
 				if (err) return console.error(err);
 			});
@@ -170,60 +175,12 @@ function getDepartureObject(stations, callback) {
 					output.trainServices[i].sta = arrival.sta;
 					output.trainServices[i].eta = arrival.eta;
 				}
-				return callback(output);
+				return callback(null, output);
 			}, function(error) {
-				console.error("WAAAAAAH", error);
-				throw error;
+				return callback(error);
 			});
 		});
 	});
-}
-
-function generateDepartureHtml(oDepartures) {
-	var output = util.format('<strong>Departure board for %s (%s)',
-		oDepartures.fromStation.stationName, oDepartures.fromStation.stationCode);
-	if (oDepartures.toStation !== undefined) {
-		output += util.format(' calling at %s (%s)',
-			oDepartures.toStation.stationName, oDepartures.toStation.stationCode);
-	}
-	output += '</strong><br><br>';
-	if (oDepartures.trainServices.length === 0) {
-		output += 'No services found. Trntxt currently does not display information for replacement bus services or routes requiring changes.';
-	} else {
-		oDepartures.trainServices.forEach(function(service) {
-			output += '----<br><br>';
-			output += service.originStation.stationName + ' &gt; <strong>';
-			output += service.destinationStation.stationName + '</strong><br>';
-			output += 'Departs ' + oDepartures.fromStation.stationName + ' at <strong>';
-			// If the train is delayed, strike out the original departure time
-			if (service.etd !== 'On time') {
-				output += '<del>';
-				output += service.std;
-				output += '</del>';
-			} else {
-				output += service.std;
-			}
-			// Show the estimated departure time: if train is on time it will say 'On time'
-			output += ' (' + service.etd + ')</strong>, ';
-			if (service.platform !== null) {
-				output += 'platform ' + service.platform + '<br>';
-			} else {
-				output += '<small>no platform information available</small><br>';
-			}
-			if (oDepartures.toStation !== undefined) {
-				output += 'Arriving at ' + oDepartures.toStation.stationName + ' at <strong>';
-				if (service.eta !== 'On time') {
-					output += '<del>' + service.sta + '</del>';
-				} else {
-					output += service.sta;
-				}
-				output += ' (' + service.eta + ')';
-				output += '</strong><br>';
-			}
-			output += '<br>';
-		});
-	}
-	return output;
 }
 
 function getArrivalTimeForService(service, toStation) {

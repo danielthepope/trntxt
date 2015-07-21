@@ -5,3 +5,11 @@ body {
 	padding: 5px;
 	margin: auto;
 }
+
+.error {
+	color: red;
+}
+
+hr.divider {
+	width: 40%;
+}
