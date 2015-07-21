@@ -25,6 +25,9 @@ describe('Valid inputs for findStation()', function() {
 		'heathrow5':'HWV',
 		'heathrowairportterminal5':'HWV',
 		'heathrow123':'HXX', // "Heathrow Airport Terminals 1, 2 and 3"
+		'waterloo':'WLO',
+		'lonwat':'WAT',
+		'waterlooeast':'WAE'
 	};
 	Object.keys(tests).forEach(function(key) {
 		it('should return "' + tests[key] + '" with input "' + key + '"', function() {

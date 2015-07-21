@@ -71,7 +71,7 @@ function fnFindStation(input) {
 			}
 			return stationB.biggestChunk - stationA.biggestChunk;
 		} else {
-			return stationB.firstIndex - stationA.firstIndex;
+			return stationA.firstIndex - stationB.firstIndex;
 		}
 	});
 	
