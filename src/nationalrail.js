@@ -6,7 +6,7 @@ var soap = require('soap');
 var sprintf = require('sprintf-js').sprintf;
 var config = require('./trntxtconfig.js');
 
-var stations = loadStations('../resources/station_codes.csv');
+exports.stations = loadStations('../resources/station_codes.csv');
 
 var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
@@ -25,17 +25,17 @@ function loadStations(filePath) {
 	return output;
 }
 
-function fnFindStation(input) {
+exports.findStation = function(input) {
 	var results = [];
 	// console.log(input);
-	input = fnSanitise(input);
+	input = exports.sanitise(input);
 	// console.log(input);
 	if (!input || input.length < 3) return results;
 	
 	// Find stations whose code matches the input.
 	if (input.length === 3) {
 		// console.log('LENGTH IS 3');
-		results = stations.filter(function(station) {
+		results = exports.stations.filter(function(station) {
 			return station.stationCode === input;
 		});
 		if (results.length > 0) {
@@ -46,8 +46,8 @@ function fnFindStation(input) {
 	
 	// Results array is still empty. Try and compare names.
 	// Filter station list to find station names containing all characters in the right order.
-	results = stations.filter(function(station) {
-		var stationName = fnSanitise(station.stationName);
+	results = exports.stations.filter(function(station) {
+		var stationName = exports.sanitise(station.stationName);
 		// console.log('testing against ' + stationName);
 		station.firstIndex = stationName.indexOf(input[0]);
 		station.biggestChunk = biggestChunk(stationName, input);
@@ -85,7 +85,7 @@ function biggestChunk(stationName, input) {
 	return 0;
 }
 
-function fnSanitise(input) {
+exports.sanitise = function(input) {
 	if (input || input === '') {
 		return input
 			.toUpperCase()
@@ -95,7 +95,7 @@ function fnSanitise(input) {
 	else return null;
 }
 
-function fnGetDepartures(stations, callback) {
+exports.getDepartures = function(stations, callback) {
 	if (config.apiKey === undefined) {
 		console.error('No API key set!');
 		var cb = {pageTitle:'trntxt: ERROR', errorMessage:'Error: No API key set.'};
@@ -212,7 +212,7 @@ function makePromiseForService(serviceId) {
 	});
 }
 
-function fnGetServiceDetails(serviceId, callback) {
+exports.getServiceDetails = function(serviceId, callback) {
 	return soap.createClient(soapUrl, function(err, client) {
 		client.addSoapHeader(soapHeader);
 		if (err) throw err;
@@ -222,8 +222,3 @@ function fnGetServiceDetails(serviceId, callback) {
 		});
 	});
 }
-
-exports.findStation       = fnFindStation;       // function findStation()
-exports.getDepartures     = fnGetDepartures;     // function getDepartures(response, fromStation, toStation)
-exports.getServiceDetails = fnGetServiceDetails; // function getServiceDetails(serviceId, callback)
-exports.sanitise          = fnSanitise;

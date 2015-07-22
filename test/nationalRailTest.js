@@ -3,6 +3,23 @@ var expect = chai.expect;
 
 var nr = require('../src/nationalrail.js');
 
+describe('Station object validation', function() {
+	it('should all have a stationName property', function() {
+		nr.stations.forEach(function(station) {
+			expect(station).to.have.property('stationName');
+		});
+	});
+	it('should all have 3-letter station codes', function() {
+		nr.stations.forEach(function(station) {
+			expect(station).to.have.property('stationCode');
+			expect(station.stationCode).to.have.length(3);
+		});
+	});
+	it('the first station should be Abbey Wood', function() {
+		expect(nr.stations[0].stationName).to.equal('Abbey Wood');
+	});
+});
+
 describe('Valid inputs for findStation()', function() {
 	var tests = {
 		'clifton':'CLI', // Clifton (Manchester), not Clifton Down
