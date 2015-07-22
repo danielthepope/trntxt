@@ -127,7 +127,7 @@ function getDepartureObject(stations, callback) {
 	output.fromStation = stations.fromStation;
 	if (stations.toStation !== undefined) output.toStation = stations.toStation;
 	output.trainServices = [];
-	// TODO output.busServices = [];
+	output.busServices = [];
 
 	var options = {
 		numRows: 10,
@@ -150,39 +150,55 @@ function getDepartureObject(stations, callback) {
 				output.nrccMessages = result.GetStationBoardResult.nrccMessages.message;
 			}
 			var oTrainServices = result.GetStationBoardResult.trainServices;
-			var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
-			var i;
-			var aPromises = [];
-			for (i = 0; i < aServices.length; i += 1) {
-				output.trainServices[i] = {};
-				output.trainServices[i].originStation = {
-					stationName: aServices[i].origin.location[0].locationName
-				};
-				output.trainServices[i].destinationStation = {
-					stationName: aServices[i].destination.location[0].locationName
-				};
-				output.trainServices[i].std = aServices[i].std;
-				output.trainServices[i].etd = aServices[i].etd;
-				if (aServices[i].platform !== undefined) {
-					output.trainServices[i].platform = aServices[i].platform;
-				} else {
-					output.trainServices[i].platform = null;
-				}
-				output.trainServices[i].serviceID = aServices[i].serviceID;
-				if (output.toStation !== undefined) aPromises.push(makePromiseForService(output.trainServices[i].serviceID));
-			}
-			Promise.all(aPromises).then(function(detailedServices) {
-				// console.log("All details received");
-				for (var i = 0; i < detailedServices.length; i++) {
-					var arrival = getArrivalTimeForService(detailedServices[i], output.toStation);
-					output.trainServices[i].sta = arrival.sta;
-					output.trainServices[i].eta = arrival.eta;
-				}
-				return callback(null, output);
-			}, function(error) {
-				return callback(error);
+			processDarwinServices(oTrainServices, stations, function(err, trainServices) {
+				if (err) return callback(err);
+				output.trainServices = trainServices;
+				var oBusServices = result.GetStationBoardResult.busServices;
+				processDarwinServices(oBusServices, stations, function(err, busServices) {
+					if (err) return callback(err);
+					output.busServices = busServices;
+					return callback(null, output);
+				});
 			});
 		});
+	});
+}
+
+function processDarwinServices(oServices, stations, callback) {
+	var aServices = oServices ? oServices.service : [];
+	var aPromises = [];
+	var output = [];
+	for (var i = 0; i < aServices.length; i++) {
+		output[i] = {};
+		output[i].originStation = {
+			stationName: aServices[i].origin.location[0].locationName
+		};
+		output[i].destinationStation = {
+			stationName: aServices[i].destination.location[0].locationName
+		};
+		output[i].std = aServices[i].std;
+		output[i].etd = aServices[i].etd;
+		if (aServices.platform) {
+			output[i].platform = aServices[i].platform;
+		} else {
+			output[i].platform = null;
+		}
+		output[i].serviceID = aServices[i].serviceID;
+		if (stations.toStation) {
+			aPromises.push(makePromiseForService(output[i].serviceID));
+		}
+	}
+	Promise.all(aPromises).then(function(detailedServices) {
+		for (var i = 0; i < detailedServices.length; i++) {
+			var arrival = getArrivalTimeForService(detailedServices[i], stations.toStation);
+			output[i].sta = arrival.sta;
+			output[i].eta = arrival.eta;
+		}
+		return callback(null, output);
+	}, function(error) {
+		// return callback(error);
+		console.error(error);
+		return callback(null, output);
 	});
 }
 
