@@ -8,6 +8,9 @@ html
 			p.error= errorMessage
 		if (departureObject)
 			strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
+			if departureObject.nrccMessages
+				each message in departureObject.nrccMessages
+					p.error!= 'NRCC message: ' + message
 			if (departureObject.trainServices.length === 0)
 				p No services found. Trntxt currently does not display information for replacement bus services or routes requiring changes.
 			each service in departureObject.trainServices

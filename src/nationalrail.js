@@ -146,6 +146,9 @@ function getDepartureObject(stations, callback) {
 				if (err) return console.error(err);
 			});
 
+			if (result.GetStationBoardResult.nrccMessages) {
+				output.nrccMessages = result.GetStationBoardResult.nrccMessages.message;
+			}
 			var oTrainServices = result.GetStationBoardResult.trainServices;
 			var aServices = oTrainServices === undefined ? [] : oTrainServices.service;
 			var i;
