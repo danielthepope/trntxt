@@ -192,7 +192,7 @@ function getArrivalTimeForService(service, toStation) {
 			output.eta = callingPointArray[i].et;
 			break;
 		} else if (i === callingPointArray.length - 1) {
-			output.sta = '&gt; ' + callingPointArray[i].st;
+			output.sta = '> ' + callingPointArray[i].st;
 			output.eta = 'Overtaken';
 		}
 	}
