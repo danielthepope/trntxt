@@ -13,3 +13,9 @@ body {
 hr.divider {
 	width: 40%;
 }
+
+hr {
+	border-style: solid;
+	border-top: 0;
+	border-color: #ccc;
+}
