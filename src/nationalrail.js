@@ -149,7 +149,7 @@ function getDepartureObject(stations, callback) {
 			if (result.GetStationBoardResult.nrccMessages) {
 				output.nrccMessages = result.GetStationBoardResult.nrccMessages.message;
 				for (var i = 0; i < output.nrccMessages.length; i++) {
-					output.nrccMessages[i] = removeHtmlTagsExceptA(output.nrccMessages[i]);
+					output.nrccMessages[i] = exports.removeHtmlTagsExceptA(output.nrccMessages[i]);
 				}
 			}
 			var oTrainServices = result.GetStationBoardResult.trainServices;
@@ -167,7 +167,8 @@ function getDepartureObject(stations, callback) {
 	});
 }
 
-function removeHtmlTagsExceptA(input) {
+exports.removeHtmlTagsExceptA = function(input) {
+	if (!input) return '';
 	return input.replace(/<\/?[^a\/][^>]*>/ig,'');
 }
 
