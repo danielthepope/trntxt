@@ -1,4 +1,10 @@
 html
+	mixin time(scheduled, estimated)
+		if estimated === 'On time'
+			= scheduled
+		else
+			del= scheduled
+		= ' (' + estimated + ')'
 	mixin services(header, serviceArray, fromStation, toStation)
 		hr
 		br
@@ -6,30 +12,16 @@ html
 		br
 		each service in serviceArray
 			br
-			= service.originStation.stationName + ' > '
-				strong= service.destinationStation.stationName
-			br
-			= 'Departs ' + fromStation.stationName + ' at '
 			strong
-				if service.etd !== 'On time'
-					del= service.std
-				else
-					= service.std
-				= ' (' + service.etd + ')'
-			= ', '
-			if service.platform !== null
-				= 'platform ' + service.platform
-			else
-				small no platform information available
+				+time(service.std, service.etd)
+				= ' to ' + service.destinationStation.stationName
+			br
+			= 'Platform: ' + (service.platform ? service.platform : 'unavailable')
 			if toStation
 				br
-				= 'Arriving at ' + toStation.stationName + ' at '
+				= 'Arrives at ' + toStation.stationName + ' at '
 				strong
-					if service.eta !== 'On time'
-						del= service.sta
-					else
-						= service.sta
-					= ' (' + service.eta + ')'
+					+time(service.sta, service.eta)
 			br
 			br
 			hr.divider
@@ -53,7 +45,7 @@ html
 				+services('Train services', departureObject.trainServices, departureObject.fromStation, departureObject.toStation)
 			
 			if departureObject.busServices.length > 0
-				+services('Rail replacement bus services',departureObject.busServices, departureObject.fromStation, departureObject.toStation)
+				+services('Bus services',departureObject.busServices, departureObject.fromStation, departureObject.toStation)
 		br
 		br
 		if toStation != undefined && fromStation != undefined
