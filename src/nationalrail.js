@@ -169,7 +169,7 @@ function getDepartureObject(stations, callback) {
 
 exports.removeHtmlTagsExceptA = function(input) {
 	if (!input) return '';
-	return input.replace(/<\/?[^a\/][^>]*>/ig,'');
+	return input.replace(/<\/?((([^\/a>]|a[^> ])[^>]*)|)>/ig,'');
 }
 
 function processDarwinServices(oServices, stations, callback) {
