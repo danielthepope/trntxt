@@ -1,7 +1,5 @@
 html
 	mixin services(header, serviceArray, fromStation, toStation)
-		br
-		br
 		hr
 		br
 		strong= header
@@ -44,7 +42,8 @@ html
 		if (errorMessage)
 			p.error= errorMessage
 		if (departureObject)
-			strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
+			p
+				strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
 			if departureObject.nrccMessages
 				each message in departureObject.nrccMessages
 					p.error!= 'NRCC message: ' + message

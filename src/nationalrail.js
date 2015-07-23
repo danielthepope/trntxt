@@ -148,6 +148,9 @@ function getDepartureObject(stations, callback) {
 
 			if (result.GetStationBoardResult.nrccMessages) {
 				output.nrccMessages = result.GetStationBoardResult.nrccMessages.message;
+				for (var i = 0; i < output.nrccMessages.length; i++) {
+					output.nrccMessages[i] = removeHtmlTagsExceptA(output.nrccMessages[i]);
+				}
 			}
 			var oTrainServices = result.GetStationBoardResult.trainServices;
 			processDarwinServices(oTrainServices, stations, function(err, trainServices) {
@@ -162,6 +165,10 @@ function getDepartureObject(stations, callback) {
 			});
 		});
 	});
+}
+
+function removeHtmlTagsExceptA(input) {
+	return input.replace(/<\/?[^a\/][^>]*>/ig,'');
 }
 
 function processDarwinServices(oServices, stations, callback) {
