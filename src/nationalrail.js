@@ -186,7 +186,7 @@ function processDarwinServices(oServices, stations, callback) {
 		};
 		output[i].std = aServices[i].std;
 		output[i].etd = aServices[i].etd;
-		if (aServices.platform) {
+		if (aServices[i].platform) {
 			output[i].platform = aServices[i].platform;
 		} else {
 			output[i].platform = null;

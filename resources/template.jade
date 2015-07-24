@@ -16,7 +16,7 @@ html
 				+time(service.std, service.etd)
 				= ' to ' + service.destinationStation.stationName
 			br
-			= 'Platform: ' + (service.platform ? service.platform : 'unavailable')
+			= 'Platform' + (service.platform ? ': ' + service.platform : ' unavailable')
 			if toStation
 				br
 				= 'Arrives at ' + toStation.stationName + ' at '
