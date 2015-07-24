@@ -29,8 +29,7 @@ html
 	head
 		include head.jade
 	body
-		p
-			em trntxt.uk
+		include header.jade
 		if (errorMessage)
 			p.error= errorMessage
 		if (departureObject)
