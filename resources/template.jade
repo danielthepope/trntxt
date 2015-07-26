@@ -24,20 +24,20 @@ html
 					+time(service.sta, service.eta)
 			br
 			br
-			hr.divider
+			hr.d
 
 	head
 		include head.jade
 	body
 		include header.jade
 		if (errorMessage)
-			p.error= errorMessage
+			p.e= errorMessage
 		if (departureObject)
 			p
 				strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
 			if departureObject.nrccMessages
 				each message in departureObject.nrccMessages
-					p.error!= 'NRCC message: ' + message
+					p.e!= 'NRCC message: ' + message
 			if (departureObject.trainServices.length + departureObject.busServices.length === 0)
 				p No services found. Trntxt currently does not display information for routes requiring changes.
 			if (departureObject.trainServices.length > 0)

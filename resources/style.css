@@ -6,16 +6,16 @@ body {
 	margin: auto;
 }
 
-.error {
+/* Error message */
+.e {
 	color: red;
 }
 
-hr.divider {
+/* Divider between routes */
+hr.d {
 	width: 40%;
 }
 
 hr {
-	border-style: solid;
-	border-top: 0;
-	border-color: #ccc;
+	border: 1px solid #ddd;
 }
