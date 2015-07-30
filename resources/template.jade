@@ -39,14 +39,21 @@ html
 			p
 				strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
 			if didYouMean.from.length > 0
-				p= 'Did you mean from '
+				p
+					- var clearUrl = '/' + departureObject.fromStation.stationCode
+					- if (path.to) clearUrl += '/' + path.to
+					a(href=clearUrl) x
+					=' Did you mean from '
 					each station in didYouMean.from
 						- var newUrl = '/'+station.stationCode
 						- if (departureObject.toStation) newUrl += '/' + path.to
 						a(href=newUrl)= station.stationName
 						= '? '
 			if didYouMean.to.length > 0
-				p= 'Did you mean to '
+				p
+					- var clearUrl = '/' + path.from + '/' + departureObject.toStation.stationCode
+					a(href=clearUrl) x
+					= ' Did you mean to '
 					each station in didYouMean.to
 						a(href='/'+path.from +'/'+ station.stationCode)= station.stationName
 						= '? '
