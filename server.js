@@ -59,10 +59,12 @@ function getStationsFromRequest(request) {
 }
 
 function getDeviceFromAgent(agentString) {
-	if (agentString.indexOf('Android') !== -1) return 'android';
-	if (agentString.indexOf('iPhone OS') !== -1) return 'ios';
-	if (agentString.indexOf('MSIE') !== -1) return 'ie';
-	else return 'other';
+	var output = 'other';
+	if (agentString.indexOf('Android') !== -1) output = 'android';
+	if (agentString.indexOf('iPhone OS') !== -1) output = 'ios';
+	if (agentString.indexOf('MSIE') !== -1) output = 'ie';
+	console.log('Optimising output for ' + output + '\n');
+	return output;
 }
 
 app.all('*', function(request, response, next) {
@@ -70,7 +72,7 @@ app.all('*', function(request, response, next) {
 	obj.headers = request.headers;
 	obj.ip = request.ip;
 	
-	console.log('Got request for ', request.originalUrl, '\nAgent ', obj.headers['user-agent'], '\n');
+	console.log('Got request for ' + request.originalUrl + '\nAgent ' + obj.headers['user-agent']);
 	next();
 });
 
@@ -87,8 +89,8 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 		return response.send(compile({ errorMessage : e}));
 	}
 	
-	var locals = { path: '/' + stations.fromStation.stationCode + '/' };
-	if (stations.toStation) locals.path += stations.toStation.stationCode + '/';
+	var locals = { stationCodePath: '/' + stations.fromStation.stationCode + '/' };
+	if (stations.toStation) locals.stationCodePath += stations.toStation.stationCode + '/';
 	locals.agent = getDeviceFromAgent(request.headers['user-agent']);
 	locals.didYouMean = stations.didYouMean;
 	locals.url = request.originalUrl;
