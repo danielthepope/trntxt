@@ -75,7 +75,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	try {
 		stations = getStationsFromRequest(request);
 	} catch (e) {
-		return response.send(e);
+		return response.send(compile({ errorMessage : e}));
 	}
 	
 	var locals = { path: '/' + stations.fromStation.stationCode + '/' };
