@@ -1,3 +1,6 @@
+- var urlArr = url.split('/')
+- var path = {from: urlArr[1]}
+- if (urlArr.length > 2) path.to = urlArr[2]
 html
 	mixin time(scheduled, estimated)
 		if estimated === 'On time'
@@ -39,13 +42,13 @@ html
 				p= 'Did you mean from '
 					each station in didYouMean.from
 						- var newUrl = '/'+station.stationCode
-						- if (departureObject.toStation) newUrl += '/' + departureObject.toStation.stationCode
+						- if (departureObject.toStation) newUrl += '/' + path.to
 						a(href=newUrl)= station.stationName
 						= '? '
 			if didYouMean.to.length > 0
 				p= 'Did you mean to '
 					each station in didYouMean.to
-						a(href='/'+departureObject.fromStation.stationCode +'/'+ station.stationCode)= station.stationName
+						a(href='/'+path.from +'/'+ station.stationCode)= station.stationName
 						= '? '
 			if departureObject.nrccMessages
 				each message in departureObject.nrccMessages

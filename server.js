@@ -91,7 +91,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	if (stations.toStation) locals.path += stations.toStation.stationCode + '/';
 	locals.agent = getDeviceFromAgent(request.headers['user-agent']);
 	locals.didYouMean = stations.didYouMean;
-	// locals.url = request.originalUrl;
+	locals.url = request.originalUrl;
 	
 	nr.getDepartures(stations, function(output) {
 		response.send(compile(extend({}, locals, output)));
