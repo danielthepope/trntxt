@@ -59,7 +59,7 @@ html
 						= '? '
 			if departureObject.nrccMessages
 				each message in departureObject.nrccMessages
-					p.e!= 'NRCC message: ' + message
+					p.e!= message
 			if (departureObject.trainServices.length + departureObject.busServices.length === 0)
 				p No services found. Trntxt currently does not display information for routes requiring changes.
 			if (departureObject.trainServices.length > 0)
