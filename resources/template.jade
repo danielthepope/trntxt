@@ -35,6 +35,18 @@ html
 		if (departureObject)
 			p
 				strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
+			if didYouMean.from.length > 0
+				p= 'Did you mean from '
+					each station in didYouMean.from
+						- var newUrl = '/'+station.stationCode
+						- if (departureObject.toStation) newUrl += '/' + departureObject.toStation.stationCode
+						a(href=newUrl)= station.stationName
+						= '? '
+			if didYouMean.to.length > 0
+				p= 'Did you mean to '
+					each station in didYouMean.to
+						a(href='/'+departureObject.fromStation.stationCode +'/'+ station.stationCode)= station.stationName
+						= '? '
 			if departureObject.nrccMessages
 				each message in departureObject.nrccMessages
 					p.e!= 'NRCC message: ' + message

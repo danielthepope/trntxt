@@ -19,10 +19,17 @@ function compile(locals) {
 function getStationsFromRequest(request) {
 	var output = {};
 	var errors = [];
+	output.didYouMean = {
+		from: [],
+		to: []
+	};
 	if (request.params.from !== undefined) {
 		var results = nr.findStation(request.params.from);
 		if (results.length > 0) {
 			output.fromStation = results[0];
+			output.didYouMean.from = results.slice(1).filter(function(otherMatch) {
+				return results[0].biggestChunk === otherMatch.biggestChunk;
+			});
 		} else {
 			errors.push(request.params.from);
 		}
@@ -31,6 +38,9 @@ function getStationsFromRequest(request) {
 		var results = nr.findStation(request.params.to);
 		if (results.length > 0) {
 			output.toStation = results[0];
+			output.didYouMean.to = results.slice(1).filter(function(otherMatch) {
+				return results[0].biggestChunk === otherMatch.biggestChunk;
+			});
 		} else {
 			errors.push(request.params.to);
 		}
@@ -58,7 +68,6 @@ function getDeviceFromAgent(agentString) {
 app.all('*', function(request, response, next) {
 	var obj = {};
 	obj.headers = request.headers;
-	obj.url = request.originalUrl;
 	obj.ip = request.ip;
 	
 	console.log('Got request for ', request.originalUrl, '\nAgent ', obj.headers['user-agent'], '\n');
@@ -81,6 +90,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	var locals = { path: '/' + stations.fromStation.stationCode + '/' };
 	if (stations.toStation) locals.path += stations.toStation.stationCode + '/';
 	locals.agent = getDeviceFromAgent(request.headers['user-agent']);
+	locals.didYouMean = stations.didYouMean;
 	// locals.url = request.originalUrl;
 	
 	nr.getDepartures(stations, function(output) {
