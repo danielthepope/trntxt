@@ -38,7 +38,7 @@ html
 		if (departureObject)
 			p
 				strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
-			if didYouMean.from.length > 0
+			if didYouMean && didYouMean.from &&didYouMean.from.length > 0
 				p
 					- var clearUrl = '/' + departureObject.fromStation.stationCode
 					- if (path.to) clearUrl += '/' + path.to
@@ -49,7 +49,7 @@ html
 						- if (departureObject.toStation) newUrl += '/' + path.to
 						a(href=newUrl)= station.stationName
 						= '? '
-			if didYouMean.to.length > 0
+			if didYouMean && didYouMean.to &&didYouMean.to.length > 0
 				p
 					- var clearUrl = '/' + path.from + '/' + departureObject.toStation.stationCode
 					a(href=clearUrl) x

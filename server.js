@@ -83,17 +83,19 @@ app.get('/defaultsite', function(request, response) {
 // Regex matches letters (no dots), ? means 'to' is optional
 app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	var stations = {};
+	var locals = {};
+	locals.agent = getDeviceFromAgent(request.headers['user-agent']);
+	locals.url = request.originalUrl;
 	try {
 		stations = getStationsFromRequest(request);
 	} catch (e) {
-		return response.send(compile({ errorMessage : e}));
+		locals.errorMessage = e;
+		return response.send(compile(locals));
 	}
 	
-	var locals = { stationCodePath: '/' + stations.fromStation.stationCode + '/' };
+	locals.stationCodePath = '/' + stations.fromStation.stationCode + '/';
 	if (stations.toStation) locals.stationCodePath += stations.toStation.stationCode + '/';
-	locals.agent = getDeviceFromAgent(request.headers['user-agent']);
 	locals.didYouMean = stations.didYouMean;
-	locals.url = request.originalUrl;
 	
 	nr.getDepartures(stations, function(output) {
 		response.send(compile(extend({}, locals, output)));
