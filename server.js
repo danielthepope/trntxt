@@ -3,6 +3,7 @@ var extend = require('extend');
 var jade = require('jade');
 var util = require('util');
 var config = require('./src/trntxtconfig.js');
+var fns = require('./src/serverFunctions.js');
 var iconGenerator = require('./src/iconGenerator.js');
 var nr = require('./src/nationalrail.js');
 
@@ -58,15 +59,6 @@ function getStationsFromRequest(request) {
 	}
 }
 
-function getDeviceFromAgent(agentString) {
-	var output = 'other';
-	if (agentString.indexOf('Android') !== -1) output = 'android';
-	if (agentString.indexOf('iPhone OS') !== -1) output = 'ios';
-	if (agentString.indexOf('MSIE') !== -1) output = 'ie';
-	console.log('Optimising output for ' + output + '\n');
-	return output;
-}
-
 app.all('*', function(request, response, next) {
 	var obj = {};
 	obj.headers = request.headers;
@@ -84,7 +76,7 @@ app.get('/defaultsite', function(request, response) {
 app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	var stations = {};
 	var locals = {};
-	locals.agent = getDeviceFromAgent(request.headers['user-agent']);
+	locals.agent = fns.getDeviceFromAgent(request.headers['user-agent']);
 	locals.url = request.originalUrl;
 	try {
 		stations = getStationsFromRequest(request);
