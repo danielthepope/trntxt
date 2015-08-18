@@ -1,5 +1,6 @@
 var csv = require('csv-string');
 var fs = require('fs');
+var prettify = require('json-pretty');
 var path = require('path');
 var util = require('util');
 var soap = require('soap');
@@ -142,7 +143,7 @@ function getDepartureObject(stations, callback) {
 		client.addSoapHeader(soapHeader);
 		return client.GetDepBoardWithDetails(options, function(err, result) {
 			if (err) return callback(err);
-			fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
+			fs.writeFile('public/lastrequest.txt', prettify(result), function(err) {
 				if (err) return console.error(err);
 			});
 
