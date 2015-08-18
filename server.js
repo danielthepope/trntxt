@@ -1,6 +1,7 @@
 var express = require('express');
 var extend = require('extend');
 var jade = require('jade');
+var prettify = require('json-pretty');
 var util = require('util');
 var config = require('./src/trntxtconfig.js');
 var fns = require('./src/serverFunctions.js');
@@ -70,6 +71,21 @@ app.all('*', function(request, response, next) {
 
 app.get('/defaultsite', function(request, response) {
 	response.sendFile('index.html', {root:'./public'});
+});
+
+app.get('/:from(\\w+)/:to(\\w+)?/json.txt', function (request, response) {
+	var stations = {};
+	try {
+		stations = getStationsFromRequest(request);
+	} catch (e) {
+		return response.send(e);
+	}
+	var notice = 'This is a JSON response from National Rail Enquiries. json.txt should be used for debugging purposes only. To create your own apps, please register for your own API key.\n'
+	nr.getDepartureBoard(stations, function(err, result) {
+		if (err) return response.send({error: err});
+		response.type('text/plain');
+		return response.send(notice + prettify(result));
+	})
 });
 
 // Regex matches letters (no dots), ? means 'to' is optional
