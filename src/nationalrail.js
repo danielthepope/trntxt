@@ -8,7 +8,7 @@ var config = require('./trntxtconfig.js');
 
 exports.stations = loadStations('../resources/station_codes.csv');
 
-var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2015-05-14';
+var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
 var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
 	|| console.error("No API key provided. Received: "+config.apiKey));
 
@@ -140,7 +140,7 @@ function getDepartureObject(stations, callback) {
 	soap.createClient(soapUrl, function(err, client) {
 		if (err) return callback(err);
 		client.addSoapHeader(soapHeader);
-		return client.GetDepBoardWithDetails(options, function(err, result) {
+		return client.GetDepartureBoard(options, function(err, result) {
 			if (err) return callback(err);
 			fs.writeFile('public/lastrequest.txt', JSON.stringify(result), function(err) {
 				if (err) return console.error(err);
@@ -152,10 +152,17 @@ function getDepartureObject(stations, callback) {
 					output.nrccMessages[i] = exports.removeHtmlTagsExceptA(output.nrccMessages[i]);
 				}
 			}
-			output.trainServices = processDarwinServices(result.GetStationBoardResult.trainServices, stations);
-			output.busServices = processDarwinServices(result.GetStationBoardResult.busServices, stations);
-			
-			return callback(null, output);
+			var oTrainServices = result.GetStationBoardResult.trainServices;
+			processDarwinServices(oTrainServices, stations, function(err, trainServices) {
+				if (err) return callback(err);
+				output.trainServices = trainServices;
+				var oBusServices = result.GetStationBoardResult.busServices;
+				processDarwinServices(oBusServices, stations, function(err, busServices) {
+					if (err) return callback(err);
+					output.busServices = busServices;
+					return callback(null, output);
+				});
+			});
 		});
 	});
 }
@@ -165,18 +172,17 @@ exports.removeHtmlTagsExceptA = function(input) {
 	return input.replace(/<\/?((([^\/a>]|a[^> ])[^>]*)|)>/ig,'');
 }
 
-function processDarwinServices(oServices, stations) {
+function processDarwinServices(oServices, stations, callback) {
 	var aServices = oServices ? oServices.service : [];
+	var aPromises = [];
 	var output = [];
 	for (var i = 0; i < aServices.length; i++) {
 		output[i] = {};
 		output[i].originStation = {
-			stationName: aServices[i].origin.location.locationName,
-			stationCode: aServices[i].origin.location.crs
+			stationName: aServices[i].origin.location[0].locationName
 		};
 		output[i].destinationStation = {
-			stationName: aServices[i].destination.location.locationName,
-			stationCode: aServices[i].destination.location.crs
+			stationName: aServices[i].destination.location[0].locationName
 		};
 		output[i].std = aServices[i].std;
 		output[i].etd = aServices[i].etd;
@@ -187,16 +193,26 @@ function processDarwinServices(oServices, stations) {
 		}
 		output[i].serviceID = aServices[i].serviceID;
 		if (stations.toStation) {
-			var arrival = getArrivalTimeForService(aServices[i].subsequentCallingPoints.callingPointList.callingPoint, stations.toStation);
+			aPromises.push(makePromiseForService(output[i].serviceID));
+		}
+	}
+	Promise.all(aPromises).then(function(detailedServices) {
+		for (var i = 0; i < detailedServices.length; i++) {
+			var arrival = getArrivalTimeForService(detailedServices[i], stations.toStation);
 			output[i].sta = arrival.sta;
 			output[i].eta = arrival.eta;
 		}
-	}
-	return output;
+		return callback(null, output);
+	}, function(error) {
+		// return callback(error);
+		console.error(error);
+		return callback(null, output);
+	});
 }
 
-function getArrivalTimeForService(callingPointArray, toStation) {
+function getArrivalTimeForService(service, toStation) {
 	var output = {};
+	var callingPointArray = service.GetServiceDetailsResult.subsequentCallingPoints.callingPointList[0].callingPoint;
 	for (var i = 0; i < callingPointArray.length; i++) {
 		if (callingPointArray[i].crs === toStation.stationCode) {
 			output.sta = callingPointArray[i].st;
@@ -208,6 +224,19 @@ function getArrivalTimeForService(callingPointArray, toStation) {
 		}
 	}
 	return output;
+}
+
+function makePromiseForService(serviceId) {
+	var options = { serviceID: serviceId };
+	return new Promise(function(resolve, reject) {
+		soap.createClient(soapUrl, function(err, client) {
+			client.addSoapHeader(soapHeader);
+			client.GetServiceDetails(options, function(err, result) {
+				if (err) return reject(err);
+				return resolve(result);
+			});
+		});
+	});
 }
 
 exports.getServiceDetails = function(serviceId, callback) {
