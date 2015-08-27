@@ -1,5 +1,6 @@
 var csv = require('csv-string');
 var fs = require('fs');
+var prettify = require('json-pretty');
 var path = require('path');
 var util = require('util');
 var soap = require('soap');
@@ -128,22 +129,7 @@ function getDepartureObject(stations, callback) {
 	if (stations.toStation !== undefined) output.toStation = stations.toStation;
 	output.trainServices = [];
 	output.busServices = [];
-	
-	exports.getDepartureBoard(stations, function(err, result) {
-		if (err) return callback(err);
-		if (result.GetStationBoardResult.nrccMessages) {
-			output.nrccMessages = result.GetStationBoardResult.nrccMessages.message;
-			for (var i = 0; i < output.nrccMessages.length; i++) {
-				output.nrccMessages[i] = exports.removeHtmlTagsExceptA(output.nrccMessages[i]);
-			}
-		}
-		output.trainServices = processDarwinServices(result.GetStationBoardResult.trainServices, stations);
-		output.busServices = processDarwinServices(result.GetStationBoardResult.busServices, stations);
-		return callback(null, output);
-	});
-}
 
-exports.getDepartureBoard = function(stations, callback) {
 	var options = {
 		numRows: 10,
 		crs: stations.fromStation.stationCode
@@ -157,10 +143,20 @@ exports.getDepartureBoard = function(stations, callback) {
 		client.addSoapHeader(soapHeader);
 		return client.GetDepBoardWithDetails(options, function(err, result) {
 			if (err) return callback(err);
-			// fs.writeFile('public/lastrequest.txt', prettify(result), function(err) {
-			// 	if (err) return console.error(err);
-			// });
-			return callback(null, result);
+			fs.writeFile('public/lastrequest.txt', prettify(result), function(err) {
+				if (err) return console.error(err);
+			});
+
+			if (result.GetStationBoardResult.nrccMessages) {
+				output.nrccMessages = result.GetStationBoardResult.nrccMessages.message;
+				for (var i = 0; i < output.nrccMessages.length; i++) {
+					output.nrccMessages[i] = exports.removeHtmlTagsExceptA(output.nrccMessages[i]);
+				}
+			}
+			output.trainServices = processDarwinServices(result.GetStationBoardResult.trainServices, stations);
+			output.busServices = processDarwinServices(result.GetStationBoardResult.busServices, stations);
+			
+			return callback(null, output);
 		});
 	});
 }
