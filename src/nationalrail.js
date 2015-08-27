@@ -197,10 +197,6 @@ function processDarwinServices(oServices, stations) {
 
 function getArrivalTimeForService(callingPointArray, toStation) {
 	var output = {};
-	// Turn it into an Array if it isn't already
-	if (callingPointArray.constructor === Object) {
-		callingPointArray = [callingPointArray];
-	}
 	for (var i = 0; i < callingPointArray.length; i++) {
 		if (callingPointArray[i].crs === toStation.stationCode) {
 			output.sta = callingPointArray[i].st;
