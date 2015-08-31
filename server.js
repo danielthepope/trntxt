@@ -1,9 +1,9 @@
 var express = require('express');
 var extend = require('extend');
 var jade = require('jade');
+var uaParser = require('ua-parser-js');
 var util = require('util');
 var config = require('./src/trntxtconfig.js');
-var fns = require('./src/serverFunctions.js');
 var iconGenerator = require('./src/iconGenerator.js');
 var nr = require('./src/nationalrail.js');
 
@@ -64,7 +64,8 @@ app.all('*', function(request, response, next) {
 	obj.headers = request.headers;
 	obj.ip = request.ip;
 	
-	console.log('Got request for ' + request.originalUrl + '\nAgent ' + obj.headers['user-agent']);
+	var agent = uaParser(request.headers['user-agent']);
+	console.log('\nGot request for ' + request.originalUrl + '\nAgent ' + JSON.stringify(agent));
 	next();
 });
 
@@ -76,7 +77,7 @@ app.get('/defaultsite', function(request, response) {
 app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	var stations = {};
 	var locals = {};
-	locals.agent = fns.getDeviceFromAgent(request.headers['user-agent']);
+	locals.agent = uaParser(request.headers['user-agent']);
 	locals.url = request.originalUrl;
 	try {
 		stations = getStationsFromRequest(request);

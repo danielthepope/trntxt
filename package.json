@@ -16,7 +16,8 @@
     "images": "^2.1.6",
     "jade": "^1.9.2",
     "soap": "^0.8.0",
-    "sprintf-js": "^1.0.2"
+    "sprintf-js": "^1.0.2",
+    "ua-parser-js": "^0.7.9"
   },
   "devDependencies": {
     "chai": "^3.0.0",
