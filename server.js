@@ -2,12 +2,26 @@ var express = require('express');
 var extend = require('extend');
 var jade = require('jade');
 var uaParser = require('ua-parser-js');
+var mongoose = require('mongoose');
 var util = require('util');
 var config = require('./src/trntxtconfig.js');
 var iconGenerator = require('./src/iconGenerator.js');
 var nr = require('./src/nationalrail.js');
 
 var app = express();
+mongoose.connect(config.dbString);
+var db = mongoose.connection;
+var Hit = null;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function (callback) {
+	console.log("YAY I'M CONNECTED TO THE DATABASE WOOHOO");
+	var hitSchema = mongoose.Schema({
+		agent: Object,
+		url: String,
+		date: { type: Date, default: Date.now }
+	});
+	Hit = mongoose.model('trntxt_hits', hitSchema);
+});
 
 var jadeOptions = {doctype:'html'};
 var jadeGlobals = {pageTitle:'trntxt'};
@@ -66,6 +80,14 @@ app.all('*', function(request, response, next) {
 	
 	var agent = uaParser(request.headers['user-agent']);
 	console.log('\nGot request for ' + request.originalUrl + '\nAgent ' + JSON.stringify(agent));
+	var hit = new Hit({
+		agent: agent,
+		url: request.originalUrl
+	});
+	hit.save(function(err) {
+		if (err) console.error("It didn't save. No worries", err);
+		else console.log("Hit saved :)");
+	})
 	next();
 });
 
