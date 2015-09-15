@@ -6,21 +6,19 @@ var mongoose = require('mongoose');
 var util = require('util');
 var config = require('./src/trntxtconfig.js');
 var iconGenerator = require('./src/iconGenerator.js');
+var schema = require('./src/mongoSchemas.js')(mongoose);
 var nr = require('./src/nationalrail.js');
 
 var app = express();
 mongoose.connect(config.dbString);
 var db = mongoose.connection;
+var connected = false;
 var Hit = null;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
-	console.log("YAY I'M CONNECTED TO THE DATABASE WOOHOO");
-	var hitSchema = mongoose.Schema({
-		agent: Object,
-		url: String,
-		date: { type: Date, default: Date.now }
-	});
-	Hit = mongoose.model('trntxt_hits', hitSchema);
+	Hit = mongoose.model('trntxt_hits', schema.hit);
+	connected = true;
+	console.log('Database models initialised');
 });
 
 var jadeOptions = {doctype:'html'};
@@ -77,17 +75,21 @@ app.all('*', function(request, response, next) {
 	var obj = {};
 	obj.headers = request.headers;
 	obj.ip = request.ip;
-	
-	var agent = uaParser(request.headers['user-agent']);
+	var uaString = request.headers['user-agent'];
+	var agent = uaParser(uaString);
 	console.log('\nGot request for ' + request.originalUrl + '\nAgent ' + JSON.stringify(agent));
-	var hit = new Hit({
-		agent: agent,
-		url: request.originalUrl
-	});
-	hit.save(function(err) {
-		if (err) console.error("It didn't save. No worries", err);
-		else console.log("Hit saved :)");
-	})
+	if (connected && uaString !== 'AlwaysOn') {
+		// Hit object may not have been loaded yet. Let's not make a fuss if it isn't.
+		// Also Azure pings with 'AlwaysOn'. We don't need to save that.
+		var hit = new Hit({
+			agent: agent,
+			url: request.originalUrl
+		});
+		hit.save(function(err) {
+			if (err) console.error("It didn't save. Meh");
+			else console.log("Hit saved :)");
+		});
+	}
 	next();
 });
 
