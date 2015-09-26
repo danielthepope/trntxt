@@ -25,6 +25,8 @@ html
 				= 'Arrives at ' + toStation.stationName + ' at '
 				strong
 					+time(service.sta, service.eta)
+				if service.time
+					= ', ' + service.time
 			br
 			br
 			hr.d

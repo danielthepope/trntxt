@@ -201,6 +201,8 @@ function processDarwinServices(oServices, stations, callback) {
 			var arrival = getArrivalTimeForService(detailedServices[i], stations.toStation);
 			output[i].sta = arrival.sta;
 			output[i].eta = arrival.eta;
+			var mins = exports.getServiceTime(output[i]);
+			output[i].time = exports.formatTime(mins);
 		}
 		return callback(null, output);
 	}, function(error) {
@@ -248,4 +250,53 @@ exports.getServiceDetails = function(serviceId, callback) {
 			return callback(result);
 		});
 	});
+}
+
+/**
+ * Takes a string in hh:mm format and returns the number of minutes
+ */
+exports.toMins = function(time) {
+	time = time.replace(/([^0-9:])/,'');
+	var array = time.split(':');
+	if (array.length < 2) return -1;
+	var h = parseInt(array[0]);
+	var m = parseInt(array[1]);
+	if (isNaN(h) || isNaN(m)) {
+		return -1;
+	} else {
+		return (60 * h) + m;
+	}
+}
+
+/**
+ * Takes an object with eta, sta, etd and std properties
+ * Returns the number of minutes a service should take,
+ *   giving preference to the estimated timings
+ */
+exports.getServiceTime = function(timings) {
+	var arrival = exports.toMins(timings.eta);
+	if (arrival < 0) {
+		arrival = exports.toMins(timings.sta);
+	}
+	var departure = exports.toMins(timings.etd);
+	if (departure < 0) {
+		departure = exports.toMins(timings.std);
+	}
+	if (arrival < 0 || departure < 0) return -1;
+	var mins = arrival - departure;
+	if (mins < 0) {
+		mins += 1440;
+	}
+	return mins;
+}
+
+/**
+ * Turns minutes into something like 1h 5m
+ */
+exports.formatTime = function(mins) {
+	if (mins < 0) return null;
+	var h = Math.floor(mins / 60);
+	var m = mins % 60;
+	if (h > 0) return h + 'h ' + m + 'm';
+	else return m + 'm';
 }

@@ -95,3 +95,79 @@ describe('Testing sanitiseText()', function() {
 		expect(nr.sanitise()).to.be.null;
 	});
 });
+
+describe('Testing toMins()', function() {
+	var tests = {
+		'00:00': 0,
+		'01:00': 60,
+		'00:30': 30,
+		'10:05': 605,
+		'01:90': 150
+	};
+	Object.keys(tests).forEach(function(key) {
+		it('should return ' + tests[key] + ' with input ' + key, function() {
+			expect(nr.toMins(key)).to.equal(tests[key]);
+		});
+	});
+});
+
+describe('Negative testing toMins()', function() {
+	var tests = ['test', 'five:fifteen', ''];
+	tests.forEach(function(failingTest) {
+		it('should fail with input ' + failingTest, function() {
+			expect(nr.toMins(failingTest)).to.equal(-1);
+		});
+	});
+});
+
+describe('Testing getServiceTime()', function() {
+	it('should do sta-std for on time services', function() {
+		var input = {
+			etd: 'On time',
+			std: '14:25',
+			eta: 'On time',
+			sta: '15:30'
+		};
+		expect(nr.getServiceTime(input)).to.equal(65);
+	});
+	it('should give preference to estimated times', function() {
+		var input = {
+			etd: '14:30',
+			std: '14:25',
+			eta: 'On time',
+			sta: '15:30'
+		};
+		expect(nr.getServiceTime(input)).to.equal(60);
+		var input2 = {
+			etd: 'On time',
+			std: '14:25',
+			eta: '15:35',
+			sta: '15:30'
+		};
+		expect(nr.getServiceTime(input2)).to.equal(70);
+		var input3 = {
+			etd: '14:30',
+			std: '14:25',
+			eta: '15:45',
+			sta: '15:30'
+		};
+		expect(nr.getServiceTime(input3)).to.equal(75);
+	})
+});
+
+describe('Testing formatTime()', function() {
+	var tests = {
+		0: '0m',
+		45: '45m',
+		60: '1h 0m',
+		75: '1h 15m',
+		100: '1h 40m',
+		120: '2h 0m',
+		150: '2h 30m'
+	};
+	Object.keys(tests).forEach(function(key) {
+		it('should return ' + tests[key] + ' for input ' + key, function() {
+			expect(nr.formatTime(key)).to.equal(tests[key]);
+		});
+	});
+});
