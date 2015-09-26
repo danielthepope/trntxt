@@ -71,28 +71,6 @@ function getStationsFromRequest(request) {
 	}
 }
 
-app.all('*', function(request, response, next) {
-	var obj = {};
-	obj.headers = request.headers;
-	obj.ip = request.ip;
-	var uaString = request.headers['user-agent'];
-	var agent = uaParser(uaString);
-	console.log('\nGot request for ' + request.originalUrl + '\nAgent ' + JSON.stringify(agent));
-	if (connected && uaString !== 'AlwaysOn') {
-		// Hit object may not have been loaded yet. Let's not make a fuss if it isn't.
-		// Also Azure pings with 'AlwaysOn'. We don't need to save that.
-		var hit = new Hit({
-			agent: agent,
-			url: request.originalUrl
-		});
-		hit.save(function(err) {
-			if (err) console.error("It didn't save. Meh");
-			else console.log("Hit saved :)");
-		});
-	}
-	next();
-});
-
 app.get('/defaultsite', function(request, response) {
 	response.sendFile('index.html', {root:'./public'});
 });
@@ -101,7 +79,8 @@ app.get('/defaultsite', function(request, response) {
 app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	var stations = {};
 	var locals = {};
-	locals.agent = uaParser(request.headers['user-agent']);
+	var uaString = request.headers['user-agent'];
+	locals.agent = uaParser(uaString);
 	locals.url = request.originalUrl;
 	try {
 		stations = getStationsFromRequest(request);
@@ -113,6 +92,23 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	locals.stationCodePath = '/' + stations.fromStation.stationCode + '/';
 	if (stations.toStation) locals.stationCodePath += stations.toStation.stationCode + '/';
 	locals.didYouMean = stations.didYouMean;
+	
+	if (connected && uaString !== 'AlwaysOn') {
+		// Hit object may not have been loaded yet. Let's not make a fuss if it isn't.
+		// Also Azure pings with 'AlwaysOn'. We don't need to save that.
+		var hit = new Hit({
+			agent: locals.agent,
+			url: request.originalUrl,
+			fromStation: stations.fromStation
+		});
+		if (stations.toStation) {
+			hit.toStation = stations.toStation;
+		}
+		hit.save(function(err) {
+			if (err) console.error("It didn't save. Meh");
+			else console.log("Hit saved :)");
+		});
+	}
 	
 	nr.getDepartures(stations, function(output) {
 		response.send(compile(extend({}, locals, output)));
