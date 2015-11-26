@@ -3,7 +3,6 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var soap = require('soap');
-var sprintf = require('sprintf-js').sprintf;
 var config = require('./trntxtconfig.js');
 
 exports.stations = loadStations('../resources/station_codes.csv');

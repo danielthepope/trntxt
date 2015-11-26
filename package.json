@@ -11,23 +11,23 @@
   },
   "dependencies": {
     "csv-string": "2.3.0",
-    "express": "4.12.3",
-    "extend": "2.0.1",
-    "images": "2.1.10",
-    "jade": "1.9.2",
-    "mongoose": "4.2.4",
+    "express": "4.13.3",
+    "extend": "3.0.0",
+    "images": "2.2.0",
+    "jade": "1.11.0",
+    "mongoose": "4.2.8",
     "soap": "0.11.0",
     "sprintf-js": "1.0.2",
     "ua-parser-js": "0.7.9"
   },
   "devDependencies": {
     "chai": "3.4.1",
-    "gulp": "3.8.11",
+    "gulp": "3.9.0",
     "gulp-cssmin": "0.1.7",
     "gulp-develop-server": "0.5.0",
-    "gulp-jade": "1.0.0",
-    "gulp-mocha": "2.1.2",
+    "gulp-jade": "1.1.0",
+    "gulp-mocha": "2.2.0",
     "gulp-rename": "1.2.2",
-    "mocha": "2.3.3"
+    "mocha": "2.3.4"
   }
 }
