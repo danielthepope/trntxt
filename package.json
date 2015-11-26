@@ -17,7 +17,6 @@
     "jade": "1.11.0",
     "mongoose": "4.2.8",
     "soap": "0.11.0",
-    "sprintf-js": "1.0.2",
     "ua-parser-js": "0.7.9"
   },
   "devDependencies": {
