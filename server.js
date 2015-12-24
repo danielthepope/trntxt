@@ -75,6 +75,20 @@ app.get('/defaultsite', function(request, response) {
 	response.sendFile('index.html', {root:'./public'});
 });
 
+app.get('/d', function(request, response) {
+	var from = request.query.from;
+	var to = request.query.to;
+	if (from) {
+		if (to) {
+			response.redirect('/' + from + '/' + to);
+		} else {
+			response.redirect('/' + from);
+		}
+	} else {
+		response.redirect('/');
+	}
+});
+
 // Regex matches letters (no dots), ? means 'to' is optional
 app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 	var stations = {};

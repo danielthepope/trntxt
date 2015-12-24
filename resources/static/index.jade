@@ -3,25 +3,36 @@ html
 		include ../head.jade
 	body
 		include ../header.jade
-		p Presenting trntxt: a data-friendly train times site designed for phones on GPRS.
+		p Welcome to trntxt: a data-friendly UK train times site.
 		h3 Usage
 		p
-			| Station names can be entered using either their 3 letter station codes, or their name (without spaces).
+			| Add to this page's URL to search for a station. Station names can be entered using either their 3 letter station codes, or their name (without spaces).
 			br
 			| e.g. 'bristolparkway', 'bristolp' or 'bpw' will get you times for Bristol Parkway.
 		p
 			strong /from
 			br
 			| For example, 
-			a(href="/bathspa") /bathspa
+			a(href="/bathspa") trntxt.uk/bathspa
 			|  will show the full departure board for Bath Spa.
 		p
 			strong /from/to
 			br
 			| For example, 
-			a(href="/paddington/reading") /paddington/reading
+			a(href="/paddington/reading") trntxt.uk/paddington/reading
 			|  will find trains departing Paddington, calling at Reading. You can then swap the journey's direction with the link at the bottom of the page.
 		p This site is designed to work on any mobile device. There are no images or any other fancy things, so you get the data you need as quickly as possible.
+		form(method="GET",action="/d")
+			table
+				tr
+					td From
+					td
+						input(name="from",type="text")
+				tr
+					td To
+					td
+						input(name="to",type="text")
+			input(type="submit",value="Search")
 		p
 			strong Protip:
 			|  pin journeys to your smartphone's homescreen for one-touch access to your favourite routes.
