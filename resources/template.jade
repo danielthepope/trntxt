@@ -40,6 +40,9 @@ html
 		if (departureObject)
 			p
 				strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
+			if toStation != undefined && fromStation != undefined
+				p
+					a(href='/'+toStation+'/'+fromStation) Switch Direction
 			if didYouMean && didYouMean.from &&didYouMean.from.length > 0
 				p
 					- var clearUrl = '/' + departureObject.fromStation.stationCode
@@ -69,10 +72,5 @@ html
 			
 			if departureObject.busServices.length > 0
 				+services('Bus services',departureObject.busServices, departureObject.fromStation, departureObject.toStation)
-		br
-		br
-		if toStation != undefined && fromStation != undefined
-			p
-				a(href='/'+toStation+'/'+fromStation) Switch Direction
 
 		include footer.jade
