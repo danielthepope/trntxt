@@ -69,6 +69,15 @@ exports.findStation = function (input) {
   return results;
 }
 
+function getStationNameFromCrs(crs) {
+  crs = crs.toUpperCase();
+  var results = exports.stations.filter(function (station) {
+    return station.stationCode === crs;
+  });
+  if (results.length === 0) return null;
+  else return results[0].stationName;
+}
+
 function biggestChunk(stationName, input) {
   for (var i = input.length; i > 0; i--) {
     if (stationName.indexOf(input.substring(0, i - 1)) > -1) return i;
@@ -192,6 +201,8 @@ function processDarwinServices(oServices, stations, callback) {
       var arrival = getArrivalTimeForService(detailedServices[i], stations.toStation);
       output[i].sta = arrival.sta;
       output[i].eta = arrival.eta;
+      output[i].arrivalStation = arrival.arrivalStation;
+      output[i].correctStation = arrival.correctStation;
       var mins = exports.getServiceTime(output[i]);
       output[i].time = exports.formatTime(mins);
     }
@@ -209,10 +220,14 @@ function getArrivalTimeForService(service, toStation) {
     if (callingPointArray[i].crs === toStation.stationCode) {
       output.sta = callingPointArray[i].st;
       output.eta = callingPointArray[i].et;
+      output.arrivalStation = getStationNameFromCrs(toStation.stationCode);
+      output.correctStation = true;
       break;
     } else if (i === callingPointArray.length - 1) {
-      output.sta = '> ' + callingPointArray[i].st;
-      output.eta = 'Overtaken';
+      output.sta = callingPointArray[i].st;
+      output.eta = callingPointArray[i].et;
+      output.arrivalStation = getStationNameFromCrs(callingPointArray[i].crs);
+      output.correctStation = false;
     }
   }
   return output;

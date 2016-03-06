@@ -1,5 +1,6 @@
 - var urlArr = url.split('/')
-- var path = {from: urlArr[1]}
+- var path = { from: urlArr[1] }
+- var incorrectArrivals = false
 - if (urlArr.length > 2) path.to = urlArr[2]
 html
   mixin time(scheduled, estimated)
@@ -22,11 +23,21 @@ html
       = 'Platform ' + (service.platform ? service.platform : 'unavailable')
       if toStation
         br
-        = 'Arrives at ' + toStation.stationName + ' at '
-        strong
-          +time(service.sta, service.eta)
-        if service.time
-          = ', ' + service.time
+        if service.correctStation
+          = 'Arrives at ' + service.arrivalStation + ' at '
+          strong
+            +time(service.sta, service.eta)
+          if service.time
+            = ', ' + service.time
+        else
+          - incorrectArrivals = true
+          em
+            = 'Arrives at ' + service.arrivalStation + ' at '
+            strong
+              +time(service.sta, service.eta)
+            if service.time
+              = ', ' + service.time
+            | *
       br
       br
       hr.d
@@ -72,5 +83,11 @@ html
       
       if departureObject.busServices.length > 0
         +services('Bus services',departureObject.busServices, departureObject.fromStation, departureObject.toStation)
+
+      if incorrectArrivals
+        p
+          em * National Rail has indicated that this service will arrive at
+            = ' ' + departureObject.toStation.stationName
+            | , but has not provided an arrival time. It is likely that this train will be overtaken by another service.
 
     include footer.jade
