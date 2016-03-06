@@ -8,56 +8,56 @@ var util = require('util');
 var fs = require('fs');
 
 gulp.task('server:start', function() {
-	server.listen( { path: './server.js' } );
+  server.listen( { path: './server.js' } );
 });
 
 gulp.task('server:restart', function() {
-	gulp.watch('./src/**/*.js', server.restart);
-	gulp.watch('./config/**/*.js', server.restart);
+  gulp.watch('./src/**/*.js', server.restart);
+  gulp.watch('./config/**/*.js', server.restart);
 });
 
 // Watch files for changes
 gulp.task('watch', function() {
-	gulp.watch('./resources/*.css', ['build']);
-	gulp.watch('./resources/*.jade', ['build']);
-	gulp.watch('./resources/static/*.jade', ['build']);
-	gulp.watch('./src/**/*.js', ['test']);
-	gulp.watch('./test/**/*.js', ['test']);
-	gulp.watch('./server.js', ['test']);
+  gulp.watch('./resources/*.css', ['build']);
+  gulp.watch('./resources/*.jade', ['build']);
+  gulp.watch('./resources/static/*.jade', ['build']);
+  gulp.watch('./src/**/*.js', ['test']);
+  gulp.watch('./test/**/*.js', ['test']);
+  gulp.watch('./server.js', ['test']);
 });
 
 gulp.task('copy', function(){
-	fs.exists('./config/config.js', function (exists) {
-		if (exists) return;
-		else {
-			fs.createReadStream('./config/config.example.js')
-				.pipe(fs.createWriteStream('./config/config.js'));
-		}
-	});
+  fs.exists('./config/config.js', function (exists) {
+    if (exists) return;
+    else {
+      fs.createReadStream('./config/config.example.js')
+        .pipe(fs.createWriteStream('./config/config.js'));
+    }
+  });
 });
 
 gulp.task('build', ['minifycss', 'staticjade', 'copy']);
 
 gulp.task('minifycss', function() {
-	return gulp.src('./resources/*.css')
-		.pipe(cssmin())
-		.pipe(rename({suffix: '.min'}))
-		.pipe(gulp.dest('./public'));
+  return gulp.src('./resources/*.css')
+    .pipe(cssmin())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest('./public'));
 });
 
 gulp.task('staticjade', ['minifycss'], function() {
-	return gulp.src('./resources/static/*.jade')
-		.pipe(jade({
-			doctype: 'html',
-			locals: {
-				pageTitle: 'trntxt'
-			}
-		}))
-		.pipe(gulp.dest('./public'));
+  return gulp.src('./resources/static/*.jade')
+    .pipe(jade({
+      doctype: 'html',
+      locals: {
+        pageTitle: 'trntxt'
+      }
+    }))
+    .pipe(gulp.dest('./public'));
 });
 
 gulp.task('test', ['build'], function() {
-	return gulp.src(['test/**/*.js']).pipe(mocha());
+  return gulp.src(['test/**/*.js']).pipe(mocha());
 });
 
 // Default task

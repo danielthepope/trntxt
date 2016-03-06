@@ -2,75 +2,75 @@
 - var path = {from: urlArr[1]}
 - if (urlArr.length > 2) path.to = urlArr[2]
 html
-	mixin time(scheduled, estimated)
-		if estimated === 'On time'
-			= scheduled
-		else
-			del= scheduled
-		= ' (' + estimated + ')'
-	mixin services(header, serviceArray, fromStation, toStation)
-		hr
-		br
-		strong= header
-		br
-		each service in serviceArray
-			br
-			strong
-				+time(service.std, service.etd)
-				= ' to ' + service.destinationStation.stationName
-			br
-			= 'Platform ' + (service.platform ? service.platform : 'unavailable')
-			if toStation
-				br
-				= 'Arrives at ' + toStation.stationName + ' at '
-				strong
-					+time(service.sta, service.eta)
-				if service.time
-					= ', ' + service.time
-			br
-			br
-			hr.d
+  mixin time(scheduled, estimated)
+    if estimated === 'On time'
+      = scheduled
+    else
+      del= scheduled
+    = ' (' + estimated + ')'
+  mixin services(header, serviceArray, fromStation, toStation)
+    hr
+    br
+    strong= header
+    br
+    each service in serviceArray
+      br
+      strong
+        +time(service.std, service.etd)
+        = ' to ' + service.destinationStation.stationName
+      br
+      = 'Platform ' + (service.platform ? service.platform : 'unavailable')
+      if toStation
+        br
+        = 'Arrives at ' + toStation.stationName + ' at '
+        strong
+          +time(service.sta, service.eta)
+        if service.time
+          = ', ' + service.time
+      br
+      br
+      hr.d
 
-	head
-		include head.jade
-	body
-		include header.jade
-		if (errorMessage)
-			p.e= errorMessage
-		if (departureObject)
-			p
-				strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
-			if toStation != undefined && fromStation != undefined
-				p
-					a(href='/'+toStation+'/'+fromStation) Switch Direction
-			if didYouMean && didYouMean.from &&didYouMean.from.length > 0
-				p
-					- var clearUrl = '/' + departureObject.fromStation.stationCode
-					- if (path.to) clearUrl += '/' + path.to
-					a(href=clearUrl) x
-					=' Did you mean from '
-					each station in didYouMean.from
-						- var newUrl = '/'+station.stationCode
-						- if (departureObject.toStation) newUrl += '/' + path.to
-						a(href=newUrl)= station.stationName
-						= '? '
-			if didYouMean && didYouMean.to &&didYouMean.to.length > 0
-				p
-					- var clearUrl = '/' + path.from + '/' + departureObject.toStation.stationCode
-					a(href=clearUrl) x
-					= ' Did you mean to '
-					each station in didYouMean.to
-						a(href='/'+path.from +'/'+ station.stationCode)= station.stationName
-						= '? '
-			if departureObject.nrccMessages
-				each message in departureObject.nrccMessages
-					p.e!= message
-			if (departureObject.trainServices.length + departureObject.busServices.length === 0)
-				p No services found. Trntxt currently does not display information for routes requiring changes.
-			if (departureObject.trainServices.length > 0)
-				+services('Train services', departureObject.trainServices, departureObject.fromStation, departureObject.toStation)
-			
-			if departureObject.busServices.length > 0
-				+services('Bus services',departureObject.busServices, departureObject.fromStation, departureObject.toStation)
+  head
+    include head.jade
+  body
+    include header.jade
+    if (errorMessage)
+      p.e= errorMessage
+    if (departureObject)
+      p
+        strong= 'Departure board for ' + departureObject.fromStation.stationName + ' (' + departureObject.fromStation.stationCode + ')' + (departureObject.toStation ? (' calling at ' + departureObject.toStation.stationName + ' (' + departureObject.toStation.stationCode + ')') : '')
+      if toStation != undefined && fromStation != undefined
+        p
+          a(href='/'+toStation+'/'+fromStation) Switch Direction
+      if didYouMean && didYouMean.from &&didYouMean.from.length > 0
+        p
+          - var clearUrl = '/' + departureObject.fromStation.stationCode
+          - if (path.to) clearUrl += '/' + path.to
+          a(href=clearUrl) x
+          =' Did you mean from '
+          each station in didYouMean.from
+            - var newUrl = '/'+station.stationCode
+            - if (departureObject.toStation) newUrl += '/' + path.to
+            a(href=newUrl)= station.stationName
+            = '? '
+      if didYouMean && didYouMean.to &&didYouMean.to.length > 0
+        p
+          - var clearUrl = '/' + path.from + '/' + departureObject.toStation.stationCode
+          a(href=clearUrl) x
+          = ' Did you mean to '
+          each station in didYouMean.to
+            a(href='/'+path.from +'/'+ station.stationCode)= station.stationName
+            = '? '
+      if departureObject.nrccMessages
+        each message in departureObject.nrccMessages
+          p.e!= message
+      if (departureObject.trainServices.length + departureObject.busServices.length === 0)
+        p No services found. Trntxt currently does not display information for routes requiring changes.
+      if (departureObject.trainServices.length > 0)
+        +services('Train services', departureObject.trainServices, departureObject.fromStation, departureObject.toStation)
+      
+      if departureObject.busServices.length > 0
+        +services('Bus services',departureObject.busServices, departureObject.fromStation, departureObject.toStation)
 
-		include footer.jade
+    include footer.jade
