@@ -67,6 +67,7 @@ Angmering,ANG
 Annan,ANN
 Anniesland,ANL
 Ansdell & Fairhaven,AFV
+Apperley Bridge,APY
 Appleby,APP
 Appledore (Kent),APD
 Appleford,APF
@@ -95,9 +96,9 @@ Ash Vale,AHV
 Ashburys,ABY
 Ashchurch for Tewkesbury,ASC
 Ashfield,ASF
+Ashford (Surrey),AFS
 Ashford International,AFK
 Ashford International (Eurostar),ASI
-Ashford (Surrey),AFS
 Ashley,ASY
 Ashtead,AHD
 Ashton-under-Lyne,AHN
@@ -110,7 +111,7 @@ Aspatria,ASP
 Aspley Guise,APG
 Aston,AST
 Atherstone,ATH
-Atherton (Manchester),ATN
+Atherton,ATN
 Attadale,ATT
 Attenborough,ATB
 Attleborough,ATL
@@ -150,7 +151,6 @@ Bare Lane,BAR
 Bargeddie,BGI
 Bargoed,BGD
 Barking,BKG
-Barking Underground,ZBK
 Barlaston,BRT
 Barming,BMG
 Barmouth,BRM
@@ -221,6 +221,7 @@ Bere Alston,BAS
 Bere Ferrers,BFE
 Berkhamsted,BKM
 Berkswell,BKW
+Bermuda Park,BEP
 Berney Arms,BYA
 Berry Brow,BBW
 Berrylands,BRS
@@ -236,7 +237,7 @@ Bexhill,BEX
 Bexley,BXY
 Bexleyheath,BXH
 Bicester North,BCS
-Bicester Town,BIT
+Bicester Village,BIT
 Bickley,BKL
 Bidston,BID
 Biggleswade,BIW
@@ -292,7 +293,7 @@ Bodorgan,BOR
 Bognor Regis,BOG
 Bogston,BGS
 Bolton,BON
-Bolton-on-Dearne,BTD
+Bolton-Upon-Dearne,BTD
 Bookham,BKA
 Bootle (Cumbria),BOC
 Bootle New Strand,BNW
@@ -481,8 +482,8 @@ Chapel-en-le-Frith,CEF
 Chapelton (Devon),CPN
 Chapeltown (South Yorks),CLN
 Chappel & Wakes Colne,CWC
-Charing Cross (Glasgow),CHC
 Charing (Kent),CHG
+Charing Cross (Glasgow),CHC
 Charlbury,CBY
 Charlton,CTN
 Chartham,CRT
@@ -523,7 +524,7 @@ Cholsey,CHO
 Chorley,CRL
 Chorleywood,CLW
 Christchurch,CHR
-Christ's Hospital,CHH
+Christs Hospital,CHH
 Church & Oswaldtwistle,CTW
 Church Fenton,CHF
 Church Stretton,CTT
@@ -531,9 +532,9 @@ Cilmeri,CIM
 City Thameslink,CTK
 Clacton-on-Sea,CLT
 Clandon,CLA
+Clapham (North Yorkshire),CPY
 Clapham High Street,CLP
 Clapham Junction,CLJ
-Clapham (North Yorkshire),CPY
 Clapton,CPT
 Clarbeston Road,CLR
 Clarkston,CKS
@@ -541,8 +542,8 @@ Claverdon,CLV
 Claygate,CLG
 Cleethorpes,CLE
 Cleland,CEA
-Clifton Down,CFN
 Clifton (Manchester),CLI
+Clifton Down,CFN
 Clitheroe,CLH
 Clock House,CLK
 Clunderwen,CUW
@@ -590,12 +591,13 @@ Cottingley,COT
 Coulsdon South,CDS
 Coulsdon Town,CDN
 Coventry,COV
+Coventry Arena,CAA
 Cowden (Kent),CWN
 Cowdenbeath,COW
 Cradley Heath,CRA
 Craigendoran,CGD
 Cramlington,CRM
-Cranbrook,CBK
+Cranbrook (Devon),CBK
 Craven Arms,CRV
 Crawley,CRW
 Crayford,CRY
@@ -686,8 +688,8 @@ Dewsbury,DEW
 Didcot Parkway,DID
 Digby & Sowton,DIG
 Dilton Marsh,DMH
-Dinas Powys,DNS
 Dinas (Rhondda),DMG
+Dinas Powys,DNS
 Dingle Road,DGL
 Dingwall,DIN
 Dinsdale,DND
@@ -703,8 +705,8 @@ Doncaster,DON
 Dorchester South,DCH
 Dorchester West,DCW
 Dore & Totley,DOR
-Dorking Deepdene,DPD
 Dorking (Main),DKG
+Dorking Deepdene,DPD
 Dorking West,DKT
 Dormans,DMS
 Dorridge,DDG
@@ -778,12 +780,13 @@ Eastleigh,ESL
 Eastrington,EGN
 Ebbsfleet International,EBD
 Ebbw Vale Parkway,EBV
+Ebbw Vale Town,EBB
 Eccles (Manchester),ECC
 Eccles Road,ECS
 Eccleston Park,ECL
 Edale,EDL
 Eden Park,EDN
-Edenbridge (Kent),EBR
+Edenbridge,EBR
 Edenbridge Town,EBT
 Edge Hill,EDG
 Edinburgh,EDB
@@ -808,16 +811,18 @@ Elton & Orston,ELO
 Ely,ELY
 Emerson Park,EMP
 Emsworth,EMS
+Energlyn & Churchill Park,ECP
 Enfield Chase,ENC
 Enfield Lock,ENL
 Enfield Town,ENF
 Entwistle,ENT
-Epsom Downs,EPD
 Epsom (Surrey),EPS
+Epsom Downs,EPD
 Erdington,ERD
 Eridge,ERI
 Erith,ERH
 Esher,ESH
+Eskbank,EKB
 Essex Road,EXR
 Etchingham,ETC
 Euxton Balshaw Lane,EBA
@@ -909,6 +914,7 @@ Furness Vale,FNV
 Furze Platt,FZP
 Gainsborough Central,GNB
 Gainsborough Lea Road,GBL
+Galashiels,GAL
 Garelochhead,GCH
 Garforth,GRF
 Gargrave,GGV
@@ -918,7 +924,7 @@ Garsdale,GSD
 Garston (Hertfordshire),GSN
 Garswood,GSW
 Gartcosh,GRH
-Garth (Bridgend),GMG
+Garth (Mid Glamorgan),GMG
 Garth (Powys),GTH
 Garve,GVE
 Gathurst,GST
@@ -961,6 +967,7 @@ Goodmayes,GMY
 Goole,GOO
 Goostrey,GTR
 Gordon Hill,GDH
+Gorebridge,GBG
 Goring & Streatley,GOR
 Goring-by-Sea,GBS
 Gorton,GTO
@@ -1036,8 +1043,8 @@ Hamilton West,HNW
 Hammerton,HMM
 Hampden Park (Sussex),HMD
 Hampstead Heath,HDH
-Hampton Court,HMC
 Hampton (London),HMP
+Hampton Court,HMC
 Hampton Wick,HMW
 Hampton-in-Arden,HIA
 Hamstead (Birmingham),HSD
@@ -1229,6 +1236,7 @@ Isleworth,ISL
 Islip,ISP
 Iver,IVR
 Ivybridge,IVY
+James Cook,JCH
 Jewellery Quarter,JEQ
 Johnston (Pembs),JOH
 Johnstone (Strathclyde),JHN
@@ -1339,6 +1347,7 @@ Laurencekirk,LAU
 Lawrence Hill,LWH
 Layton (Lancs),LAY
 Lazonby & Kirkoswald,LZB
+Lea Bridge,LEB
 Lea Green,LEG
 Lea Hall,LEH
 Leagrave,LEA
@@ -1442,6 +1451,7 @@ London Marylebone,MYB
 London Paddington,PAD
 London Road (Brighton),LRB
 London Road (Guildford),LRD
+London St Pancras (Intl),SPX
 London St Pancras International,STP
 London Victoria,VIC
 London Waterloo,WAT
@@ -1531,8 +1541,8 @@ Maze Hill,MZH
 Meadowhall,MHS
 Meldreth,MEL
 Melksham,MKM
-Melton Mowbray,MMO
 Melton (Suffolk),MES
+Melton Mowbray,MMO
 Menheniot,MEN
 Menston,MNN
 Meols,MEO
@@ -1550,10 +1560,10 @@ Micklefield,MIK
 Middlesbrough,MBR
 Middlewood,MDL
 Midgham,MDG
-Milford Haven,MFH
 Milford (Surrey),MLF
-Mill Hill Broadway,MIL
+Milford Haven,MFH
 Mill Hill (Lancs),MLH
+Mill Hill Broadway,MIL
 Millbrook (Beds),MLB
 Millbrook (Hants),MBK
 Milliken Park,MIN
@@ -1590,8 +1600,8 @@ Mortimer,MOR
 Mortlake,MTL
 Moses Gate,MSS
 Moss Side,MOS
-Mossley Hill,MSH
 Mossley (Manchester),MSL
+Mossley Hill,MSH
 Mosspark,MPK
 Moston,MSO
 Motherwell,MTH
@@ -1645,6 +1655,7 @@ Newbridge,NBE
 Newbury,NBY
 Newbury Racecourse,NRC
 Newcastle,NCL
+Newcourt,NCO
 Newcraighall,NEW
 Newhaven Harbour,NVH
 Newhaven Town,NVN
@@ -1654,11 +1665,12 @@ Newport (Essex),NWE
 Newport (South Wales),NWP
 Newquay,NQY
 Newstead,NSD
+Newton (Lanark),NTN
 Newton Abbot,NTA
 Newton Aycliffe,NAY
 Newton for Hyde,NWN
-Newton (Lanark),NTN
 Newton St Cyres,NTC
+Newtongrange,NEG
 Newton-le-Willows,NLW
 Newtonmore,NWR
 Newton-on-Ayr,NOA
@@ -1720,6 +1732,7 @@ Overpool,OVE
 Overton,OVR
 Oxenholme Lake District,OXN
 Oxford,OXF
+Oxford Parkway,OXP
 Oxshott,OXS
 Oxted,OXT
 Paddock Wood,PDW
@@ -1847,6 +1860,7 @@ Purley,PUR
 Purley Oaks,PUO
 Putney,PUT
 Pwllheli,PWL
+Pye Corner,PYE
 Pyle,PYL
 Quakers Yard,QYD
 Queenborough,QBR
@@ -1941,12 +1955,12 @@ Runcorn East,RUE
 Ruskington,RKT
 Ruswarp,RUS
 Rutherglen,RUT
-Ryde St Johns Road,RYR
 Ryde Esplanade,RYD
 Ryde Pier Head,RYP
+Ryde St Johns Road,RYR
 Ryder Brow,RRB
-Rye House,RYH
 Rye (Sussex),RYE
+Rye House,RYH
 Salford Central,SFD
 Salford Crescent,SLD
 Salfords (Surrey),SAF
@@ -2004,6 +2018,7 @@ Severn Tunnel Junction,STJ
 Shadwell,SDE
 Shalford (Surrey),SFR
 Shanklin,SHN
+Shawfair,SFI
 Shawford,SHW
 Shawlands,SHL
 Sheerness-on-Sea,SSS
@@ -2106,8 +2121,8 @@ Spring Road,SRI
 Springburn,SPR
 Springfield,SPF
 Squires Gate,SQU
-St Albans,SAC
 St Albans Abbey,SAA
+St Albans City,SAC
 St Andrews Road,SAR
 St Annes-on-Sea,SAS
 St Austell,SAU
@@ -2136,8 +2151,8 @@ Stafford,STA
 Staines,SNS
 Stallingborough,SLL
 Stalybridge,SYB
-Stamford Hill,SMH
 Stamford (Lincs),SMD
+Stamford Hill,SMH
 Stanford-le-Hope,SFO
 Stanlow & Thornton,SNT
 Stansted Airport,SSD
@@ -2162,8 +2177,8 @@ Stockton,STK
 Stoke Mandeville,SKM
 Stoke Newington,SKW
 Stoke-on-Trent,SOT
-Stone Crossing,SCG
 Stone (Staffs),SNE
+Stone Crossing,SCG
 Stonebridge Park,SBP
 Stonegate,SOG
 Stonehaven,STN
@@ -2171,17 +2186,18 @@ Stonehouse,SHU
 Stoneleigh,SNL
 Stourbridge Junction,SBJ
 Stourbridge Town,SBT
+Stow,SOI
 Stowmarket,SMK
 Stranraer,STR
-Stratford International,SFA
 Stratford (London),SRA
+Stratford International,SFA
 Stratford-upon-Avon,SAV
 Stratford-upon-Avon Parkway,STY
 Strathcarron,STC
 Strawberry Hill,STW
+Streatham (Greater London),STE
 Streatham Common,SRC
 Streatham Hill,SRH
-Streatham(Greater London),STE
 Streethouse,SHC
 Strines,SRN
 Stromeferry,STF
@@ -2190,8 +2206,8 @@ Stroud (Gloucs),STD
 Sturry,STU
 Styal,SYA
 Sudbury & Harrow Road,SUD
-Sudbury Hill Harrow,SDH
 Sudbury (Suffolk),SUY
+Sudbury Hill Harrow,SDH
 Sugar Loaf,SUG
 Summerston,SUM
 Sunbury,SUU
@@ -2201,10 +2217,10 @@ Sunningdale,SNG
 Sunnymeads,SNY
 Surbiton,SUR
 Surrey Quays,SQE
+Sutton (Surrey),SUO
 Sutton Coldfield,SUT
 Sutton Common,SUC
 Sutton Parkway,SPK
-Sutton (Surrey),SUO
 Swale,SWL
 Swanley,SAY
 Swanscombe,SWM
@@ -2217,8 +2233,8 @@ Swindon (Wilts),SWI
 Swineshead,SWE
 Swinton (Manchester),SNN
 Swinton (South Yorks),SWN
-Sydenham Hill,SYH
 Sydenham (London),SYD
+Sydenham Hill,SYH
 Syon Lane,SYL
 Syston,SYS
 Tackley,TAC
@@ -2306,6 +2322,7 @@ Tulse Hill,TUH
 Tunbridge Wells,TBW
 Turkey Street,TUR
 Tutbury & Hatton,TUT
+Tweedbank,TWB
 Twickenham,TWI
 Twyford,TWY
 Ty Croes,TYC
@@ -2446,7 +2463,7 @@ Whitchurch (Hants),WCH
 Whitchurch (Shropshire),WTC
 White Hart Lane,WHL
 White Notley,WNY
-Whitechapel,ZWL
+Whitechapel,ZLW
 Whitecraigs,WCR
 Whitehaven,WTH
 Whitland,WTL

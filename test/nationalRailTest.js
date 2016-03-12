@@ -27,6 +27,8 @@ describe('Valid inputs for findStation()', function() {
     'didcot':'DID',
     'didcot parkway':'DID',
     'didcotparkway':'DID',
+    'exeterstdavids':'EXD',
+    'exeterstdavid\'s':'EXD',
     'hayeskent':'HYS', // Hayes (Kent)
     'hayes':'HYS',
     'hayesandharlington':'HAY', // Hayes & Harlington
