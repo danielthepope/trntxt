@@ -4,6 +4,7 @@ var path = require('path');
 var util = require('util');
 var soap = require('soap');
 var config = require('./trntxtconfig.js');
+var ignoreStations = require('../resources/ignore_stations.json');
 
 exports.stations = loadStations('../resources/station_codes.csv');
 
@@ -14,13 +15,15 @@ var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessTo
 function loadStations(filePath) {
   var stationFile = fs.readFileSync(path.join(__dirname, filePath), { encoding: 'utf-8' });
   var csvArray = csv.parse(stationFile);
+  csvArray = csvArray.filter(function (arr) {
+    return (ignoreStations.indexOf(arr[1]) < 0);
+  })
   var output = csvArray.map(function (arr) {
     return {
       stationName: arr[0],
       stationCode: arr[1]
     }
   });
-  output.shift();
   return output;
 }
 
