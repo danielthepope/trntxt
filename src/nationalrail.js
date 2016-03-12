@@ -60,7 +60,6 @@ exports.findStation = function (input) {
       } else {
         return stationB.biggestChunk - stationA.biggestChunk;
       }
-      return stationB.biggestChunk - stationA.biggestChunk;
     } else {
       return stationA.firstIndex - stationB.firstIndex;
     }
@@ -105,7 +104,7 @@ exports.getDepartures = function (stations, callback) {
 
   getDepartureObject(stations, function (err, departureObject) {
     if (err) {
-      console.error(err);
+      console.error(JSON.stringify(err));
       var errorObject = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: Getting departures failed.' };
       return callback(errorObject);
     }
