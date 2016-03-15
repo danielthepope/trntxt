@@ -78,6 +78,8 @@ app.get('/defaultsite', function (request, response) {
 app.get('/d', function (request, response) {
   var from = request.query.from;
   var to = request.query.to;
+  if (from) from = from.replace(/\W/g, '');
+  if (to) to = to.replace(/\W/g, '');
   if (from) {
     if (to) {
       response.redirect('/' + from + '/' + to);
