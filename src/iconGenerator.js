@@ -33,6 +33,7 @@ function getSizeFromFileName(name) {
     }
   }
   if (!size) size = 57;
+  if (size > 512) size = 512;
   // Scale for Microsoft
   if (name.indexOf('mstile') !== -1) size *= 1.8;
   return size;

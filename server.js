@@ -139,6 +139,11 @@ app.get('/details/:serviceId', function (request, response) {
 });
 
 app.get('/:from(\\w+)/:to(\\w+)?/:image(*.png)', function (request, response) {
+  var from = request.params.from;
+  var to = request.params.to;
+  if ((from && from.length > 3) || (to && to.length > 3)) {
+    return response.sendStatus(403);
+  }
   var image = iconGenerator.getIcon(request.params.from, request.params.to, request.params.image);
   response.sendFile(image, { root: './' });
 });
