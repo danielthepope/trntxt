@@ -12,11 +12,6 @@ body {
   color: red;
 }
 
-/* Divider between routes */
-hr.d {
-  width: 40%;
-}
-
 hr {
   border: 1px solid #ddd;
 }

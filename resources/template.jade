@@ -40,7 +40,6 @@ html
             | *
       br
       br
-      hr.d
 
   head
     include head.jade
@@ -58,7 +57,7 @@ html
         p
           - var clearUrl = '/' + departureObject.fromStation.stationCode
           - if (path.to) clearUrl += '/' + path.to
-          a(href=clearUrl) x
+          a(href=clearUrl) &times;
           =' Did you mean from '
           each station in didYouMean.from
             - var newUrl = '/'+station.stationCode
@@ -68,7 +67,7 @@ html
       if didYouMean && didYouMean.to &&didYouMean.to.length > 0
         p
           - var clearUrl = '/' + path.from + '/' + departureObject.toStation.stationCode
-          a(href=clearUrl) x
+          a(href=clearUrl) &times;
           = ' Did you mean to '
           each station in didYouMean.to
             a(href='/'+path.from +'/'+ station.stationCode)= station.stationName
