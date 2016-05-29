@@ -5,15 +5,10 @@ html
     include ../header.jade
     p Welcome to Train Text: a data-friendly UK train times site.
     form(method="GET",action="/d")
-      table
-        tr
-          td From
-          td
-            input(name="from",type="text")
-        tr
-          td To
-          td
-            input(name="to",type="text")
+      input(name="from",type="text",placeholder="From")
+      br
+      input(name="to",type="text",placeholder="To")
+      br
       input(type="submit",value="Get train times")
     h3 Usage
     p
