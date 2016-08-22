@@ -111,16 +111,16 @@ exports.getDepartures = function (stations, callback) {
       var errorObject = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: Getting departures failed.' };
       return callback(errorObject);
     }
-    var jadeResponse = {
+    var pugResponse = {
       departureObject: departureObject,
       pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode,
       fromStation: departureObject.fromStation.stationCode
     };
     if (departureObject.toStation !== undefined) {
-      jadeResponse.pageTitle += ' > ' + departureObject.toStation.stationCode;
-      jadeResponse.toStation = departureObject.toStation.stationCode;
+      pugResponse.pageTitle += ' > ' + departureObject.toStation.stationCode;
+      pugResponse.toStation = departureObject.toStation.stationCode;
     }
-    callback(jadeResponse);
+    callback(pugResponse);
   });
 }
 

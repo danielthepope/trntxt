@@ -1,6 +1,6 @@
 var express = require('express');
 var extend = require('extend');
-var jade = require('jade');
+var pug = require('pug');
 var uaParser = require('ua-parser-js');
 var mongoose = require('mongoose');
 var util = require('util');
@@ -21,12 +21,12 @@ db.once('open', function (callback) {
   console.log('Database models initialised');
 });
 
-var jadeOptions = { doctype: 'html' };
-var jadeGlobals = { pageTitle: 'trntxt' };
+var pugOptions = { doctype: 'html' };
+var pugGlobals = { pageTitle: 'trntxt' };
 
 function compile(locals) {
-  var fn = jade.compileFile('resources/template.jade', jadeOptions);
-  return fn(extend({}, jadeGlobals, locals));
+  var fn = pug.compileFile('resources/template.pug', pugOptions);
+  return fn(extend({}, pugGlobals, locals));
 }
 
 function getStationsFromRequest(request) {
@@ -186,8 +186,8 @@ app.get('/:image(*.png)', function (request, response) {
 });
 
 app.get('*/browserconfig.xml', function (request, response) {
-  var jadeOptions = { pretty: true };
-  var fn = jade.compileFile('resources/browserconfig.jade', jadeOptions);
+  var pugOptions = { pretty: true };
+  var fn = pug.compileFile('resources/browserconfig.pug', pugOptions);
   var locals = { path: '/' };
   var urlElements = request.originalUrl.split('/');
   urlElements.forEach(function (element) {

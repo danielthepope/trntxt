@@ -42,9 +42,9 @@ html
       br
 
   head
-    include head.jade
+    include head.pug
   body
-    include header.jade
+    include header.pug
     if (errorMessage)
       p.e= errorMessage
     if (departureObject)
@@ -89,4 +89,4 @@ html
             = ' ' + departureObject.toStation.stationName
             | , but has not provided an arrival time. It is likely that this train will be overtaken by another service.
 
-    include footer.jade
+    include footer.pug

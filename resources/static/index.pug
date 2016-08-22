@@ -1,8 +1,8 @@
 html
   head
-    include ../head.jade
+    include ../head.pug
   body
-    include ../header.jade
+    include ../header.pug
     p Welcome to Train Text: a data-friendly UK train times site.
     form(method="GET",action="/d")
       input(name="from",type="text",placeholder="From")
@@ -27,4 +27,4 @@ html
     p
       strong Protip:
       |  pin journeys to your smartphone's homescreen for one-touch access to your favourite routes.
-    include ../footer.jade
+    include ../footer.pug

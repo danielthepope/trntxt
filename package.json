@@ -28,8 +28,8 @@
     "express": "4.14.0",
     "extend": "3.0.0",
     "images": "3.0.0",
-    "jade": "1.11.0",
     "mongoose": "4.5.9",
+    "pug": "^2.0.0-beta5",
     "soap": "0.11.4",
     "ua-parser-js": "0.7.10"
   },
@@ -38,8 +38,8 @@
     "gulp": "3.9.1",
     "gulp-cssmin": "0.1.7",
     "gulp-develop-server": "0.5.2",
-    "gulp-jade": "1.1.0",
     "gulp-mocha": "3.0.1",
+    "gulp-pug": "^3.0.4",
     "gulp-rename": "1.2.2",
     "mocha": "3.0.2"
   }

@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var server = require('gulp-develop-server');
-var jade = require('gulp-jade');
+var pug = require('gulp-pug');
 var cssmin = require('gulp-cssmin');
 var rename = require('gulp-rename');
 var mocha = require('gulp-mocha');
@@ -19,8 +19,8 @@ gulp.task('server:restart', function() {
 // Watch files for changes
 gulp.task('watch', function() {
   gulp.watch('./resources/*.css', ['build']);
-  gulp.watch('./resources/*.jade', ['build']);
-  gulp.watch('./resources/static/*.jade', ['build']);
+  gulp.watch('./resources/*.pug', ['build']);
+  gulp.watch('./resources/static/*.pug', ['build']);
   gulp.watch('./src/**/*.js', ['test']);
   gulp.watch('./test/**/*.js', ['test']);
   gulp.watch('./server.js', ['test']);
@@ -36,7 +36,7 @@ gulp.task('copy', function(){
   });
 });
 
-gulp.task('build', ['minifycss', 'staticjade', 'copy']);
+gulp.task('build', ['minifycss', 'staticpug', 'copy']);
 
 gulp.task('minifycss', function() {
   return gulp.src('./resources/*.css')
@@ -45,9 +45,9 @@ gulp.task('minifycss', function() {
     .pipe(gulp.dest('./public'));
 });
 
-gulp.task('staticjade', ['minifycss'], function() {
-  return gulp.src('./resources/static/*.jade')
-    .pipe(jade({
+gulp.task('staticpug', ['minifycss'], function() {
+  return gulp.src('./resources/static/*.pug')
+    .pipe(pug({
       doctype: 'html',
       locals: {
         pageTitle: 'trntxt'
