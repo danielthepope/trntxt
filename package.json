@@ -1,14 +1,28 @@
 {
   "name": "trntxt",
-  "version": "1.0.0",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/danielthepope/trntxt.git"
-  },
+  "version": "3.0.0",
+  "description": "A data-friendly UK train times site",
+  "homepage": "http://trntxt.uk",
   "scripts": {
     "start": "node server.js",
     "test": "mocha ./test -R spec"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/danielthepope/trntxt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/danielthepope/trntxt/issues"
+  },
+  "author": {
+    "name": "Daniel Pope",
+    "url": "http://www.danielthepope.co.uk"
+  },
+  "engines": {
+    "node": ">=6.3.1"
+  },
+  "license": "MIT",
+  "private": true,
   "dependencies": {
     "csv-string": "2.3.0",
     "express": "4.14.0",
