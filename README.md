@@ -1,6 +1,6 @@
 # trntxt
 
-[![Join the chat at https://gitter.im/danielthepope/trntxt](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/danielthepope/trntxt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/danielthepope/trntxt.svg)](https://travis-ci.org/danielthepope/trntxt) [![Dependency Status](https://dependencyci.com/github/danielthepope/trntxt/badge)](https://dependencyci.com/github/danielthepope/trntxt)
+[![Build Status](https://travis-ci.org/danielthepope/trntxt.svg)](https://travis-ci.org/danielthepope/trntxt) [![Dependency Status](https://dependencyci.com/github/danielthepope/trntxt/badge)](https://dependencyci.com/github/danielthepope/trntxt)
 
 Pronounced "train text" and currently live at [trntxt.uk](http://trntxt.uk), this is a GPRS-friendly UK train times web service.
 
@@ -37,7 +37,7 @@ Install the required packages using `npm install` in the command line. You also 
 To run the server, just type `gulp`. The server runs, then restarts if any of the JavaScript files are changed.
 
 ### To do
-There are still a few things I'd like to do with trntxt. Check out the [issues page](https://github.com/danielthepope/trntxt/issues) for things to do. If you want to tackle a particular issue, let me know first in a comment or on Gitter - I might be working on it already!
+There are still a few things I'd like to do with trntxt. Check out the [issues page](https://github.com/danielthepope/trntxt/issues) for things to do. If you want to tackle a particular issue, let me know first in a comment or on Twitter - I might be working on it already!
 
 ## Acknowledgements
 There are a number of people I'd like to thank for helping me out throughout the development of this project. The [contributors](https://github.com/danielthepope/trntxt/graphs/contributors) page doesn't tell the whole story, so here we go.
