@@ -50,7 +50,7 @@ gulp.task('staticpug', ['minifycss'], function() {
     .pipe(pug({
       doctype: 'html',
       locals: {
-        pageTitle: 'trntxt'
+        pageTitle: 'Train Text: a data-friendly UK train times site'
       }
     }))
     .pipe(gulp.dest('./public'));
