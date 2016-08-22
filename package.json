@@ -13,7 +13,7 @@
     "csv-string": "2.3.0",
     "express": "4.14.0",
     "extend": "3.0.0",
-    "images": "2.2.0",
+    "images": "3.0.0",
     "jade": "1.11.0",
     "mongoose": "4.5.9",
     "soap": "0.11.4",
