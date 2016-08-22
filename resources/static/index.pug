@@ -4,12 +4,7 @@ html
   body
     include ../header.pug
     p Welcome to Train Text: a data-friendly UK train times site.
-    form(method="GET",action="/d")
-      input(name="from",type="text",placeholder="From")
-      br
-      input(name="to",type="text",placeholder="To")
-      br
-      input(type="submit",value="Get train times")
+    include ../form.pug
     h3 Usage
     p
       | Either use the boxes above or add to this page's URL to search for stations. Station names can be entered using either their 3 letter station codes, or their name e.g. 'bristolparkway', 'bristolp' or 'bpw' will get you times for Bristol Parkway.
@@ -27,4 +22,5 @@ html
     p
       strong Protip:
       |  pin journeys to your smartphone's homescreen for one-touch access to your favourite routes.
+    hr
     include ../footer.pug
