@@ -3,12 +3,7 @@ var express = require('express');
 var extend = require('extend');
 var fs = require('fs');
 var https = require('https');
-var pug = require('pug');
-var uaParser = require('ua-parser-js');
 var mongoose = require('mongoose');
-var util = require('util');
-var config = require('./src/trntxtconfig.js');
-var iconGenerator = require('./src/iconGenerator.js');
 var Nexmo = require('nexmo');
 var nexmo = new Nexmo({
   apiKey: config.nexmoApiKey,
@@ -16,6 +11,12 @@ var nexmo = new Nexmo({
   applicationId: config.nexmoApplicationId,
   privateKey: config.nexmoPrivateKeyPath
 });
+var pug = require('pug');
+var requester = require('request');
+var uaParser = require('ua-parser-js');
+var util = require('util');
+var config = require('./src/trntxtconfig.js');
+var iconGenerator = require('./src/iconGenerator.js');
 var schema = require('./src/mongoSchemas.js')(mongoose);
 var nr = require('./src/nationalrail.js');
 
@@ -252,7 +253,7 @@ app.post('/c/recording', function (request, response) {
     console.log(`STATUS: ${res.statusCode}`);
     console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
     res.pipe(file);
-    console.log('Got MP3? ' + filename);
+    console.log('Got wav? ' + filename);
   });
 
   req.on('error', (e) => {

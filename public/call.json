@@ -7,7 +7,7 @@
   {
     "action": "record",
     "eventUrl": ["http://trntxt.uk/c/recording"],
-    "format": "mp3",
+    "format": "wav",
     "endOnSilence": "2"
   },
   {
