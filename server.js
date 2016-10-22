@@ -5,12 +5,6 @@ var fs = require('fs');
 var https = require('https');
 var mongoose = require('mongoose');
 var Nexmo = require('nexmo');
-var nexmo = new Nexmo({
-  apiKey: config.nexmoApiKey,
-  apiSecret: config.nexmoApiSecret,
-  applicationId: config.nexmoApplicationId,
-  privateKey: config.nexmoPrivateKeyPath
-});
 var pug = require('pug');
 var requester = require('request');
 var uaParser = require('ua-parser-js');
@@ -20,6 +14,12 @@ var iconGenerator = require('./src/iconGenerator.js');
 var schema = require('./src/mongoSchemas.js')(mongoose);
 var nr = require('./src/nationalrail.js');
 
+var nexmo = new Nexmo({
+  apiKey: config.nexmoApiKey,
+  apiSecret: config.nexmoApiSecret,
+  applicationId: config.nexmoApplicationId,
+  privateKey: config.nexmoPrivateKeyPath
+});
 var app = express();
 mongoose.connect(config.dbString);
 var db = mongoose.connection;
