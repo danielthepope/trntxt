@@ -266,8 +266,9 @@ app.post('/c/recording', function (request, response) {
       console.log('Got wav? ' + filename);
       stt.speechToText(filename, function(err, text) {
         if (err) return console.log(err);
-        console.log(text);
-        nexmo.message.sendSms('trntxt', cache.get(request.body.conversation_uuid), text, {}, function(r) {
+        var sendTo = cache.get(request.body.conversation_uuid);
+        console.log(`Sending "${text}" to ${sendTo}`);
+        nexmo.message.sendSms('trntxt', sendTo, text, {}, function(r) {
           console.log(r);
         });
       })
