@@ -7,6 +7,13 @@ var mongoose = require('mongoose');
 var util = require('util');
 var config = require('./src/trntxtconfig.js');
 var iconGenerator = require('./src/iconGenerator.js');
+var Nexmo = require('nexmo');
+var nexmo = new Nexmo({
+  apiKey: config.nexmoApiKey,
+  apiSecret: config.nexmoApiSecret,
+  applicationId: config.nexmoApplicationId,
+  privateKey: config.nexmoPrivateKeyPath
+});
 var schema = require('./src/mongoSchemas.js')(mongoose);
 var nr = require('./src/nationalrail.js');
 
@@ -221,6 +228,10 @@ app.get('/call.json', function (request, response) {
 });
 
 app.post('/c/recording', function (request, response) {
+  var jwt = nexmo.credentials.generateJwt();
+  console.log(jwt);
+  console.log(request.body.recording_url);
+
   response.sendStatus(200);
 })
 

@@ -29,7 +29,9 @@
     "express": "4.14.0",
     "extend": "3.0.0",
     "images": "3.0.0",
+    "jsonwebtoken": "^7.1.9",
     "mongoose": "4.5.9",
+    "nexmo": "^1.1.0-beta1",
     "pug": "^2.0.0-beta5",
     "soap": "0.11.4",
     "ua-parser-js": "0.7.10"
