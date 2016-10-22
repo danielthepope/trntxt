@@ -1,3 +1,4 @@
+var fs = require('fs');
 var requester = require('request');
 var uuid = require('uuid');
 var config = require('./trntxtconfig.js');
