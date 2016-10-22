@@ -32,6 +32,7 @@
     "jsonwebtoken": "^7.1.9",
     "mongoose": "4.5.9",
     "nexmo": "^1.1.0-beta1",
+    "node-cache": "^4.1.0",
     "pug": "^2.0.0-beta5",
     "request": "^2.75.0",
     "soap": "0.11.4",

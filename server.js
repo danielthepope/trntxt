@@ -5,6 +5,7 @@ var fs = require('fs');
 var https = require('https');
 var mongoose = require('mongoose');
 var Nexmo = require('nexmo');
+var NodeCache = require('node-cache');
 var pug = require('pug');
 var requester = require('request');
 var uaParser = require('ua-parser-js');
@@ -13,7 +14,9 @@ var config = require('./src/trntxtconfig.js');
 var iconGenerator = require('./src/iconGenerator.js');
 var schema = require('./src/mongoSchemas.js')(mongoose);
 var nr = require('./src/nationalrail.js');
+var stt = require('./src/speechtotext.js');
 
+var cache = new NodeCache({stdTTL: 60, checkperiod: 100});
 var nexmo = new Nexmo({
   apiKey: config.nexmoApiKey,
   apiSecret: config.nexmoApiSecret,
@@ -230,6 +233,12 @@ app.get('/call.json', function (request, response) {
   response.sendFile('call.json', { root: './public' });
 });
 
+app.post('/', function (request, response) {
+  if (request.body.from && request.body.conversation_uuid) {
+    cache.set(request.body.conversation_uuid, request.body.from);
+  }
+})
+
 app.post('/c/recording', function (request, response) {
   var jwt = nexmo.credentials.generateJwt();
   console.log(jwt);
@@ -252,8 +261,15 @@ app.post('/c/recording', function (request, response) {
   var req = https.request(options, (res) => {
     console.log(`STATUS: ${res.statusCode}`);
     console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-    res.pipe(file);
-    console.log('Got wav? ' + filename);
+    var stream = res.pipe(file);
+    stream.on('finish', function() {
+      console.log('Got wav? ' + filename);
+      stt.speechToText(filename, function(err, text) {
+        nexmo.message.sendSms('trntxt', cache.get(request.body.conversation_uuid, text, {}, function(r) {
+          console.log(r);
+        }));
+      })
+    })
   });
 
   req.on('error', (e) => {
