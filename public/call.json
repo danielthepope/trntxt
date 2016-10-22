@@ -6,8 +6,13 @@
   },
   {
     "action": "record",
-    "eventUrl": "http://trntxt.uk/c/recording",
+    "eventUrl": ["http://trntxt.uk/c/recording"],
     "format": "mp3",
-    "endOnSilence": 3
+    "endOnSilence": "2"
+  },
+  {
+    "action": "talk",
+    "text": "Thanks. I'll text you back with your information. Bye.",
+    "voice_name": "Gwyneth"
   }
 ]

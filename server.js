@@ -1,6 +1,7 @@
 var bodyParser = require('body-parser')
 var express = require('express');
 var extend = require('extend');
+var https = require('https');
 var pug = require('pug');
 var uaParser = require('ua-parser-js');
 var mongoose = require('mongoose');
@@ -84,7 +85,7 @@ function getStationsFromRequest(request) {
 }
 
 app.all('*', function(request, response, next) {
-  console.log(request.url);
+  console.log(request.method + " " + request.url);
   console.log(request.body);
   next();
 })
@@ -231,6 +232,34 @@ app.post('/c/recording', function (request, response) {
   var jwt = nexmo.credentials.generateJwt();
   console.log(jwt);
   console.log(request.body.recording_url);
+
+  var filename = 'resources/recordings/' + request.body.recording_uuid;
+
+  var file = fs.createWriteStream(filename);
+
+  var options = {
+    hostname: 'api.nexmo.com',
+    port: 443,
+    path: request.body.recording_url.split('nexmo.com')[1],
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer ' + jwt
+    }
+  };
+  
+  var req = https.request(options, (res) => {
+    console.log(`STATUS: ${res.statusCode}`);
+    console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+    res.pipe(file);
+    console.log('Got MP3? ' + filename);
+  });
+
+  req.on('error', (e) => {
+    console.log(`problem with request: ${e.message}`);
+  });
+
+  // write data to request body
+  req.end();
 
   response.sendStatus(200);
 })
