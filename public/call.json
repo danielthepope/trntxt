@@ -1,7 +1,13 @@
 [
   {
     "action": "talk",
-    "text": "You are listening to a Call made with Voice API",
+    "text": "You have reached train text. What train times do you need?",
     "voice_name": "Gwyneth"
+  },
+  {
+    "action": "record",
+    "eventUrl": "http://trntxt.uk/c/recording",
+    "format": "mp3",
+    "endOnSilence": 3
   }
 ]

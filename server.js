@@ -1,3 +1,4 @@
+var bodyParser = require('body-parser')
 var express = require('express');
 var extend = require('extend');
 var pug = require('pug');
@@ -20,6 +21,10 @@ db.once('open', function (callback) {
   connected = true;
   console.log('Database models initialised');
 });
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
 
 var pugOptions = { doctype: 'html' };
 var pugGlobals = { pageTitle: 'trntxt' };
@@ -70,6 +75,12 @@ function getStationsFromRequest(request) {
     throw output;
   }
 }
+
+app.all('*', function(request, response, next) {
+  console.log(request.url);
+  console.log(request.body);
+  next();
+})
 
 app.get('/defaultsite', function (request, response) {
   response.sendFile('index.html', { root: './public' });
@@ -207,6 +218,10 @@ app.get('*/browserconfig.xml', function (request, response) {
 
 app.get('/call.json', function (request, response) {
   response.sendFile('call.json', { root: './public' });
+});
+
+app.post('/c/recording', function (request, response) {
+  response.sendStatus(200);
 })
 
 app.use(express.static('public'));
