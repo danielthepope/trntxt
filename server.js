@@ -1,6 +1,7 @@
 var bodyParser = require('body-parser')
 var express = require('express');
 var extend = require('extend');
+var fs = require('fs');
 var https = require('https');
 var pug = require('pug');
 var uaParser = require('ua-parser-js');
