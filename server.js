@@ -205,6 +205,10 @@ app.get('*/browserconfig.xml', function (request, response) {
   });
 });
 
+app.get('/call.json', function (request, response) {
+  response.sendFile('call.json', { root: './public' });
+})
+
 app.use(express.static('public'));
 
 var server = app.listen(config.port, function () {
