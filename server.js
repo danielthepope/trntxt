@@ -265,9 +265,11 @@ app.post('/c/recording', function (request, response) {
     stream.on('finish', function() {
       console.log('Got wav? ' + filename);
       stt.speechToText(filename, function(err, text) {
-        nexmo.message.sendSms('trntxt', cache.get(request.body.conversation_uuid, text, {}, function(r) {
+        if (err) return console.log(err);
+        console.log(text);
+        nexmo.message.sendSms('trntxt', cache.get(request.body.conversation_uuid), text, {}, function(r) {
           console.log(r);
-        }));
+        });
       })
     })
   });
