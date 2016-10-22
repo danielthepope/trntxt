@@ -43,6 +43,7 @@ module.exports.speechToText = function(filename, callback) {
         }
       }, function(err, resp, body) {
         if(err) return callback(err);
+        console.log(body);
         try {
           callback(null, JSON.parse(body).header.name);
         } catch(e) {

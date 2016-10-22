@@ -268,9 +268,7 @@ app.post('/c/recording', function (request, response) {
         if (err) return console.log(err);
         var sendTo = cache.get(request.body.conversation_uuid);
         console.log(`Sending "${text}" to ${sendTo}`);
-        nexmo.message.sendSms('trntxt', sendTo, text, {}, function(r) {
-          console.log(r);
-        });
+        nexmo.message.sendSms('trntxt', sendTo, text);
       })
     })
   });
