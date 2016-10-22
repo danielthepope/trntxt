@@ -53,3 +53,32 @@ module.exports.speechToText = function(filename, callback) {
     });
   });
 }
+
+module.exports.findStations = function(text) {
+  var words = text.toLowerCase().split(' ');
+  var indexTo = words.indexOf('to');
+  var indexFrom = words.indexOf('from');
+  var fromText;
+  var toText;
+  if (indexTo > -1 && indexFrom > -1) {
+    if (indexTo > indexFrom) {
+      toText = words.slice(indexTo+1);
+      fromText = words.slice(indexFrom+1, indexTo);
+    } else {
+      fromText = words.slice(indexFrom+1);
+      toText = words.slice(indexTo+1, indexFrom);
+    }
+  } else if (indexTo > -1) {
+    fromText = words.slice(0, indexTo);
+    toText = words.slice(indexTo+1);
+  } else if (indexFrom > -1) {
+    // Station departure board or
+    toText = words.slice(0, indexFrom);
+    fromText = words.slice(indexFrom+1);
+  } else {
+    // I have no idea what you said to me.
+  }
+  fromText = fromText.join(' ');
+  toText = toText.join(' ');
+  return {from: fromText, to: toText};
+}

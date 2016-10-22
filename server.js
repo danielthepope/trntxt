@@ -151,6 +151,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
   }
 
   nr.getDepartures(stations, function (output) {
+    console.log(output)
     response.send(compile(extend({}, locals, output)));
   });
 });
@@ -267,8 +268,25 @@ app.post('/c/recording', function (request, response) {
       stt.speechToText(filename, function(err, text) {
         if (err) return console.log(err);
         var sendTo = cache.get(request.body.conversation_uuid);
+        var stationNames = stt.findStations(text);
+        var fromStations = nr.findStation(stationNames.from);
+        var fromStation = null;
+        if (fromStations.length > 0) fromStation = fromStations[0].stationCode;
+        var toStations = nr.findStation(stationNames.to);
+        var toStation = null;
+        if (toStations.length > 0) toStation = toStations[0].stationCode;
+        nr.getDepartures({toStation, fromStation}, function (output) {
+          console.log(output)
+          // response.send(compile(extend({}, locals, output)));
+          if (output && output.departureObject && output.departureObject.trainServices && output.departureObject.trainServices.length > 0) {
+            nexmo.message.sendSms('trntxt', sendTo, `You said ${text}. ${JSON.stringify(output.departureObject.trainServices[0])}`);
+          } else {
+            nexmo.message.sendSms('trntxt', sendTo, `You said ${text}. I couldn't find any services.`);
+          }
+          nexmo.message.sendSms('trntxt', sendTo, text);
+        });
+
         console.log(`Sending "${text}" to ${sendTo}`);
-        nexmo.message.sendSms('trntxt', sendTo, text);
       })
     })
   });
