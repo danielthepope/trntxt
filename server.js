@@ -286,7 +286,7 @@ app.post('/c/recording', function (request, response) {
   function generateSmsMessage(nrResults, dictation) {
     if (nrResults && nrResults.departureObject && nrResults.departureObject.trainServices && nrResults.departureObject.trainServices.length > 0) {
       var dep = nrResults.departureObject;
-      var text = `The next train from ${dep.fromStation.stationName} to ${dep.toStation.stationName} will be the ${dep.trainServices[0].std}${dep.trainServices[0].etd === 'On time' ? '' : (dep.trainServices[0].etd === 'Delayed' ? 'Delayed' : ' (expected ' + dep.trainServices[0].etd + ')')}${dep.toStation.stationName === dep.trainServices[0].destinationStation.stationName ? '' : ' to ' + dep.trainServices[0].destinationStation.stationName}${dep.trainServices[0].platform ? ' from platform ' + dep.trainServices[0].platform : ''}.`;
+      var text = `The next train from ${dep.fromStation.stationName} to ${dep.toStation.stationName} will be the ${dep.trainServices[0].std}${dep.trainServices[0].etd === 'On time' ? '' : (dep.trainServices[0].etd === 'Delayed' ? ' (Delayed)' : (dep.trainServices[0].etd === 'Cancelled' ? ' (Cancelled)' :' (expected ' + dep.trainServices[0].etd + ')'))}${dep.toStation.stationName === dep.trainServices[0].destinationStation.stationName ? '' : ' to ' + dep.trainServices[0].destinationStation.stationName}${dep.trainServices[0].platform ? ' from platform ' + dep.trainServices[0].platform : ''}.`;
       if (dep.trainServices.length > 1) {
         text += '\nAlso:\n'
         dep.trainServices.slice(1,3).forEach(function(service, index, array) {
