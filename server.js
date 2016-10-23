@@ -288,9 +288,9 @@ app.post('/c/recording', function (request, response) {
       var dep = nrResults.departureObject;
       var text = `The next train to ${dep.toStation.stationName} from ${dep.fromStation.stationName} will be the ${dep.trainServices[0].std}${dep.trainServices[0].etd === 'On time' ? '' : ' (expected ' + dep.trainServices[0].etd + ')'}${dep.fromStation.stationName === dep.trainServices[0].originStation.stationName ? '' : ' to ' + dep.trainServices[0].originStation.stationName}${dep.trainServices[0].platform ? ' from platform ' + dep.trainServices[0].platform : ''}.`;
       if (dep.trainServices.length > 1) {
-        text += ' Also,'
+        text += '\nAlso:\n'
         dep.trainServices.slice(1,3).forEach(function(service, index, array) {
-          text += ` ${service.std}${service.etd === 'On Time' ? '' : ' (expected ' + service.etd + ')'} to ${service.originStation.stationName}${service.platform ? ', P' + service.platform : ''}${index+1 === array.length ? '.' : ';'}`;
+          text += `${service.std}${service.etd === 'On Time' ? '' : ' (expected ' + service.etd + ')'} to ${service.originStation.stationName}${service.platform ? ', P' + service.platform : ''}${index+1 === array.length ? '.' : ';\n'}`;
         })
       }
       return text;
