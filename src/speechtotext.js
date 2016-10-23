@@ -56,8 +56,8 @@ module.exports.speechToText = function(filename, callback) {
 
 module.exports.findStations = function(text) {
   var words = text.toLowerCase().split(' ');
-  var indexTo = words.indexOf('to');
-  var indexFrom = words.indexOf('from');
+  var indexTo = words.lastIndexOf('to');
+  var indexFrom = words.lastIndexOf('from');
   var fromText;
   var toText;
   if (indexTo > -1 && indexFrom > -1) {
