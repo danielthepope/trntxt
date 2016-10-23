@@ -80,5 +80,6 @@ module.exports.findStations = function(text) {
   }
   fromText = fromText.join(' ');
   toText = toText.join(' ');
+  console.log(`FROM ${fromText}, TO ${toText}`);
   return {from: fromText, to: toText};
 }

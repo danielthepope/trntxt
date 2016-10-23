@@ -270,10 +270,10 @@ app.post('/c/recording', function (request, response) {
         var sendTo = cache.get(request.body.conversation_uuid);
         var stationNames = stt.findStations(text);
         var fromStations = nr.findStation(stationNames.from);
-        var fromStation = null;
+        var fromStation = undefined;
         if (fromStations.length > 0) fromStation = fromStations[0].stationCode;
         var toStations = nr.findStation(stationNames.to);
-        var toStation = null;
+        var toStation = undefined;
         if (toStations.length > 0) toStation = toStations[0].stationCode;
         nr.getDepartures({toStation, fromStation}, function (output) {
           console.log(output)
