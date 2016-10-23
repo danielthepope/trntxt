@@ -286,9 +286,9 @@ app.post('/c/recording', function (request, response) {
   function generateSmsMessage(nrResults, dictation) {
     if (nrResults && nrResults.departureObject && nrResults.departureObject.trainServices && nrResults.departureObject.trainServices.length > 0) {
       var text = `The next train to ${nrResults.departureObject.toStation.stationName} from ${nrResults.departureObject.fromStation.stationName} will be the ${nrResults.departureObject.trainServices[0].std} ${nrResults.departureObject.fromStation.stationName === nrResults.departureObject.trainServices[0].originStation.stationName ? '' : 'to ' + nrResults.departureObject.trainServices[0].originStation.stationName + ' '}${nrResults.departureObject.trainServices[0].platform ? 'from platform ' + nrResults.departureObject.trainServices[0].platform : ''}`
-      nexmo.message.sendSms('trntxt', sendTo, text);
+      return text;
     } else {
-      nexmo.message.sendSms('trntxt', sendTo, `I heard "${dictation}". I couldn't find any services.`);
+      return `I heard "${dictation}". I couldn't find any services.`;
     }
 
   }
