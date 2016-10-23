@@ -283,7 +283,6 @@ app.post('/c/recording', function (request, response) {
           } else {
             nexmo.message.sendSms('trntxt', sendTo, `You said ${text}. I couldn't find any services.`);
           }
-          nexmo.message.sendSms('trntxt', sendTo, text);
         });
 
         console.log(`Sending "${text}" to ${sendTo}`);
