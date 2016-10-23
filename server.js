@@ -271,10 +271,10 @@ app.post('/c/recording', function (request, response) {
         var stationNames = stt.findStations(text);
         var fromStations = nr.findStation(stationNames.from);
         var fromStation = undefined;
-        if (fromStations.length > 0) fromStation = fromStations[0].stationCode;
+        if (fromStations.length > 0) fromStation = fromStations[0];
         var toStations = nr.findStation(stationNames.to);
         var toStation = undefined;
-        if (toStations.length > 0) toStation = toStations[0].stationCode;
+        if (toStations.length > 0) toStation = toStations[0];
         nr.getDepartures({toStation, fromStation}, function (output) {
           console.log(output)
           // response.send(compile(extend({}, locals, output)));
@@ -284,8 +284,6 @@ app.post('/c/recording', function (request, response) {
             nexmo.message.sendSms('trntxt', sendTo, `You said ${text}. I couldn't find any services.`);
           }
         });
-
-        console.log(`Sending "${text}" to ${sendTo}`);
       })
     })
   });
