@@ -276,17 +276,22 @@ app.post('/c/recording', function (request, response) {
         var toStation = undefined;
         if (toStations.length > 0) toStation = toStations[0];
         nr.getDepartures({toStation, fromStation}, function (output) {
-          console.log(output)
-          // response.send(compile(extend({}, locals, output)));
-          if (output && output.departureObject && output.departureObject.trainServices && output.departureObject.trainServices.length > 0) {
-            nexmo.message.sendSms('trntxt', sendTo, `You said ${text}. ${JSON.stringify(output.departureObject.trainServices[0])}`);
-          } else {
-            nexmo.message.sendSms('trntxt', sendTo, `You said ${text}. I couldn't find any services.`);
-          }
+          console.log(output);
+          nexmo.message.sendSms('trntxt', sendTo, generateSmsMessage(output, text));
         });
       })
     })
   });
+
+  function generateSmsMessage(nrResults, dictation) {
+    if (nrResults && nrResults.departureObject && nrResults.departureObject.trainServices && nrResults.departureObject.trainServices.length > 0) {
+      var text = `The next train to ${nrResults.departureObject.toStation.stationName} from ${nrResults.departureObject.fromStation.stationName} will be the ${nrResults.departureObject.trainServices[0].std} ${nrResults.departureObject.fromStation.stationName === nrResults.departureObject.trainServices[0].originStation.stationName ? '' : 'to ' + nrResults.departureObject.trainServices[0].originStation.stationName + ' '}${nrResults.departureObject.trainServices[0].platform ? 'from platform ' + nrResults.departureObject.trainServices[0].platform : ''}`
+      nexmo.message.sendSms('trntxt', sendTo, text);
+    } else {
+      nexmo.message.sendSms('trntxt', sendTo, `I heard "${dictation}". I couldn't find any services.`);
+    }
+
+  }
 
   req.on('error', (e) => {
     console.log(`problem with request: ${e.message}`);
