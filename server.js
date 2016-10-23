@@ -285,7 +285,14 @@ app.post('/c/recording', function (request, response) {
 
   function generateSmsMessage(nrResults, dictation) {
     if (nrResults && nrResults.departureObject && nrResults.departureObject.trainServices && nrResults.departureObject.trainServices.length > 0) {
-      var text = `The next train to ${nrResults.departureObject.toStation.stationName} from ${nrResults.departureObject.fromStation.stationName} will be the ${nrResults.departureObject.trainServices[0].std} ${nrResults.departureObject.fromStation.stationName === nrResults.departureObject.trainServices[0].originStation.stationName ? '' : 'to ' + nrResults.departureObject.trainServices[0].originStation.stationName + ' '}${nrResults.departureObject.trainServices[0].platform ? 'from platform ' + nrResults.departureObject.trainServices[0].platform : ''}`
+      var dep = nrResults.departureObject;
+      var text = `The next train to ${dep.toStation.stationName} from ${dep.fromStation.stationName} will be the ${dep.trainServices[0].std}${dep.trainServices[0].etd === 'On Time' ? '' : ' (expected ' + dep.trainServices[0].etd + ')'}${dep.fromStation.stationName === dep.trainServices[0].originStation.stationName ? '' : ' to ' + dep.trainServices[0].originStation.stationName}${dep.trainServices[0].platform ? ' from platform ' + dep.trainServices[0].platform : ''}.`;
+      if (dep.trainServices.length > 1) {
+        text += ' Also,'
+        dep.trainServices.slice(1,3).forEach(function(service, index, array) {
+          text += ` ${service.std}${service.etd === 'On Time' ? '' : ' (expected ' + service.etd + ')'} to ${service.originStation.stationName}${service.platform ? ', P' + service.platform : ''}${index+1 === array.length ? '.' : ';'}`;
+        })
+      }
       return text;
     } else {
       return `I heard "${dictation}". I couldn't find any services.`;
