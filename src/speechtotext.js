@@ -55,11 +55,12 @@ module.exports.speechToText = function(filename, callback) {
 }
 
 module.exports.findStations = function(text) {
+  text = text || '';
   var words = text.toLowerCase().split(' ');
   var indexTo = words.lastIndexOf('to');
   var indexFrom = words.lastIndexOf('from');
-  var fromText;
-  var toText;
+  var fromText = [];
+  var toText = [];
   if (indexTo > -1 && indexFrom > -1) {
     if (indexTo > indexFrom) {
       toText = words.slice(indexTo+1);

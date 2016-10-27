@@ -275,10 +275,14 @@ app.post('/c/recording', function (request, response) {
         var toStations = nr.findStation(stationNames.to);
         var toStation = undefined;
         if (toStations.length > 0) toStation = toStations[0];
-        nr.getDepartures({toStation, fromStation}, function (output) {
-          console.log(output);
-          nexmo.message.sendSms('trntxt', sendTo, generateSmsMessage(output, text));
-        });
+        if (fromStation && toStation) {
+          nr.getDepartures({toStation, fromStation}, function (output) {
+            console.log(output);
+            nexmo.message.sendSms('trntxt', sendTo, generateSmsMessage(output, text));
+          });
+        } else {
+          nexmo.message.sendSms('trntxt', sendTo, `Sorry, I couldn't figure out a departure and destination station from "${text}"`);
+        }
       })
     })
   });
@@ -295,8 +299,11 @@ app.post('/c/recording', function (request, response) {
       }
       text += '\nMore info at http://trntxt.uk/' + dep.fromStation.stationCode + '/' + dep.toStation.stationCode;
       return text;
+    } else if (nrResults && nrResults.departureObject) {
+      var dep = nrResults.departureObject;
+      return `I couldn't find any services for ${dep.fromStation.stationName} to ${dep.toStation.stationName}. Try http://trntxt.uk/${dep.fromStation.stationCode}/${dep.toStation.stationCode} for more info.`;
     } else {
-      return `I heard "${dictation}". I couldn't find any services.`;
+      return `Looks like something has broken. Please tweet @danielthepope.`;
     }
 
   }
