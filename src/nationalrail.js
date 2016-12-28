@@ -263,6 +263,7 @@ exports.getServiceDetails = function (serviceId, callback) {
  * Takes a string in hh:mm format and returns the number of minutes
  */
 exports.toMins = function (time) {
+  if (!time) return -1;
   time = time.replace(/([^0-9:])/, '');
   var array = time.split(':');
   if (array.length < 2) return -1;
