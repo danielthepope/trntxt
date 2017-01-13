@@ -5,7 +5,15 @@ exports.post = function(url, response_code, ip, user_agent) {
   if (config.sumoUrl) {
     var line = createLogLine(url, response_code, ip, user_agent);
     console.log(line);
-    request.post(config.sumoUrl, {postData: line});
+    request.post({
+      url: config.sumoUrl,
+      body: line,
+      headers: {'Content-Type': 'text/plain'}
+    }, function(error, response, body) {
+      if (error) {
+        console.error("Error posting to Sumo", error);
+      }
+    });
   }
 }
 
