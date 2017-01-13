@@ -8,6 +8,7 @@ var config = require('./src/trntxtconfig.js');
 var iconGenerator = require('./src/iconGenerator.js');
 var schema = require('./src/mongoSchemas.js')(mongoose);
 var nr = require('./src/nationalrail.js');
+var sumo = require('./src/sumo.js');
 
 var app = express();
 mongoose.connect(config.dbString);
@@ -128,6 +129,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 
   nr.getDepartures(stations, function (output) {
     response.send(compile(extend({}, locals, output)));
+    sumo.post(request.url, response.statusCode, request.ip, uaString);
   });
 });
 
