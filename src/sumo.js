@@ -3,6 +3,7 @@ var request = require('request');
 
 exports.post = function(url, response_code, ip, user_agent, stations) {
   if (config.sumoUrl) {
+    if (!stations) stations = {};
     var line = createLogLine(url, response_code, ip, user_agent, stations.fromStation, stations.toStation);
     console.log(line);
     request.post({

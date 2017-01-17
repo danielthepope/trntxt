@@ -72,8 +72,14 @@ function getStationsFromRequest(request) {
   }
 }
 
+app.get('/', function (request, response) {
+  response.sendFile('index.html', { root: './public' });
+  sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
+});
+
 app.get('/defaultsite', function (request, response) {
   response.sendFile('index.html', { root: './public' });
+  sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
 });
 
 app.get('/d', function (request, response) {
@@ -129,7 +135,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 
   nr.getDepartures(stations, function (output) {
     response.send(compile(extend({}, locals, output)));
-    sumo.post(request.url, response.statusCode, request.ip, uaString, stations);
+    sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent'], stations);
   });
 });
 
