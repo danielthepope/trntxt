@@ -129,7 +129,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
 
   nr.getDepartures(stations, function (output) {
     response.send(compile(extend({}, locals, output)));
-    sumo.post(request.url, response.statusCode, request.ip, uaString);
+    sumo.post(request.url, response.statusCode, request.ip, uaString, stations);
   });
 });
 
