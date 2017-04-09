@@ -9,37 +9,46 @@ html
     else
       del= scheduled
     = ' (' + estimated + ')'
+
+  mixin serviceDetails(service, fromStation, toStation)
+    br
+    strong
+      +time(service.std, service.etd)
+      = ' to ' + service.destinationStation.stationName
+    br
+    = 'Platform ' + (service.platform ? service.platform : 'unavailable')
+    if toStation
+      br
+      if service.correctStation
+        = 'Arrives at ' + service.arrivalStation + ' at '
+        strong
+          +time(service.sta, service.eta)
+        if service.time
+          = ', ' + service.time
+      else
+        - incorrectArrivals = true
+        em
+          = 'Arrives at ' + service.arrivalStation + ' at '
+          strong
+            +time(service.sta, service.eta)
+          if service.time
+            = ', ' + service.time
+          | *
+    br
+    br
+
   mixin services(header, serviceArray, fromStation, toStation)
     hr
     br
     strong= header
     br
     each service in serviceArray
-      br
-      strong
-        +time(service.std, service.etd)
-        = ' to ' + service.destinationStation.stationName
-      br
-      = 'Platform ' + (service.platform ? service.platform : 'unavailable')
-      if toStation
-        br
-        if service.correctStation
-          = 'Arrives at ' + service.arrivalStation + ' at '
-          strong
-            +time(service.sta, service.eta)
-          if service.time
-            = ', ' + service.time
-        else
-          - incorrectArrivals = true
-          em
-            = 'Arrives at ' + service.arrivalStation + ' at '
-            strong
-              +time(service.sta, service.eta)
-            if service.time
-              = ', ' + service.time
-            | *
-      br
-      br
+      if service.etd == 'Cancelled'
+        div.g
+          +serviceDetails(service, fromStation, toStation)
+      else
+        div
+          +serviceDetails(service, fromStation, toStation)
 
   head
     include head.pug

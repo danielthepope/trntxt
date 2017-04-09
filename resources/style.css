@@ -12,6 +12,10 @@ body {
   color: red;
 }
 
+.g {
+  color: #bbb;
+}
+
 hr {
   border: 1px solid #ddd;
 }
