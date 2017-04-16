@@ -2,8 +2,8 @@ var fs = require('fs');
 var images = require('images');
 
 var iconPath = 'resources/iconGenerator/';
-var xs = [120, 307, 494, 120, 307, 494];
-var ys = [15, 15, 15, 325, 325, 325];
+
+var characterWidths = {};
 
 // Icons should be stored in resources/iconGenerator
 // format FROM-TO-mstile-70x70.png
@@ -41,14 +41,36 @@ function getSizeFromFileName(name) {
 
 function generateIcon(text, format, size, fileName) {
   var baseImage = iconPath + 'trntxt_logo.png';
-  if (format === 'mstile') baseImage = iconPath + 'trntxt_logo_t.png';
   var image = images(baseImage);
+  var x = 64;
+  var y = 64;
+  var charHeight = 224;
   for (var i = 0; i < 6 && text[i]; i++) {
+    if (i == 3) {
+      // new line
+      x = 64;
+      y = 64 + charHeight + 32;
+    }
     var letterImagePath = iconPath + text[i] + '.png';
-    image.draw(images(letterImagePath), xs[i], ys[i]);
+    image.draw(images(letterImagePath), x, y);
+    x += 32 + characterWidths[text[i]];
   }
-  image.size(size).save(fileName);
+  image.resize(size).save(fileName);
   return fileName;
 }
+
+function getCharacterWidth(letter) {
+  var fileName = iconPath + letter + '.png';
+  return images(fileName).size().width;
+}
+
+function setup() {
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(char => {
+    characterWidths[char] = images(iconPath + char + '.png').size().width;
+    console.log(`${char}: ${characterWidths[char]}px`);
+  });
+}
+
+setup();
 
 exports.getIcon = getIcon;
