@@ -45,12 +45,21 @@ function generateIcon(text, format, size, fileName) {
   var x = 64;
   var y = 64;
   var charHeight = 224;
-  for (var i = 0; i < 6 && text[i]; i++) {
-    if (i == 3) {
-      // new line
-      x = 64;
-      y = 64 + charHeight + 32;
+  for (var i = 0; i < 3 && text[i]; i++) {
+    var letterImagePath = iconPath + text[i] + '.png';
+    image.draw(images(letterImagePath), x, y);
+    x += 32 + characterWidths[text[i]];
+  }
+  x = 1024 - 64;
+  y = 64 + charHeight + 32;
+  for (i = 3; i < 6 && text[i]; i++) {
+    if (characterWidths[text[i]]) {
+      x -= characterWidths[text[i]];
+      x -= 32;
     }
+  }
+  x += 32;
+  for (i = 3; i < 6 && text[i]; i++) {
     var letterImagePath = iconPath + text[i] + '.png';
     image.draw(images(letterImagePath), x, y);
     x += 32 + characterWidths[text[i]];
