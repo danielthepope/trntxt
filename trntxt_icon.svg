@@ -13,7 +13,7 @@
    viewBox="0 0 32 32"
    height="32"
    width="32"
-   sodipodi:docname="trntxt2.svg"
+   sodipodi:docname="trntxt_icon.svg"
    inkscape:version="0.92.1 r15371">
   <metadata
      id="metadata7">
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -60,18 +60,18 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1001"
+     inkscape:window-width="3840"
+     inkscape:window-height="2004"
      id="namedview3"
      showgrid="true"
-     inkscape:zoom="12.625"
-     inkscape:cx="20.157918"
-     inkscape:cy="20.095043"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:zoom="50.5"
+     inkscape:cx="12.661375"
+     inkscape:cy="13.063413"
+     inkscape:window-x="-16"
+     inkscape:window-y="-16"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg8"
-     inkscape:object-paths="true"
+     inkscape:object-paths="false"
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="false">
     <inkscape:grid
@@ -79,7 +79,7 @@
        id="grid3679" />
   </sodipodi:namedview>
   <rect
-     id="rect3681"
+     id="background"
      width="32"
      height="32"
      x="0"
@@ -89,18 +89,18 @@
      inkscape:export-xdpi="3072"
      inkscape:export-ydpi="3072" />
   <rect
-     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.23442686"
-     id="rect4488"
+     style="fill:#ffffff;fill-opacity:1;stroke:none"
+     id="rail"
      width="32"
-     height="0.99999994"
+     height="1"
      x="0"
      y="28"
      inkscape:export-filename="C:\Users\Daniel\git\trntxt\resources\iconGenerator\trntxt_logo.png"
      inkscape:export-xdpi="3072"
      inkscape:export-ydpi="3072" />
   <rect
-     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.15470052"
-     id="rect4490"
+     style="fill:#ffffff;fill-opacity:1;stroke:none"
+     id="sleeper1"
      width="4"
      height="1"
      x="2"
@@ -109,8 +109,8 @@
      inkscape:export-xdpi="3072"
      inkscape:export-ydpi="3072" />
   <rect
-     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.15470052"
-     id="rect4494"
+     style="fill:#ffffff;fill-opacity:1;stroke:none"
+     id="sleeper2"
      width="4"
      height="1"
      x="10"
@@ -119,8 +119,8 @@
      inkscape:export-xdpi="3072"
      inkscape:export-ydpi="3072" />
   <rect
-     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.15470052"
-     id="rect4496"
+     style="fill:#ffffff;fill-opacity:1;stroke:none"
+     id="sleeper3"
      width="4"
      height="1"
      x="18"
@@ -129,8 +129,8 @@
      inkscape:export-xdpi="3072"
      inkscape:export-ydpi="3072" />
   <rect
-     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.15470052"
-     id="rect4500"
+     style="fill:#ffffff;fill-opacity:1;stroke:none"
+     id="sleeper4"
      width="4"
      height="1"
      x="26"
@@ -139,61 +139,35 @@
      inkscape:export-xdpi="3072"
      inkscape:export-ydpi="3072" />
   <path
-     style="fill:#fbfdfe;fill-opacity:1;stroke:none;stroke-width:0.95142919px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 0,27 c 9.3333346,0.0057 26,0 26,0 l 3,-3 -5,-5 C 23,18.094782 22,18 22,18 H 0 Z"
-     id="path4492-2"
+     style="fill:#ffffff;fill-opacity:1;stroke:none"
+     d="m 0,18 v 1 h 6 v 4 H 0 v 1 h 17 l 3,3 h 6 l 3,-3 -1,-1 h -8 v -4 h 4 c -1,-1 -2,-1 -2,-1 z m 9,1 h 8 v 4 H 9 Z"
+     id="trainframe"
      inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccccc"
-     inkscape:export-filename="C:\Users\Daniel\git\trntxt\resources\iconGenerator\trntxt_logo.png"
-     inkscape:export-xdpi="3072"
-     inkscape:export-ydpi="3072" />
+     sodipodi:nodetypes="ccccccccccccccccccccc" />
   <path
-     style="fill:#3fa6da;fill-opacity:0.49803922;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="M 20,27 17,24 H 0 v 3 z"
-     id="path4523-8"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccc"
-     inkscape:export-filename="C:\Users\Daniel\git\trntxt\resources\iconGenerator\trntxt_logo.png"
-     inkscape:export-xdpi="3072"
-     inkscape:export-ydpi="3072" />
+     style="fill:#ffffff;stroke:none;fill-opacity:0.50196081"
+     d="m 0,24 h 17 l 3,3 H 0 Z"
+     id="trainbase"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:#ffffff;stroke:none;fill-opacity:0.50196081"
+     d="m 28,23 h -8 v -4 h 4 z"
+     id="frontwindow"
+     inkscape:connector-curvature="0" />
   <rect
-     style="fill:#3fa6da;fill-opacity:0.49803922;stroke:none;stroke-width:1.6329931;stroke-linejoin:round;stroke-opacity:1"
-     id="rect4555-1"
+     style="fill:#ffffff;fill-opacity:0.50196078;stroke:none"
+     id="window2"
+     width="6"
+     height="4"
+     x="0"
+     y="19" />
+  <rect
+     style="fill:#ffffff;fill-opacity:0.50196078;stroke:none"
+     id="window1"
      width="8"
      height="4"
      x="9"
-     y="19"
-     inkscape:export-filename="C:\Users\Daniel\git\trntxt\resources\iconGenerator\trntxt_logo.png"
-     inkscape:export-xdpi="3072"
-     inkscape:export-ydpi="3072" />
-  <rect
-     style="fill:#3fa6da;fill-opacity:0.49803922;stroke:none;stroke-width:1.41421354;stroke-linejoin:round;stroke-opacity:1"
-     id="rect4555-3"
-     width="6"
-     height="4"
-     x="5.5511151e-016"
-     y="19"
-     inkscape:export-filename="C:\Users\Daniel\git\trntxt\resources\iconGenerator\trntxt_logo.png"
-     inkscape:export-xdpi="3072"
-     inkscape:export-ydpi="3072" />
-  <path
-     style="fill:#3fa6da;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:0.49803922"
-     d="m 20,19 v 4 h 8 l -4,-4 z"
-     id="path4580"
-     inkscape:connector-curvature="0"
-     inkscape:export-filename="C:\Users\Daniel\git\trntxt\resources\iconGenerator\trntxt_logo.png"
-     inkscape:export-xdpi="3072"
-     inkscape:export-ydpi="3072" />
-  <text
-     xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:'Small Fonts';-inkscape-font-specification:'Small Fonts';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-     x="2"
-     y="-9"
-     id="text4539"><tspan
-       sodipodi:role="line"
-       id="tspan4537"
-       x="2"
-       y="27.493212"></tspan></text>
+     y="19" />
   <path
      inkscape:connector-curvature="0"
      id="A"
