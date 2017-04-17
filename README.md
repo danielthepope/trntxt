@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/danielthepope/trntxt.svg)](https://travis-ci.org/danielthepope/trntxt) [![Dependency Status](https://dependencyci.com/github/danielthepope/trntxt/badge)](https://dependencyci.com/github/danielthepope/trntxt)
 
+![trntxt icon](trntxtheader.png)
+
 Pronounced "train text" and currently live at [trntxt.uk](http://trntxt.uk), this is a GPRS-friendly UK train times web service.
 
 *(Also lives at [traintext.uk](http://traintext.uk), but that's not as cool)*
