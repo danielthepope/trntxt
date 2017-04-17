@@ -1,3 +1,4 @@
+var crypto = require('crypto');
 var fs = require('fs');
 var images = require('images');
 
@@ -40,8 +41,11 @@ function getSizeFromFileName(name) {
 }
 
 function generateIcon(text, format, size, fileName) {
-  var baseImage = iconPath + 'trntxt_logo.png';
-  var image = images(baseImage);
+  var baseImage = iconPath + 'trntxt_logo_t.png';
+  var image = images(1024, 1024);
+  var background = backgroundColour(text);
+  image.fill(background[0], background[1], background[2]);
+  image.draw(images(baseImage), 0, 0);
   var x = 64;
   var y = 64;
   var charHeight = 224;
@@ -71,6 +75,50 @@ function generateIcon(text, format, size, fileName) {
 function getCharacterWidth(letter) {
   var fileName = iconPath + letter + '.png';
   return images(fileName).size().width;
+}
+
+function backgroundColour(text) {
+  var hue = parseInt(crypto.createHash('md5').update(text).digest('hex').substring(0, 2), 16) / 256;
+  return hslToRgb(hue, 0.7, 0.6);
+}
+
+// Got from http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+
+/**
+ * Converts an HSL color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes h, s, and l are contained in the set [0, 1] and
+ * returns r, g, and b in the set [0, 255].
+ *
+ * @param   {number}  h       The hue
+ * @param   {number}  s       The saturation
+ * @param   {number}  l       The lightness
+ * @return  {Array}           The RGB representation
+ */
+function hslToRgb(h, s, l){
+    var r, g, b;
+
+    if(s == 0){
+        r = g = b = l; // achromatic
+    }else{
+
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function hue2rgb(p, q, t){
+    if(t < 0) t += 1;
+    if(t > 1) t -= 1;
+    if(t < 1/6) return p + (q - p) * 6 * t;
+    if(t < 1/2) return q;
+    if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
 }
 
 function setup() {
