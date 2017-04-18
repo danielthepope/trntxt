@@ -78,7 +78,9 @@ function getCharacterWidth(letter) {
 }
 
 function backgroundColour(text) {
-  var hue = parseInt(crypto.createHash('md5').update(text).digest('hex').substring(0, 2), 16) / 256;
+  var hue1 = parseInt(crypto.createHash('md5').update(text.substring(0,3)).digest('hex').substring(0, 2), 16);
+  var hue2 = parseInt(crypto.createHash('md5').update(text.substring(3,6)).digest('hex').substring(0, 2), 16);
+  var hue = ((hue1 + hue2) % 256) / 256;
   return hslToRgb(hue, 0.7, 0.6);
 }
 
