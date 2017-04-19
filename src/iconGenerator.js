@@ -41,7 +41,7 @@ function getSizeFromFileName(name) {
 }
 
 function generateIcon(text, format, size, fileName) {
-  var baseImage = iconPath + 'trntxt_logo_t.png';
+  var baseImage = iconPath + 'trntxt_logo.png';
   var image = images(1024, 1024);
   var background = backgroundColour(text);
   image.fill(background[0], background[1], background[2]);
@@ -60,7 +60,7 @@ function generateIcon(text, format, size, fileName) {
     x += 32 + characterWidths[text[i]];
   }
   x = 1024 - 64;
-  y = 64 + charHeight + 32;
+  y = 1024 - 64 - charHeight;
   for (i = 3; i < 6 && text[i]; i++) {
     if (characterWidths[text[i]]) {
       x -= characterWidths[text[i]];
