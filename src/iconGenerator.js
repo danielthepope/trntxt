@@ -44,6 +44,8 @@ function generateIcon(text, format, size, fileName) {
   var baseImage = iconPath + 'trntxt_logo.png';
   var image = images(1024, 1024);
   var background = backgroundColour(text);
+  var paddingX = 96;
+  var paddingY = 64;
   image.fill(background[0], background[1], background[2]);
   if (text.substring(0,3) < text.substring(3,6)) {
     image.draw(images(iconPath + 'gradient-darkleft.png'), 0, 0);
@@ -51,16 +53,16 @@ function generateIcon(text, format, size, fileName) {
     image.draw(images(iconPath + 'gradient-darkright.png'), 0, 0);
   }
   image.draw(images(baseImage), 0, 0);
-  var x = 64;
-  var y = 64;
+  var x = paddingX;
+  var y = paddingY;
   var charHeight = 224;
   for (var i = 0; i < 3 && text[i]; i++) {
     var letterImagePath = iconPath + text[i] + '.png';
     image.draw(images(letterImagePath), x, y);
     x += 32 + characterWidths[text[i]];
   }
-  x = 1024 - 64;
-  y = 1024 - 64 - charHeight;
+  x = 1024 - paddingX;
+  y = 1024 - paddingY - charHeight;
   for (i = 3; i < 6 && text[i]; i++) {
     if (characterWidths[text[i]]) {
       x -= characterWidths[text[i]];
