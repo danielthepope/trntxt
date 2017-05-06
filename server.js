@@ -156,8 +156,8 @@ app.get('/:from(\\w+)/:to(\\w+)?/:image(*.png)', function (request, response) {
   response.sendFile(image, { root: './' });
 });
 
-app.get('/favicon-16x16.png', function (request, response) {
-  response.sendFile('favicon-16x16.png', { root: './public' });
+app.get('/favicon-32x32.png', function (request, response) {
+  response.sendFile('favicon-32x32.png', { root: './public' });
 });
 
 app.get('*/manifest.json', function (request, response) {
