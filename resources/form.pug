@@ -1,6 +1,8 @@
+- fromText = (departureObject && departureObject.fromStation && departureObject.fromStation.stationName) ? departureObject.fromStation.stationName : ""
+- toText = (departureObject && departureObject.toStation && departureObject.toStation.stationName) ? departureObject.toStation.stationName : ""
 form(method="GET",action="/d")
-  input(name="from",type="text",placeholder="From")
+  input(name="from",type="text",placeholder="From",value=fromText)
   br
-  input(name="to",type="text",placeholder="To")
+  input(name="to",type="text",placeholder="To",value=toText)
   br
   input(type="submit",value="Get train times")
