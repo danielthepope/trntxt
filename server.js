@@ -153,7 +153,9 @@ app.get('/:from(\\w+)/:to(\\w+)?/:image(*.png)', function (request, response) {
     return response.sendStatus(403);
   }
   var image = iconGenerator.getIcon(request.params.from, request.params.to, request.params.image);
-  response.sendFile(image, { root: './' });
+
+  response.type('png');
+  response.send(image);
 });
 
 app.get('/favicon-32x32.png', function (request, response) {
@@ -190,7 +192,9 @@ app.get('*/manifest.json', function (request, response) {
 
 app.get('/:image(*.png)', function (request, response) {
   var image = iconGenerator.getIcon('TRN', 'TXT', request.params.image);
-  response.sendFile(image, { root: './' });
+
+  response.type('png');
+  response.send(image)
 });
 
 app.get('*/browserconfig.xml', function (request, response) {

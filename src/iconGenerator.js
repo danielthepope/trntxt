@@ -75,8 +75,7 @@ function generateIcon(text, format, size, fileName) {
     image.draw(images(letterImagePath), x, y);
     x += 32 + characterWidths[text[i]];
   }
-  image.resize(size).save(fileName);
-  return fileName;
+  return image.resize(size).encode('png');
 }
 
 function getCharacterWidth(letter) {
