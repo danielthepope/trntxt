@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var fs = require('fs');
 var images = require('images');
+var OptiPng = require('optipng');
 var streamifier = require('streamifier');
 
 var iconPath = 'resources/iconGenerator/';
@@ -79,7 +80,7 @@ function generateIcon(text, format, size, fileName) {
 
   var buffer = image.resize(size).encode('png');
   var stream = streamifier.createReadStream(buffer);
-  return stream
+  return stream.pipe(new OptiPng())
 }
 
 function getCharacterWidth(letter) {
