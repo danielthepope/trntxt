@@ -155,7 +155,7 @@ app.get('/:from(\\w+)/:to(\\w+)?/:image(*.png)', function (request, response) {
   var image = iconGenerator.getIcon(request.params.from, request.params.to, request.params.image);
 
   response.type('png');
-  response.send(image);
+  image.pipe(response);
 });
 
 app.get('/favicon-32x32.png', function (request, response) {
@@ -194,7 +194,7 @@ app.get('/:image(*.png)', function (request, response) {
   var image = iconGenerator.getIcon('TRN', 'TXT', request.params.image);
 
   response.type('png');
-  response.send(image)
+  image.pipe(response);
 });
 
 app.get('*/browserconfig.xml', function (request, response) {

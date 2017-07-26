@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var fs = require('fs');
 var images = require('images');
+var streamifier = require('streamifier');
 
 var iconPath = 'resources/iconGenerator/';
 
@@ -75,7 +76,10 @@ function generateIcon(text, format, size, fileName) {
     image.draw(images(letterImagePath), x, y);
     x += 32 + characterWidths[text[i]];
   }
-  return image.resize(size).encode('png');
+
+  var buffer = image.resize(size).encode('png');
+  var stream = streamifier.createReadStream(buffer);
+  return stream
 }
 
 function getCharacterWidth(letter) {
