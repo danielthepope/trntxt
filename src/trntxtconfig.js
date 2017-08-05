@@ -1,7 +1,7 @@
-var extend = require('extend');
+const extend = require('extend');
 
-var defaultConfig = require('../config/config.example.js');
-var customConfig = {};
+const defaultConfig = require('../config/config.example.js');
+let customConfig = {};
 try {
   customConfig = require('../config/config.js');
 } catch (e) {}

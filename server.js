@@ -1,34 +1,34 @@
-var express = require('express');
-var extend = require('extend');
-var pug = require('pug');
-var uaParser = require('ua-parser-js');
-var config = require('./src/trntxtconfig.js');
-var iconGenerator = require('./src/iconGenerator.js');
-var nr = require('./src/nationalrail.js');
-var sumo = require('./src/sumo.js');
+const express = require('express');
+const extend = require('extend');
+const pug = require('pug');
+const uaParser = require('ua-parser-js');
+const config = require('./src/trntxtconfig.js');
+const iconGenerator = require('./src/iconGenerator.js');
+const nr = require('./src/nationalrail.js');
+const sumo = require('./src/sumo.js');
 
-var app = express();
+const app = express();
 
-var pugOptions = { doctype: 'html' };
-var pugGlobals = { pageTitle: 'trntxt' };
+const pugOptions = { doctype: 'html' };
+const pugGlobals = { pageTitle: 'trntxt' };
 
 function compile(locals) {
-  var fn = pug.compileFile('resources/template.pug', pugOptions);
+  const fn = pug.compileFile('resources/template.pug', pugOptions);
   return fn(extend({}, pugGlobals, locals));
 }
 
 function getStationsFromRequest(request) {
-  var output = {};
-  var errors = [];
+  const output = {};
+  const errors = [];
   output.didYouMean = {
     from: [],
     to: []
   };
   if (request.params.from !== undefined) {
-    var results = nr.findStation(request.params.from);
+    const results = nr.findStation(request.params.from);
     if (results.length > 0) {
       output.fromStation = results[0];
-      output.didYouMean.from = results.slice(1).filter(function (otherMatch) {
+      output.didYouMean.from = results.slice(1).filter(otherMatch => {
         return results[0].biggestChunk === otherMatch.biggestChunk;
       });
     } else {
@@ -36,10 +36,10 @@ function getStationsFromRequest(request) {
     }
   }
   if (request.params.to !== undefined) {
-    var results = nr.findStation(request.params.to);
+    const results = nr.findStation(request.params.to);
     if (results.length > 0) {
       output.toStation = results[0];
-      output.didYouMean.to = results.slice(1).filter(function (otherMatch) {
+      output.didYouMean.to = results.slice(1).filter(otherMatch => {
         return results[0].biggestChunk === otherMatch.biggestChunk;
       });
     } else {
@@ -48,30 +48,30 @@ function getStationsFromRequest(request) {
   }
   if (errors.length === 0) return output;
   else {
-    output = "Invalid station name";
-    if (errors.length > 1) output += "s: ";
-    else output += ": ";
-    errors.forEach(function (name) {
-      output += name + ", ";
+    let errorMessage = "Invalid station name";
+    if (errors.length > 1) errorMessage += "s: ";
+    else errorMessage += ": ";
+    errors.forEach(name => {
+      errorMessage += name + ", ";
     });
-    output = output.replace(/, $/, "");
-    throw output;
+    errorMessage = errorMessage.replace(/, $/, "");
+    throw errorMessage;
   }
 }
 
-app.get('/', function (request, response) {
+app.get('/', (request, response) => {
   response.sendFile('index.html', { root: './public' });
   sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
 });
 
-app.get('/defaultsite', function (request, response) {
+app.get('/defaultsite', (request, response) => {
   response.sendFile('index.html', { root: './public' });
   sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
 });
 
-app.get('/d', function (request, response) {
-  var from = request.query.from;
-  var to = request.query.to;
+app.get('/d', (request, response) => {
+  let from = request.query.from;
+  let to = request.query.to;
   if (from) from = from.replace(/\W/g, '');
   if (to) to = to.replace(/\W/g, '');
   if (from) {
@@ -86,10 +86,10 @@ app.get('/d', function (request, response) {
 });
 
 // Regex matches letters (no dots), ? means 'to' is optional
-app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
-  var stations = {};
-  var locals = {};
-  var uaString = request.headers['user-agent'];
+app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
+  let stations = {};
+  const locals = {};
+  const uaString = request.headers['user-agent'];
   locals.agent = uaParser(uaString);
   locals.url = request.originalUrl;
   try {
@@ -103,36 +103,36 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
   if (stations.toStation) locals.stationCodePath += stations.toStation.stationCode + '/';
   locals.didYouMean = stations.didYouMean;
 
-  nr.getDepartures(stations, function (output) {
+  nr.getDepartures(stations, output => {
     response.send(compile(extend({}, locals, output)));
     sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent'], stations);
   });
 });
 
-app.get('/details/:serviceId', function (request, response) {
-  nr.getServiceDetails(request.params.serviceId, function (data) {
+app.get('/details/:serviceId', (request, response) => {
+  nr.getServiceDetails(request.params.serviceId, data => {
     console.log(data);
     response.send(data);
   });
 });
 
-app.get('/:from(\\w+)/:to(\\w+)?/:image(*.png)', function (request, response) {
-  var from = request.params.from;
-  var to = request.params.to;
+app.get('/:from(\\w+)/:to(\\w+)?/:image(*.png)', (request, response) => {
+  const from = request.params.from;
+  const to = request.params.to;
   if ((from && from.length > 3) || (to && to.length > 3)) {
     return response.sendStatus(403);
   }
-  var image = iconGenerator.getIcon(request.params.from, request.params.to, request.params.image);
+  const image = iconGenerator.getIcon(request.params.from, request.params.to, request.params.image);
   response.sendFile(image, { root: './' });
 });
 
-app.get('/favicon-32x32.png', function (request, response) {
+app.get('/favicon-32x32.png', (request, response) => {
   response.sendFile('favicon-32x32.png', { root: './public' });
 });
 
-app.get('*/manifest.json', function (request, response) {
-  var manifest = {};
-  var path = request.originalUrl.split('manifest.json')[0];
+app.get('*/manifest.json', (request, response) => {
+  const manifest = {};
+  const path = request.originalUrl.split('manifest.json')[0];
 
   manifest.lang = 'en';
   manifest.name = 'trntxt';
@@ -140,10 +140,10 @@ app.get('*/manifest.json', function (request, response) {
   manifest.start_url = path;
   manifest.display = 'browser';
   manifest.icons = [];
-  var resolutions = ['36', '48', '72', '96', '144', '192'];
-  var densities = ['0.75', '1.0', '1.5', '2.0', '3.0', '4.0'];
-  for (var i = 0; i < 6; i++) {
-    var icon = {};
+  const resolutions = ['36', '48', '72', '96', '144', '192'];
+  const densities = ['0.75', '1.0', '1.5', '2.0', '3.0', '4.0'];
+  for (let i = 0; i < 6; i++) {
+    const icon = {};
     icon.src = path + 'android-chrome-' + resolutions[i] + 'x' + resolutions[i] + '.png';
     icon.sizes = resolutions[i] + 'x' + resolutions[i];
     icon.type = 'image/png';
@@ -152,32 +152,32 @@ app.get('*/manifest.json', function (request, response) {
   }
 
   response.format({
-    json: function () {
+    json: () => {
       response.send(manifest);
     }
   });
 });
 
-app.get('/:image(*.png)', function (request, response) {
-  var image = iconGenerator.getIcon('TRN', 'TXT', request.params.image);
+app.get('/:image(*.png)', (request, response) => {
+  const image = iconGenerator.getIcon('TRN', 'TXT', request.params.image);
   response.sendFile(image, { root: './' });
 });
 
-app.get('*/browserconfig.xml', function (request, response) {
-  var pugOptions = { pretty: true };
-  var fn = pug.compileFile('resources/browserconfig.pug', pugOptions);
-  var locals = { path: '/' };
-  var urlElements = request.originalUrl.split('/');
-  urlElements.forEach(function (element) {
+app.get('*/browserconfig.xml', (request, response) => {
+  const pugOptions = { pretty: true };
+  const fn = pug.compileFile('resources/browserconfig.pug', pugOptions);
+  const locals = { path: '/' };
+  const urlElements = request.originalUrl.split('/');
+  urlElements.forEach(element => {
     if (element !== 'browserconfig.xml' && element !== '') {
-      var results = nr.findStation(element);
+      const results = nr.findStation(element);
       if (results.length > 0) {
         locals.path += results[0].stationCode + '/';
       }
     }
   });
   response.format({
-    'application/xml': function () {
+    'application/xml': () => {
       response.send(fn(locals));
     }
   });
@@ -185,6 +185,6 @@ app.get('*/browserconfig.xml', function (request, response) {
 
 app.use(express.static('public'));
 
-var server = app.listen(config.port, function () {
+const server = app.listen(config.port, () => {
   console.log('listening on port %s', config.port);
 });

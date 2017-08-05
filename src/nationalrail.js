@@ -1,24 +1,24 @@
-var csv = require('csv-string');
-var fs = require('fs');
-var path = require('path');
-var util = require('util');
-var soap = require('soap');
-var config = require('./trntxtconfig.js');
-var ignoreStations = require('../resources/ignore_stations.json');
+const csv = require('csv-string');
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const soap = require('soap');
+const config = require('./trntxtconfig.js');
+const ignoreStations = require('../resources/ignore_stations.json');
 
-exports.stations = loadStations('../resources/station_codes.csv');
+const stations = loadStations('../resources/station_codes.csv');
 
-var soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
-var soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
+const soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
+const soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
   || console.error("No API key provided. Received: " + config.apiKey));
 
 function loadStations(filePath) {
-  var stationFile = fs.readFileSync(path.join(__dirname, filePath), { encoding: 'utf-8' });
-  var csvArray = csv.parse(stationFile);
-  csvArray = csvArray.filter(function (arr) {
+  const stationFile = fs.readFileSync(path.join(__dirname, filePath), { encoding: 'utf-8' });
+  let csvArray = csv.parse(stationFile);
+  csvArray = csvArray.filter(arr => {
     return (ignoreStations.indexOf(arr[1]) < 0);
   })
-  var output = csvArray.map(function (arr) {
+  const output = csvArray.map(arr => {
     return {
       stationName: arr[0],
       stationCode: arr[1]
@@ -27,14 +27,14 @@ function loadStations(filePath) {
   return output;
 }
 
-exports.findStation = function (input) {
-  var results = [];
-  input = exports.sanitise(input);
+function findStation(input) {
+  let results = [];
+  input = sanitise(input);
   if (!input || input.length < 3) return results;
 
   // Find stations whose code matches the input.
   if (input.length === 3) {
-    results = exports.stations.filter(function (station) {
+    results = stations.filter(station => {
       return station.stationCode === input;
     });
     if (results.length > 0) {
@@ -44,19 +44,19 @@ exports.findStation = function (input) {
 
   // Results array is still empty. Try and compare names.
   // Filter station list to find station names containing all characters in the right order.
-  results = exports.stations.filter(function (station) {
-    var stationName = exports.sanitise(station.stationName);
+  results = stations.filter(station => {
+    let stationName = sanitise(station.stationName);
     station.firstIndex = stationName.indexOf(input[0]);
     station.biggestChunk = biggestChunk(stationName, input);
-    for (var i = 0; i < input.length; i++) {
-      var index = stationName.indexOf(input[i]);
+    for (let i = 0; i < input.length; i++) {
+      const index = stationName.indexOf(input[i]);
       if (index === -1) return false;
       stationName = stationName.substring(index + 1);
     }
     return true;
   });
 
-  results = results.sort(function (stationA, stationB) {
+  results = results.sort((stationA, stationB) => {
     if (stationA.firstIndex === stationB.firstIndex) {
       if (stationA.biggestChunk === stationB.biggestChunk) {
         return stationA.stationName.replace(/\(.*\)/, '').length - stationB.stationName.replace(/\(.*\)/, '').length;
@@ -73,7 +73,7 @@ exports.findStation = function (input) {
 
 function getStationNameFromCrs(crs) {
   crs = crs.toUpperCase();
-  var results = exports.stations.filter(function (station) {
+  const results = stations.filter(station => {
     return station.stationCode === crs;
   });
   if (results.length === 0) return null;
@@ -81,13 +81,13 @@ function getStationNameFromCrs(crs) {
 }
 
 function biggestChunk(stationName, input) {
-  for (var i = input.length; i > 0; i--) {
+  for (let i = input.length; i > 0; i--) {
     if (stationName.indexOf(input.substring(0, i - 1)) > -1) return i;
   }
   return 0;
 }
 
-exports.sanitise = function (input) {
+function sanitise(input) {
   if (input || input === '') {
     return input
       .toUpperCase()
@@ -97,21 +97,21 @@ exports.sanitise = function (input) {
   else return null;
 }
 
-exports.getDepartures = function (stations, callback) {
+function getDepartures(requestedStations, callback) {
   if (config.apiKey === undefined) {
     console.error('No API key set!');
-    var cb = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: No API key set.' };
+    const cb = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: No API key set.' };
     callback(cb);
     return;
   }
 
-  getDepartureObject(stations, function (err, departureObject) {
+  getDepartureObject(requestedStations, (err, departureObject) => {
     if (err) {
       console.error(JSON.stringify(err));
-      var errorObject = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: Getting departures failed.' };
+      const errorObject = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: Getting departures failed.' };
       return callback(errorObject);
     }
-    var pugResponse = {
+    const pugResponse = {
       departureObject: departureObject,
       pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode,
       fromStation: departureObject.fromStation.stationCode
@@ -124,42 +124,42 @@ exports.getDepartures = function (stations, callback) {
   });
 }
 
-function getDepartureObject(stations, callback) {
-  var output = {};
-  output.fromStation = stations.fromStation;
-  if (stations.toStation !== undefined) output.toStation = stations.toStation;
+function getDepartureObject(requestedStations, callback) {
+  const output = {};
+  output.fromStation = requestedStations.fromStation;
+  if (requestedStations.toStation !== undefined) output.toStation = requestedStations.toStation;
   output.trainServices = [];
   output.busServices = [];
 
-  var options = {
+  const options = {
     numRows: 10,
-    crs: stations.fromStation.stationCode
+    crs: requestedStations.fromStation.stationCode
   };
-  if (stations.toStation !== undefined) {
-    options.filterCrs = stations.toStation.stationCode;
+  if (requestedStations.toStation !== undefined) {
+    options.filterCrs = requestedStations.toStation.stationCode;
   }
 
-  soap.createClient(soapUrl, function (err, client) {
+  soap.createClient(soapUrl, (err, client) => {
     if (err) return callback(err);
     client.addSoapHeader(soapHeader);
-    return client.GetDepartureBoard(options, function (err, result) {
+    return client.GetDepartureBoard(options, (err, result) => {
       if (err) return callback(err);
-      fs.writeFile('public/lastrequest.txt', JSON.stringify(result, null, 2), function (err) {
+      fs.writeFile('public/lastrequest.txt', JSON.stringify(result, null, 2), err => {
         if (err) return console.error(err);
       });
 
       if (result.GetStationBoardResult.nrccMessages) {
         output.nrccMessages = result.GetStationBoardResult.nrccMessages.message;
-        for (var i = 0; i < output.nrccMessages.length; i++) {
-          output.nrccMessages[i] = exports.removeHtmlTagsExceptA(output.nrccMessages[i]);
+        for (let i = 0; i < output.nrccMessages.length; i++) {
+          output.nrccMessages[i] = removeHtmlTagsExceptA(output.nrccMessages[i]);
         }
       }
-      var oTrainServices = result.GetStationBoardResult.trainServices;
-      processDarwinServices(oTrainServices, stations, function (err, trainServices) {
+      const oTrainServices = result.GetStationBoardResult.trainServices;
+      processDarwinServices(oTrainServices, requestedStations, (err, trainServices) => {
         if (err) return callback(err);
         output.trainServices = trainServices;
-        var oBusServices = result.GetStationBoardResult.busServices;
-        processDarwinServices(oBusServices, stations, function (err, busServices) {
+        const oBusServices = result.GetStationBoardResult.busServices;
+        processDarwinServices(oBusServices, requestedStations, (err, busServices) => {
           if (err) return callback(err);
           output.busServices = busServices;
           return callback(null, output);
@@ -169,16 +169,16 @@ function getDepartureObject(stations, callback) {
   });
 }
 
-exports.removeHtmlTagsExceptA = function (input) {
+function removeHtmlTagsExceptA(input) {
   if (!input) return '';
   return input.replace(/<\/?((([^\/a>]|a[^> ])[^>]*)|)>/ig, '');
 }
 
-function processDarwinServices(oServices, stations, callback) {
-  var aServices = oServices ? oServices.service : [];
-  var aPromises = [];
-  var output = [];
-  for (var i = 0; i < aServices.length; i++) {
+function processDarwinServices(oServices, requestedStations, callback) {
+  const aServices = oServices ? oServices.service : [];
+  const aPromises = [];
+  const output = [];
+  for (let i = 0; i < aServices.length; i++) {
     output[i] = {};
     output[i].originStation = {
       stationName: aServices[i].origin.location[0].locationName
@@ -194,31 +194,31 @@ function processDarwinServices(oServices, stations, callback) {
       output[i].platform = null;
     }
     output[i].serviceID = aServices[i].serviceID;
-    if (stations.toStation) {
+    if (requestedStations.toStation) {
       aPromises.push(makePromiseForService(output[i].serviceID));
     }
   }
-  Promise.all(aPromises).then(function (detailedServices) {
-    for (var i = 0; i < detailedServices.length; i++) {
-      var arrival = getArrivalTimeForService(detailedServices[i], stations.toStation);
+  Promise.all(aPromises).then(detailedServices => {
+    for (let i = 0; i < detailedServices.length; i++) {
+      const arrival = getArrivalTimeForService(detailedServices[i], requestedStations.toStation);
       output[i].sta = arrival.sta;
       output[i].eta = arrival.eta;
       output[i].arrivalStation = arrival.arrivalStation;
       output[i].correctStation = arrival.correctStation;
-      var mins = exports.getServiceTime(output[i]);
-      output[i].time = exports.formatTime(mins);
+      const mins = getServiceTime(output[i]);
+      output[i].time = formatTime(mins);
     }
     return callback(null, output);
-  }, function (error) {
+  }, error => {
     console.error(error);
     return callback(null, output);
   });
 }
 
 function getArrivalTimeForService(service, toStation) {
-  var output = {};
-  var callingPointArray = service.GetServiceDetailsResult.subsequentCallingPoints.callingPointList[0].callingPoint;
-  for (var i = 0; i < callingPointArray.length; i++) {
+  const output = {};
+  const callingPointArray = service.GetServiceDetailsResult.subsequentCallingPoints.callingPointList[0].callingPoint;
+  for (let i = 0; i < callingPointArray.length; i++) {
     if (callingPointArray[i].crs === toStation.stationCode) {
       output.sta = callingPointArray[i].st;
       output.eta = callingPointArray[i].et;
@@ -236,11 +236,11 @@ function getArrivalTimeForService(service, toStation) {
 }
 
 function makePromiseForService(serviceId) {
-  var options = { serviceID: serviceId };
-  return new Promise(function (resolve, reject) {
-    soap.createClient(soapUrl, function (err, client) {
+  const options = { serviceID: serviceId };
+  return new Promise((resolve, reject) => {
+    soap.createClient(soapUrl, (err, client) => {
       client.addSoapHeader(soapHeader);
-      client.GetServiceDetails(options, function (err, result) {
+      client.GetServiceDetails(options, (err, result) => {
         if (err) return reject(err);
         return resolve(result);
       });
@@ -248,12 +248,12 @@ function makePromiseForService(serviceId) {
   });
 }
 
-exports.getServiceDetails = function (serviceId, callback) {
-  return soap.createClient(soapUrl, function (err, client) {
+function getServiceDetails(serviceId, callback) {
+  return soap.createClient(soapUrl, (err, client) => {
     client.addSoapHeader(soapHeader);
     if (err) throw err;
-    var options = { serviceID: serviceId };
-    return client.GetServiceDetails(options, function (result) {
+    const options = { serviceID: serviceId };
+    return client.GetServiceDetails(options, result => {
       return callback(result);
     });
   });
@@ -262,13 +262,13 @@ exports.getServiceDetails = function (serviceId, callback) {
 /**
  * Takes a string in hh:mm format and returns the number of minutes
  */
-exports.toMins = function (time) {
+function toMins(time) {
   if (!time) return -1;
   time = time.replace(/([^0-9:])/, '');
-  var array = time.split(':');
+  const array = time.split(':');
   if (array.length < 2) return -1;
-  var h = parseInt(array[0]);
-  var m = parseInt(array[1]);
+  const h = parseInt(array[0]);
+  const m = parseInt(array[1]);
   if (isNaN(h) || isNaN(m)) {
     return -1;
   } else {
@@ -281,17 +281,17 @@ exports.toMins = function (time) {
  * Returns the number of minutes a service should take,
  *   giving preference to the estimated timings
  */
-exports.getServiceTime = function (timings) {
-  var arrival = exports.toMins(timings.eta);
+function getServiceTime(timings) {
+  let arrival = toMins(timings.eta);
   if (arrival < 0) {
-    arrival = exports.toMins(timings.sta);
+    arrival = toMins(timings.sta);
   }
-  var departure = exports.toMins(timings.etd);
+  let departure = toMins(timings.etd);
   if (departure < 0) {
-    departure = exports.toMins(timings.std);
+    departure = toMins(timings.std);
   }
   if (arrival < 0 || departure < 0) return -1;
-  var mins = arrival - departure;
+  let mins = arrival - departure;
   if (mins < 0) {
     mins += 1440;
   }
@@ -301,10 +301,22 @@ exports.getServiceTime = function (timings) {
 /**
  * Turns minutes into something like 1h 5m
  */
-exports.formatTime = function (mins) {
+function formatTime(mins) {
   if (mins < 0) return null;
-  var h = Math.floor(mins / 60);
-  var m = mins % 60;
-  if (h > 0) return h + 'h ' + m + 'm';
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  if (h > 0) return `${h}h ${m}m`;
   else return m + 'm';
+}
+
+module.exports = {
+  findStation,
+  formatTime,
+  getDepartures,
+  getServiceDetails,
+  getServiceTime,
+  removeHtmlTagsExceptA,
+  sanitise,
+  stations,
+  toMins
 }
