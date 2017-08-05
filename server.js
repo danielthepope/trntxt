@@ -2,25 +2,12 @@ var express = require('express');
 var extend = require('extend');
 var pug = require('pug');
 var uaParser = require('ua-parser-js');
-var mongoose = require('mongoose');
-var util = require('util');
 var config = require('./src/trntxtconfig.js');
 var iconGenerator = require('./src/iconGenerator.js');
-var schema = require('./src/mongoSchemas.js')(mongoose);
 var nr = require('./src/nationalrail.js');
 var sumo = require('./src/sumo.js');
 
 var app = express();
-mongoose.connect(config.dbString);
-var db = mongoose.connection;
-var connected = false;
-var Hit = null;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function (callback) {
-  Hit = mongoose.model('trntxt_hits', schema.hit);
-  connected = true;
-  console.log('Database models initialised');
-});
 
 var pugOptions = { doctype: 'html' };
 var pugGlobals = { pageTitle: 'trntxt' };
@@ -115,23 +102,6 @@ app.get('/:from(\\w+)/:to(\\w+)?', function (request, response) {
   locals.stationCodePath = '/' + stations.fromStation.stationCode + '/';
   if (stations.toStation) locals.stationCodePath += stations.toStation.stationCode + '/';
   locals.didYouMean = stations.didYouMean;
-
-  if (connected && uaString !== 'AlwaysOn') {
-    // Hit object may not have been loaded yet. Let's not make a fuss if it isn't.
-    // Also Azure pings with 'AlwaysOn'. We don't need to save that.
-    var hit = new Hit({
-      agent: locals.agent,
-      url: request.originalUrl,
-      fromStation: stations.fromStation
-    });
-    if (stations.toStation) {
-      hit.toStation = stations.toStation;
-    }
-    hit.save(function (err) {
-      if (err) console.error("It didn't save. Meh");
-      else console.log("Hit saved :)");
-    });
-  }
 
   nr.getDepartures(stations, function (output) {
     response.send(compile(extend({}, locals, output)));
