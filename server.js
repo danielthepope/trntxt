@@ -4,7 +4,9 @@ const pug = require('pug');
 const uaParser = require('ua-parser-js');
 const config = require('./src/trntxtconfig.js');
 const aws = require('./src/icons/aws');
+const Consumer = require('sqs-consumer');
 const iconGenerator = require('./src/icons/iconGenerator');
+const messageProcessor = require('./src/icons/messageProcessor');
 const taskGenerator = require('./src/icons/taskGenerator');
 const Query = taskGenerator.Query;
 const nr = require('./src/nationalrail.js');
@@ -110,6 +112,9 @@ app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
     response.send(compile(extend({}, locals, output)));
     sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent'], stations);
   });
+  // put message on queue to request app icons
+  const query = new Query(stations.fromStation.stationCode, stations.toStation ? stations.toStation.stationCode : null);
+  aws.sendMessage(query);
 });
 
 app.get('/details/:serviceId', (request, response) => {
@@ -200,14 +205,30 @@ function respondWithIcon(request, response) {
       // send image to requester
       response.type('png');
       image.pipe(response);
-      // put message on queue to request everything else
-      // TODO this
-      // const query = new Query(request.params.from, request.params.to);
-      // aws.sendMessage(query);
     } else {
       console.log('returning image from S3');
       response.contentType('png');
       response.send(data.Body);
     }
   });
+}
+
+if (aws.isConfigured()) {
+  const sqsApp = Consumer.create({
+    queueUrl: config.iconQueueUrl,
+    handleMessage: (message, done) => {
+      messageProcessor.processMessage(message.Body, done);
+    }
+  });
+
+  sqsApp.on('error', (err) => {
+    console.log(err.message);
+  });
+
+  sqsApp.on('processing_error', (err, message) => {
+    console.log(`Error processing message ${message.Body}`);
+    console.log(err);
+  })
+
+  sqsApp.start();
 }

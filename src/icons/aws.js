@@ -37,15 +37,18 @@ function getObject(key, callback) {
 }
 
 function objectExists(key, callback) {
-  if (!isConfigured()) return false;
-  const params = {
-    Bucket: config.iconBucketName,
-    Key: key
+  if (isConfigured()) {
+    const params = {
+      Bucket: config.iconBucketName,
+      Key: key
+    };
+    s3.headObject(params, function(err, data) {
+      if (err) callback(false);
+      else callback(true);
+    });
+  } else {
+    return callback(false);
   }
-  s3.headObject(params, function(err, data) {
-    if (err) callback(false);
-    else callback(true);
-  })
 }
 
 function putObject(key, data, callback) {
@@ -56,7 +59,7 @@ function putObject(key, data, callback) {
       Key: key
     };
     console.log(`putting object ${key}`);
-    s3.putObject(params, callback);
+    s3.upload(params, callback);
   } else {
     callback('aws is not configured.');
   }
@@ -70,13 +73,9 @@ function sendMessage(message) {
     const params = {
       MessageBody: message.toJson(),
       QueueUrl: config.iconQueueUrl
-    }
+    };
     sqs.sendMessage(params, function(err, data) {
       if (err) console.log(err, err.stack); // an error occurred
-      else {
-        console.log(params.MessageBody);
-        console.log(data);           // successful response
-      }
     });
   }
 }
@@ -87,4 +86,4 @@ module.exports = {
   objectExists,
   putObject,
   sendMessage
-}
+};
