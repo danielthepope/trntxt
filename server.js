@@ -3,7 +3,10 @@ const extend = require('extend');
 const pug = require('pug');
 const uaParser = require('ua-parser-js');
 const config = require('./src/trntxtconfig.js');
-const iconGenerator = require('./src/iconGenerator.js');
+const aws = require('./src/icons/aws');
+const iconGenerator = require('./src/icons/iconGenerator');
+const taskGenerator = require('./src/icons/taskGenerator');
+const Query = taskGenerator.Query;
 const nr = require('./src/nationalrail.js');
 const sumo = require('./src/sumo.js');
 
@@ -116,18 +119,6 @@ app.get('/details/:serviceId', (request, response) => {
   });
 });
 
-app.get('/:from(\\w+)/:to(\\w+)?/:image(*.png)', (request, response) => {
-  const from = request.params.from;
-  const to = request.params.to;
-  if ((from && from.length > 3) || (to && to.length > 3)) {
-    return response.sendStatus(403);
-  }
-  const image = iconGenerator.getIcon(request.params.from, request.params.to, request.params.image);
-
-  response.type('png');
-  image.pipe(response);
-});
-
 app.get('/favicon-32x32.png', (request, response) => {
   response.sendFile('favicon-32x32.png', { root: './public' });
 });
@@ -160,11 +151,14 @@ app.get('*/manifest.json', (request, response) => {
   });
 });
 
-app.get('/:image(*.png)', (request, response) => {
-  const image = iconGenerator.getIcon('TRN', 'TXT', request.params.image);
+app.get('/:from([A-Z]{3})/:to([A-Z]{3})?/:filename(*.png)', (request, response) => {
+  respondWithIcon(request, response);
+});
 
-  response.type('png');
-  image.pipe(response);
+app.get('/:filename(*.png)', (request, response) => {
+  request.params.from = 'TRN';
+  request.params.to = 'TXT';
+  respondWithIcon(request, response);
 });
 
 app.get('*/browserconfig.xml', (request, response) => {
@@ -192,3 +186,28 @@ app.use(express.static('public'));
 const server = app.listen(config.port, () => {
   console.log('listening on port %s', config.port);
 });
+
+function respondWithIcon(request, response) {
+  console.log(request.path);
+  const task = taskGenerator.deriveTaskFromRequest(request);
+  if (!task) return response.sendStatus(400);
+  // check for object in S3
+  aws.getObject(request.path.substring(1), (err, data) => {
+    if (err) {
+      console.log('generating image from http request');
+      // generate requested image immediately
+      const image = iconGenerator.generateIcon(task);
+      // send image to requester
+      response.type('png');
+      image.pipe(response);
+      // put message on queue to request everything else
+      // TODO this
+      // const query = new Query(request.params.from, request.params.to);
+      // aws.sendMessage(query);
+    } else {
+      console.log('returning image from S3');
+      response.contentType('png');
+      response.send(data.Body);
+    }
+  });
+}
