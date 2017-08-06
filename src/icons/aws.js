@@ -13,8 +13,6 @@ const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 function isConfigured() {
   return (
     config.awsRegion &&
-    config.awsAccessKeyId &&
-    config.awsSecretAccessKey &&
     config.iconBucketName &&
     config.iconQueueUrl
   );
