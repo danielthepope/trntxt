@@ -1,7 +1,6 @@
 const express = require('express');
 const extend = require('extend');
 const pug = require('pug');
-const uaParser = require('ua-parser-js');
 const config = require('./src/trntxtconfig.js');
 const aws = require('./src/icons/aws');
 const Consumer = require('sqs-consumer');
@@ -95,7 +94,6 @@ app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   let stations = {};
   const locals = {};
   const uaString = request.headers['user-agent'];
-  locals.agent = uaParser(uaString);
   locals.url = request.originalUrl;
   try {
     stations = getStationsFromRequest(request);
