@@ -51,6 +51,16 @@ function generateIcon(task) {
   return stream.pipe(new OptiPng());
 }
 
+/**
+ * Create an app icon without text
+ * @param {Task} task 
+ */
+function generateFavicon(task) {
+  const image = images(`${resourcePath}icon_touch_256.png`)
+  const buffer = image.resize(task.width, task.height).encode('png');
+  return streamifier.createReadStream(buffer);
+}
+
 function backgroundColour(from, to) {
   var hue1 = parseInt(crypto.createHash('md5').update(from).digest('hex').substring(0, 2), 16);
   var hue2 = parseInt(crypto.createHash('md5').update(to).digest('hex').substring(0, 2), 16);
@@ -107,5 +117,5 @@ setup();
 
 
 module.exports = {
-  generateIcon
+  generateIcon, generateFavicon
 }

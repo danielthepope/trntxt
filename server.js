@@ -156,13 +156,11 @@ app.get('*/manifest.json', (request, response) => {
   });
 });
 
-app.get('/:from([A-Z]{3})/:to([A-Z]{3})?/:filename(*.png)', (request, response) => {
+app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/:filename(*.png)', (request, response) => {
   respondWithIcon(request, response);
 });
 
 app.get('/:filename(*.png)', (request, response) => {
-  request.params.from = 'TRN';
-  request.params.to = 'TXT';
   respondWithIcon(request, response);
 });
 
@@ -201,7 +199,7 @@ function respondWithIcon(request, response) {
     if (err) {
       console.log('generating image from http request');
       // generate requested image immediately
-      const image = iconGenerator.generateIcon(task);
+      const image = request.params.from ? iconGenerator.generateIcon(task) : iconGenerator.generateFavicon(task);
       // send image to requester
       response.type('png');
       image.pipe(response);
