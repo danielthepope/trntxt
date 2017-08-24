@@ -15,7 +15,7 @@ function generateIcon(task) {
   const to = task.to || '';
   const baseImage = `${resourcePath}trntxt_logo.png`;
   const image = images(1024,1024);
-  const background = backgroundColour(from, to);
+  const background = backgroundColour(from, to, 0.5);
   const paddingX = 96;
   const paddingY = 64;
   const charHeight = 224;
@@ -61,11 +61,29 @@ function generateFavicon(task) {
   return streamifier.createReadStream(buffer);
 }
 
-function backgroundColour(from, to) {
+/**
+ * Generate a colour based on the hash of the From station plus the hash of the To station.
+ * That way, the same colour is produced if the From and To stations are swapped.
+ * @param {string} from 3 characters
+ * @param {string} to 3 characters
+ * @param {number} luminosity 0-1, percentage
+ * @return {Array} RGB values
+ */
+function backgroundColour(from, to, luminosity) {
+  from = from || '';
+  to = to || '';
   var hue1 = parseInt(crypto.createHash('md5').update(from).digest('hex').substring(0, 2), 16);
   var hue2 = parseInt(crypto.createHash('md5').update(to).digest('hex').substring(0, 2), 16);
   var hue = ((hue1 + hue2) % 256) / 256;
-  return hslToRgb(hue, 0.6, 0.5);
+  return hslToRgb(hue, 0.6, luminosity);
+}
+
+function themeColour(from, to) {
+  return rgbToHex(backgroundColour(from, to, 0.8));
+}
+
+function rgbToHex(rgbArray) {
+  return `#${rgbArray[0].toString(16)}${rgbArray[1].toString(16)}${rgbArray[2].toString(16)}`;
 }
 
 // Got from http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
@@ -117,5 +135,5 @@ setup();
 
 
 module.exports = {
-  generateIcon, generateFavicon
+  generateIcon, generateFavicon, themeColour
 }
