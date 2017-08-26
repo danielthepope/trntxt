@@ -204,8 +204,12 @@ function generateManifest(prefix, stations, themeColour) {
     (stations.toStation ? ` to ${stations.toStation.stationName}` : '');
   manifest.start_url = prefix;
   manifest.background_color = '#fff';
-  manifest.theme_color = themeColour;
-  manifest.display = 'standalone';
+  if (stations.fromStation) {
+    manifest.theme_color = themeColour;
+    manifest.display = 'standalone';
+  } else {
+    manifest.display = 'browser';
+  }
   manifest.icons = [];
   const resolutions = ['36', '48', '72', '96', '144', '192'];
   const densities = ['0.75', '1.0', '1.5', '2.0', '3.0', '4.0'];
