@@ -29,6 +29,7 @@
     "express": "^4.15.4",
     "extend": "^3.0.1",
     "images": "^3.0.0",
+    "jstransformer-uglify-js": "^1.2.0",
     "optipng": "^1.1.0",
     "pug": "^2.0.0-beta5",
     "request": "^2.81.0",

@@ -18,6 +18,7 @@ gulp.task('server:start', function() {
 gulp.task('watch', function() {
   gulp.watch('./resources/*.css', ['build']);
   gulp.watch('./resources/*.pug', ['build']);
+  gulp.watch('./resources/*.js', ['build']);
   gulp.watch('./resources/static/*.pug', ['build']);
   gulp.watch('./src/**/*.js', ['test', server.restart]);
   gulp.watch('./config/**/*.js', server.restart);
