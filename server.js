@@ -126,28 +126,11 @@ app.get('/favicon-32x32.png', (request, response) => {
   response.sendFile('favicon-32x32.png', { root: './public' });
 });
 
-app.get('*/manifest.json', (request, response) => {
-  const manifest = {};
+app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/manifest.json', (request, response) => {
+  const stations = getStationsFromRequest(request);
   const path = request.originalUrl.split('manifest.json')[0];
-
-  manifest.lang = 'en';
-  manifest.name = 'trntxt';
-  manifest.short_name = 'trntxt';
-  manifest.start_url = path;
-  manifest.background_color = '#fff';
-  manifest.theme_color = '#59bcd8';
-  manifest.display = 'browser';
-  manifest.icons = [];
-  const resolutions = ['36', '48', '72', '96', '144', '192'];
-  const densities = ['0.75', '1.0', '1.5', '2.0', '3.0', '4.0'];
-  for (let i = 0; i < 6; i++) {
-    const icon = {};
-    icon.src = path + 'android-chrome-' + resolutions[i] + 'x' + resolutions[i] + '.png';
-    icon.sizes = resolutions[i] + 'x' + resolutions[i];
-    icon.type = 'image/png';
-    icon.density = densities[i];
-    manifest.icons.push(icon);
-  }
+  const themeColour = iconGenerator.themeColour(request.params.from, request.params.to);
+  const manifest = generateManifest(path, stations, themeColour);
 
   response.format({
     json: () => {
@@ -209,6 +192,37 @@ function respondWithIcon(request, response) {
       response.send(data.Body);
     }
   });
+}
+
+function generateManifest(prefix, stations, themeColour) {
+  const manifest = {};
+  
+  manifest.lang = 'en';
+  manifest.short_name = 'trntxt';
+  manifest.name = 'trntxt' +
+    (stations.fromStation ? `: ${stations.fromStation.stationName}` : '') +
+    (stations.toStation ? ` to ${stations.toStation.stationName}` : '');
+  manifest.start_url = prefix;
+  manifest.background_color = '#fff';
+  if (stations.fromStation) {
+    manifest.theme_color = themeColour;
+    manifest.display = 'standalone';
+  } else {
+    manifest.display = 'browser';
+  }
+  manifest.icons = [];
+  const resolutions = ['36', '48', '72', '96', '144', '192'];
+  const densities = ['0.75', '1.0', '1.5', '2.0', '3.0', '4.0'];
+  for (let i = 0; i < 6; i++) {
+    const icon = {};
+    icon.src = prefix + 'android-chrome-' + resolutions[i] + 'x' + resolutions[i] + '.png';
+    icon.sizes = resolutions[i] + 'x' + resolutions[i];
+    icon.type = 'image/png';
+    icon.density = densities[i];
+    manifest.icons.push(icon);
+  }
+
+  return manifest;
 }
 
 if (aws.isConfigured()) {
