@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var server = require('gulp-develop-server');
 var pug = require('gulp-pug');
 var cssmin = require('gulp-cssmin');
-var rename = require('gulp-rename');
 var mocha = require('gulp-mocha');
 var uglify = require('gulp-uglify');
 var pump = require('pump');
@@ -42,15 +41,14 @@ gulp.task('build', ['minifycss', 'minifyjs', 'staticpug', 'copy']);
 gulp.task('minifycss', function() {
   return gulp.src('./resources/*.css')
     .pipe(cssmin())
-    .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest('./public'));
+    .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('minifyjs', function(cb) {
   pump([
     gulp.src('./resources/static/*.js'),
     uglify(),
-    gulp.dest('./public')
+    gulp.dest('./dist')
   ], cb);
 });
 
@@ -62,7 +60,7 @@ gulp.task('staticpug', ['minifycss'], function() {
         pageTitle: 'Train Text: a data-friendly UK train times site'
       }
     }))
-    .pipe(gulp.dest('./public'));
+    .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('test', ['build'], function() {

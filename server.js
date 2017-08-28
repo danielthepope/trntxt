@@ -64,12 +64,7 @@ function getStationsFromRequest(request) {
 }
 
 app.get('/', (request, response) => {
-  response.sendFile('index.html', { root: './public' });
-  sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
-});
-
-app.get('/defaultsite', (request, response) => {
-  response.sendFile('index.html', { root: './public' });
+  response.sendFile('index.html', { root: './dist' });
   sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
 });
 
@@ -122,10 +117,6 @@ app.get('/details/:serviceId', (request, response) => {
   });
 });
 
-app.get('/favicon-32x32.png', (request, response) => {
-  response.sendFile('favicon-32x32.png', { root: './public' });
-});
-
 app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/manifest.json', (request, response) => {
   const stations = getStationsFromRequest(request);
   const path = request.originalUrl.split('manifest.json')[0];
@@ -167,6 +158,7 @@ app.get('*/browserconfig.xml', (request, response) => {
   });
 });
 
+app.use(express.static('dist'));
 app.use(express.static('public'));
 
 const server = app.listen(config.port, () => {
