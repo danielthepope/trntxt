@@ -4,9 +4,9 @@
 
 ![trntxt icon](trntxtheader.png)
 
-Pronounced "train text" and currently live at [trntxt.uk](http://trntxt.uk), this is a GPRS-friendly UK train times web service.
+Pronounced "train text" and currently live at [trntxt.uk](https://trntxt.uk), this is a GPRS-friendly UK train times web service.
 
-*(Also lives at [traintext.uk](http://traintext.uk), but that's not as cool)*
+*(Also lives at [traintext.uk](https://traintext.uk), but that's not as cool)*
 
 Uses the [National Rail 'Darwin' API](https://lite.realtime.nationalrail.co.uk/OpenLDBWS/) to get departure times.
 
@@ -16,9 +16,9 @@ trntxt currently gives departure times for a given station, optionally filtered 
 Stations can be input using either their 3-letter codes or by their names (without spaces). For example, 'bristolparkway', 'bristolp' and 'bpw' will all give times for Bristol Parkway.
 
 ### Examples
-* [/pad](http://trntxt.uk/pad): Departure board for London Paddington
-* [/swindon](http://trntxt.uk/swindon): Departure board for Swindon
-* [/bth/cardiffcentral](http://trntxt.uk/bth/cardiffcentral): List of trains from Bath Spa that call at Cardiff Central
+* [/pad](https://trntxt.uk/pad): Departure board for London Paddington
+* [/swindon](https://trntxt.uk/swindon): Departure board for Swindon
+* [/bth/cardiffcentral](https://trntxt.uk/bth/cardiffcentral): List of trains from Bath Spa that call at Cardiff Central
 
 ## Contributing
 Thanks for helping out! Please feel free to fork this repo, make your changes then make a pull request.
@@ -34,9 +34,9 @@ module.exports = {
 };
 ```
 
-Install the required packages using `npm install` in the command line. You also need to install the gulp command line interface globally, if you haven't already done so: `npm install -g gulp-cli`
+Install the required packages using `npm install` in the command line.
 
-To run the server, just type `gulp`. The server runs, then restarts if any of the JavaScript files are changed.
+To run the server, just type `npm run dev`. The server runs, then restarts/rebuilds if any of the files are changed.
 
 ### To do
 There are still a few things I'd like to do with trntxt. Check out the [issues page](https://github.com/danielthepope/trntxt/issues) for things to do. If you want to tackle a particular issue, let me know first in a comment or on Twitter - I might be working on it already!
