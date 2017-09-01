@@ -130,11 +130,11 @@ app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/manifest.json', (request, response) 
   });
 });
 
-app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/:filename(*.png)', (request, response) => {
-  respondWithIcon(request, response);
+app.get('/favicon-32x32.png', (request, response) => {
+  response.sendFile('favicon-32x32.png', { root: './public' });
 });
 
-app.get('/:filename(*.png)', (request, response) => {
+app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/:filename(*.png)', (request, response) => {
   respondWithIcon(request, response);
 });
 
