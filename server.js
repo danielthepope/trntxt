@@ -120,7 +120,7 @@ app.get('/details/:serviceId', (request, response) => {
 app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/manifest.json', (request, response) => {
   const stations = getStationsFromRequest(request);
   const path = request.originalUrl.split('manifest.json')[0];
-  const themeColour = iconGenerator.themeColour(request.params.from, request.params.to);
+  const themeColour = request.params.from ? iconGenerator.themeColour(request.params.from, request.params.to) : '#59bcd8';
   const manifest = generateManifest(path, stations, themeColour);
 
   response.format({
@@ -196,12 +196,8 @@ function generateManifest(prefix, stations, themeColour) {
     (stations.toStation ? ` to ${stations.toStation.stationName}` : '');
   manifest.start_url = prefix;
   manifest.background_color = '#fff';
-  if (stations.fromStation) {
-    manifest.theme_color = themeColour;
-    manifest.display = 'standalone';
-  } else {
-    manifest.display = 'browser';
-  }
+  manifest.theme_color = themeColour;
+  manifest.display = 'browser';
   manifest.icons = [];
   const resolutions = ['36', '48', '72', '96', '144', '192'];
   const densities = ['0.75', '1.0', '1.5', '2.0', '3.0', '4.0'];
