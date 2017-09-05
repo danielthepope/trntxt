@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-var nr = require('../src/nationalrail.js');
+var nr = require('../../src/nationalrail.js');
 
 describe('removeHtmlTagsExceptA()', function() {
   it('shouldn\'t be laugh in the face of undefined', function() {

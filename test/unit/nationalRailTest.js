@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-var nr = require('../src/nationalrail.js');
+var nr = require('../../src/nationalrail.js');
 
 describe('Station object validation', function() {
   it('should all have a stationName property', function() {
