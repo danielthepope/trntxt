@@ -232,3 +232,5 @@ if (aws.isConfigured()) {
 
   sqsApp.start();
 }
+
+module.exports = { port: config.port }

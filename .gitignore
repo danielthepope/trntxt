@@ -32,3 +32,5 @@ node_modules
 public/lastrequest.txt
 config/config.js
 dist
+
+\.vscode/
