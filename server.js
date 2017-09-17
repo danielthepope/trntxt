@@ -241,6 +241,7 @@ function generateManifest(prefix, stations, themeColour) {
   manifest.name = 'trntxt' +
     (stations.fromStation ? `: ${stations.fromStation.stationName}` : '') +
     (stations.toStation ? ` to ${stations.toStation.stationName}` : '');
+  manifest.description = 'Train Text: a data-friendly UK train times service';
   manifest.start_url = prefix;
   manifest.background_color = '#fff';
   manifest.theme_color = themeColour;
