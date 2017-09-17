@@ -248,15 +248,13 @@ function generateManifest(prefix, stations, themeColour) {
   manifest.display = 'browser';
   manifest.icons = [];
   const resolutions = ['36', '48', '72', '96', '144', '192'];
-  const densities = ['0.75', '1.0', '1.5', '2.0', '3.0', '4.0'];
-  for (let i = 0; i < 6; i++) {
+  resolutions.forEach(resolution => {
     const icon = {};
-    icon.src = prefix + 'android-chrome-' + resolutions[i] + 'x' + resolutions[i] + '.png';
-    icon.sizes = resolutions[i] + 'x' + resolutions[i];
+    icon.src = `${prefix}android-chrome-${resolution}x${resolution}.png`;
+    icon.sizes = `${resolution}x${resolution}`;
     icon.type = 'image/png';
-    icon.density = densities[i];
     manifest.icons.push(icon);
-  }
+  });
 
   return manifest;
 }

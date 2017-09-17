@@ -57,14 +57,14 @@ describe('Integration tests:', function() {
       .then(function(response) {
         expect(response.status).to.equal(200);
         response.arrayBuffer()
-        .then(Buffer)
-        .then(function(buffer) {
-          const expectedBody = fs.readFileSync(`${folder}/${filename}`);
-          const responseHash = crypto.createHash('md5').update(buffer).digest('hex');
-          const expectedHash = crypto.createHash('md5').update(expectedBody).digest('hex');
-          expect(responseHash).to.equal(expectedHash);
-          done();
-        });
+          .then(Buffer)
+          .then(function(buffer) {
+            const expectedBody = fs.readFileSync(`${folder}/${filename}`);
+            const responseHash = crypto.createHash('md5').update(buffer).digest('hex');
+            const expectedHash = crypto.createHash('md5').update(expectedBody).digest('hex');
+            expect(responseHash).to.equal(expectedHash);
+            done();
+          });
       });
   }
   
@@ -115,6 +115,29 @@ describe('Integration tests:', function() {
         requiredProperties.forEach(property => {
           it(`has '${property}'`, function() {
             expect(manifest[property], `property '${property}' does not exist`).to.exist;
+          });
+        });
+
+        describe('icons', function() {
+          it('has icons listed', function() {
+            expect(manifest.icons).to.be.an('array');
+            expect(manifest.icons.length).to.be.greaterThan(0);
+          });
+          it(`has valid icons`, function(done) {
+            const length = manifest.icons.length;
+            let count = 0;
+            manifest.icons.forEach(icon => {
+              expect(icon.src).to.not.be.empty;
+              expect(icon.sizes).to.not.be.empty;
+              expect(icon.type).to.not.be.empty;
+              expect(icon.src).to.contain(icon.sizes);
+              browser.visit(urlFor(icon.src), function() {
+                browser.assert.success();
+                if (++count === length) {
+                  done();
+                }
+              });
+            });
           });
         });
       });
