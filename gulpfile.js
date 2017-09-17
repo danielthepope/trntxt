@@ -9,10 +9,10 @@ var util = require('util');
 var fs = require('fs');
 
 gulp.task('server:start', function() {
-  server.listen( { 
-    path: './server.js',
+  server.listen( {
+    path: './app.js',
     successMessage: /listening on port \d+/
-  } );
+  });
 });
 
 // Watch files for changes
@@ -23,7 +23,7 @@ gulp.task('watch', function() {
   gulp.watch('./src/**/*.js', ['test', server.restart]);
   gulp.watch('./config/**/*.js', server.restart);
   gulp.watch('./test/**/*.js', ['test']);
-  gulp.watch('./server.js', ['test', server.restart]);
+  gulp.watch('./*.js', ['test', server.restart]);
 });
 
 gulp.task('copy', function(){

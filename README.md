@@ -30,13 +30,13 @@ Once you have a key, paste it into `./config/config.js`; this file is generated 
 *config/config.js should look like this*
 ```javascript
 module.exports = {
-	apiKey: 'your-api-key-here'
+  apiKey: 'your-api-key-here'
 };
 ```
 
-Install the required packages using `npm install` in the command line.
+Install the required packages using `npm install` in the command line. You also need to install the gulp command line interface globally, if you haven't already done so: `npm install -g gulp-cli`.
 
-To run the server, just type `npm run dev`. The server runs, then restarts/rebuilds if any of the files are changed.
+To run the server, just type `gulp`. The server runs, then restarts/rebuilds if any of the files are changed.
 
 ### To do
 There are still a few things I'd like to do with trntxt. Check out the [issues page](https://github.com/danielthepope/trntxt/issues) for things to do. If you want to tackle a particular issue, let me know first in a comment or on Twitter - I might be working on it already!

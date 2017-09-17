@@ -161,9 +161,56 @@ app.get('*/browserconfig.xml', (request, response) => {
 app.use(express.static('dist'));
 app.use(express.static('public'));
 
-const server = app.listen(config.port, () => {
-  console.log('listening on port %s', config.port);
-});
+let server = null;
+let sqsApp = null;
+
+/**
+ * Start the server.
+ * @param {number} port Optional. If not supplied it will use the port 
+ * number defined in the config / PORT env variable
+ */
+function start(port) {
+  const portToUse = port === undefined ? config.port : port;
+  server = app.listen(portToUse);
+  console.log(`listening on port ${server.address().port}`);
+  
+  if (aws.isConfigured()) {
+    sqsApp = Consumer.create({
+      queueUrl: config.iconQueueUrl,
+      handleMessage: (message, done) => {
+        messageProcessor.processMessage(message.Body, done);
+      }
+    });
+  
+    sqsApp.on('error', (err) => {
+      console.log(err.message);
+    });
+  
+    sqsApp.on('processing_error', (err, message) => {
+      console.log(`Error processing message ${message.Body}`);
+      console.log(err);
+    })
+  
+    sqsApp.start();
+  }
+}
+
+function stop() {
+  if (aws.isConfigured() && sqsApp) {
+    sqsApp.stop();
+  }
+  if (server) {
+    server.close();
+  }
+}
+
+function port() {
+  if (server) {
+    return server.address().port;
+  } else {
+    return null;
+  }
+}
 
 function respondWithIcon(request, response) {
   console.log(request.path);
@@ -213,24 +260,4 @@ function generateManifest(prefix, stations, themeColour) {
   return manifest;
 }
 
-if (aws.isConfigured()) {
-  const sqsApp = Consumer.create({
-    queueUrl: config.iconQueueUrl,
-    handleMessage: (message, done) => {
-      messageProcessor.processMessage(message.Body, done);
-    }
-  });
-
-  sqsApp.on('error', (err) => {
-    console.log(err.message);
-  });
-
-  sqsApp.on('processing_error', (err, message) => {
-    console.log(`Error processing message ${message.Body}`);
-    console.log(err);
-  })
-
-  sqsApp.start();
-}
-
-module.exports = { port: config.port }
+module.exports = { port, start, stop }
