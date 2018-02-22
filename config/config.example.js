@@ -9,5 +9,6 @@ module.exports = {
   awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   iconBucketName: process.env.TRNTXT_ICON_BUCKET,
   iconQueueUrl: process.env.TRNTXT_ICON_QUEUE,
-  sumoUrl: process.env.SUMO_URL
+  sumoUrl: process.env.SUMO_URL,
+  mashapeProxySecret: process.env.MASHAPE_PROXY_SECRET
 };

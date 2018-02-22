@@ -181,10 +181,12 @@ function processDarwinServices(oServices, requestedStations, callback) {
   for (let i = 0; i < aServices.length; i++) {
     output[i] = {};
     output[i].originStation = {
-      stationName: aServices[i].origin.location[0].locationName
+      stationName: aServices[i].origin.location[0].locationName,
+      stationCode:aServices[i].origin.location[0].crs
     };
     output[i].destinationStation = {
-      stationName: aServices[i].destination.location[0].locationName
+      stationName: aServices[i].destination.location[0].locationName,
+      stationCode:aServices[i].destination.location[0].crs
     };
     output[i].std = aServices[i].std;
     output[i].etd = aServices[i].etd;

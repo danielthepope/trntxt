@@ -84,6 +84,28 @@ app.get('/d', (request, response) => {
   }
 });
 
+app.get('/api/departures/:from(\\w+)/:to(\\w+)?', (request, response) => {
+  var secret = request.headers['x-mashape-proxy-secret'];
+  if (!secret) return response.status(401).send('Header X-Mashape-Proxy-Secret is not present');
+  if (secret !== config.mashapeProxySecret) return response.status(401).send('Invalid X-Mashape-Proxy-Secret');
+  // User is authenticated
+  let stations = {};
+  try {
+    stations = getStationsFromRequest(request);
+  } catch (e) {
+    locals.errorMessage = e;
+    return response.send(compile(locals));
+  }
+  const output = {};
+  output.stations = stations;
+
+  nr.getDepartures(stations, nrResponse => {
+    output.departures = nrResponse.departureObject.trainServices;
+    output.warnings = nrResponse.departureObject.nrccMessages;
+    return response.send(output);
+  });
+});
+
 // Regex matches letters (no dots), ? means 'to' is optional
 app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   let stations = {};
