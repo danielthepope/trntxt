@@ -195,6 +195,7 @@ function processDarwinServices(oServices, requestedStations, callback) {
     } else {
       output[i].platform = null;
     }
+    output[i].operator = aServices[i].operator;
     output[i].serviceID = aServices[i].serviceID;
     if (requestedStations.toStation) {
       aPromises.push(makePromiseForService(output[i].serviceID));

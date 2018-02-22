@@ -17,6 +17,8 @@ html
       = ' to ' + service.destinationStation.stationName
     br
     = 'Platform ' + (service.platform ? service.platform : 'unavailable')
+    br
+    = service.operator
     if toStation
       br
       if service.correctStation
