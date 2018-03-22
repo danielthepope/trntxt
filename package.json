@@ -26,6 +26,7 @@
   "private": true,
   "dependencies": {
     "aws-sdk": "^2.94.0",
+    "cors": "^2.8.4",
     "csv-string": "^2.3.2",
     "express": "^4.15.4",
     "extend": "^3.0.1",

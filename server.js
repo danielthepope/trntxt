@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const extend = require('extend');
 const pug = require('pug');
@@ -84,11 +85,11 @@ app.get('/d', (request, response) => {
   }
 });
 
-app.get('/api/departures/:from(\\w+)/:to(\\w+)?', (request, response) => {
-  var secret = request.headers['x-mashape-proxy-secret'];
-  if (!secret) return response.status(401).send('Header X-Mashape-Proxy-Secret is not present');
-  if (secret !== config.mashapeProxySecret) return response.status(401).send('Invalid X-Mashape-Proxy-Secret');
-  // User is authenticated
+app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) => {
+  // var secret = request.headers['x-mashape-proxy-secret'];
+  // if (!secret) return response.status(401).send('Header X-Mashape-Proxy-Secret is not present');
+  // if (secret !== config.mashapeProxySecret) return response.status(401).send('Invalid X-Mashape-Proxy-Secret');
+  // User would be authenticated if I uncomment the bit above.
   let stations = {};
   try {
     stations = getStationsFromRequest(request);
