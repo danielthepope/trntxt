@@ -154,17 +154,51 @@ function getDepartureObject(requestedStations, callback) {
           output.nrccMessages[i] = removeHtmlTagsExceptA(output.nrccMessages[i]);
         }
       }
-      const oTrainServices = result.GetStationBoardResult.trainServices;
-      processDarwinServices(oTrainServices, requestedStations, (err, trainServices) => {
-        if (err) return callback(err);
-        output.trainServices = trainServices;
-        const oBusServices = result.GetStationBoardResult.busServices;
-        processDarwinServices(oBusServices, requestedStations, (err, busServices) => {
-          if (err) return callback(err);
-          output.busServices = busServices;
-          return callback(null, output);
+      let aTrainServices = result.GetStationBoardResult.trainServices ? result.GetStationBoardResult.trainServices.service : [];
+      let aBusServices = result.GetStationBoardResult.busServices ? result.GetStationBoardResult.busServices.service : [];
+      if (aTrainServices.length < 10 || aBusServices.length < 10) {
+        // Get another page of departures
+        const nextPageOptions = Object.assign({}, options);
+        nextPageOptions.timeOffset=119;
+        client.GetDepartureBoard(nextPageOptions, (err, nextPageResult) => {
+          if (err) {
+            // Ignore error, use empty object
+            console.error(err);
+            nextPageResult = {
+              GetStationBoardResult: {
+                trainServices: [],
+                busServices: []
+              }
+            };
+          }
+          if (nextPageResult.GetStationBoardResult.trainServices) {
+            aTrainServices = aTrainServices.concat(nextPageResult.GetStationBoardResult.trainServices.service).slice(0,10);
+          }
+          if (nextPageResult.GetStationBoardResult.busServices) {
+            aBusServices = aBusServices.concat(nextPageResult.GetStationBoardResult.busServices.service).slice(0,10);
+          }
+          processDarwinServices(aTrainServices, requestedStations, (err, trainServices) => {
+            if (err) return callback(err);
+            output.trainServices = trainServices;
+            processDarwinServices(aBusServices, requestedStations, (err, busServices) => {
+              if (err) return callback(err);
+              output.busServices = busServices;
+              return callback(null, output);
+            });
+          });
         });
-      });
+      } else {
+        // Just process those ones
+        processDarwinServices(aTrainServices, requestedStations, (err, trainServices) => {
+          if (err) return callback(err);
+          output.trainServices = trainServices;
+          processDarwinServices(aBusServices, requestedStations, (err, busServices) => {
+            if (err) return callback(err);
+            output.busServices = busServices;
+            return callback(null, output);
+          });
+        });
+      }
     });
   });
 }
@@ -174,8 +208,7 @@ function removeHtmlTagsExceptA(input) {
   return input.replace(/<\/?((([^\/a>]|a[^> ])[^>]*)|)>/ig, '');
 }
 
-function processDarwinServices(oServices, requestedStations, callback) {
-  const aServices = oServices ? oServices.service : [];
+function processDarwinServices(aServices, requestedStations, callback) {
   const aPromises = [];
   const output = [];
   for (let i = 0; i < aServices.length; i++) {
