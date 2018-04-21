@@ -3,10 +3,7 @@ const express = require('express');
 const extend = require('extend');
 const pug = require('pug');
 const config = require('./src/trntxtconfig.js');
-const aws = require('./src/icons/aws');
-const Consumer = require('sqs-consumer');
 const iconGenerator = require('./src/icons/iconGenerator');
-const messageProcessor = require('./src/icons/messageProcessor');
 const taskGenerator = require('./src/icons/taskGenerator');
 const Query = taskGenerator.Query;
 const nr = require('./src/nationalrail.js');
@@ -65,7 +62,7 @@ function getStationsFromRequest(request) {
 }
 
 app.get('/', (request, response) => {
-  response.sendFile('index.html', { root: './dist' });
+  response.sendFile('index.html', { root: './dist', maxAge: 3600000 });
   sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
 });
 
@@ -125,12 +122,10 @@ app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   locals.didYouMean = stations.didYouMean;
 
   nr.getDepartures(stations, output => {
+    response.set('Cache-Control', 'public, max-age=20');
     response.send(compile(extend({}, locals, output)));
     sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent'], stations);
   });
-  // put message on queue to request app icons
-  const query = new Query(stations.fromStation.stationCode, stations.toStation ? stations.toStation.stationCode : null);
-  aws.sendMessage(query);
 });
 
 app.get('/details/:serviceId', (request, response) => {
@@ -154,7 +149,7 @@ app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/manifest.json', (request, response) 
 });
 
 app.get('/favicon-32x32.png', (request, response) => {
-  response.sendFile('favicon-32x32.png', { root: './public' });
+  response.sendFile('favicon-32x32.png', { root: './public', maxAge: 86400000 });
 });
 
 app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/:filename(*.png)', (request, response) => {
@@ -181,11 +176,10 @@ app.get('*/browserconfig.xml', (request, response) => {
   });
 });
 
-app.use(express.static('dist'));
+app.use(express.static('dist', {maxAge: 86400000}));
 app.use(express.static('public'));
 
 let server = null;
-let sqsApp = null;
 
 /**
  * Start the server.
@@ -196,32 +190,9 @@ function start(port) {
   const portToUse = port === undefined ? config.port : port;
   server = app.listen(portToUse);
   console.log(`listening on port ${server.address().port}`);
-  
-  if (aws.isConfigured()) {
-    sqsApp = Consumer.create({
-      queueUrl: config.iconQueueUrl,
-      handleMessage: (message, done) => {
-        messageProcessor.processMessage(message.Body, done);
-      }
-    });
-  
-    sqsApp.on('error', (err) => {
-      console.log(err.message);
-    });
-  
-    sqsApp.on('processing_error', (err, message) => {
-      console.log(`Error processing message ${message.Body}`);
-      console.log(err);
-    })
-  
-    sqsApp.start();
-  }
 }
 
 function stop() {
-  if (aws.isConfigured() && sqsApp) {
-    sqsApp.stop();
-  }
   if (server) {
     server.close();
   }
@@ -239,21 +210,13 @@ function respondWithIcon(request, response) {
   console.log(request.path);
   const task = taskGenerator.deriveTaskFromRequest(request);
   if (!task) return response.sendStatus(400);
-  // check for object in S3
-  aws.getObject(request.path.substring(1), (err, data) => {
-    if (err) {
-      console.log('generating image from http request');
-      // generate requested image immediately
-      const image = request.params.from ? iconGenerator.generateIcon(task) : iconGenerator.generateFavicon(task);
-      // send image to requester
-      response.type('png');
-      image.pipe(response);
-    } else {
-      console.log('returning image from S3');
-      response.contentType('png');
-      response.send(data.Body);
-    }
-  });
+  console.log('generating image from http request');
+  // generate requested image immediately
+  const image = request.params.from ? iconGenerator.generateIcon(task) : iconGenerator.generateFavicon(task);
+  // send image to requester
+  response.type('png');
+  response.set('Cache-Control', 'public, max-age=86400');
+  image.pipe(response);
 }
 
 function generateManifest(prefix, stations, themeColour) {
