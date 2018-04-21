@@ -91,8 +91,7 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
   try {
     stations = getStationsFromRequest(request);
   } catch (e) {
-    locals.errorMessage = e;
-    return response.send(compile(locals));
+    return response.status(400).send(e);
   }
   const output = {};
   output.stations = stations;
