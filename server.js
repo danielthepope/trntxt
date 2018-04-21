@@ -99,7 +99,7 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
   nr.getDepartures(stations, nrResponse => {
     output.departures = nrResponse.departureObject.trainServices;
     output.warnings = nrResponse.departureObject.nrccMessages;
-    return response.send(output);
+    return response.set('Cache-Control', 'public, max-age=20').send(output);
   });
 });
 
