@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var server = require('gulp-develop-server');
 var pug = require('gulp-pug');
-var cssmin = require('gulp-cssmin');
+var cleanCSS = require('gulp-clean-css');
 var mocha = require('gulp-mocha');
 var uglify = require('gulp-uglify');
 var pump = require('pump');
@@ -40,7 +40,7 @@ gulp.task('build', ['minifycss', 'minifyjs', 'staticpug', 'copy']);
 
 gulp.task('minifycss', function() {
   return gulp.src('./resources/*.css')
-    .pipe(cssmin())
+    .pipe(cleanCSS({compatibility: 'ie8'}))
     .pipe(gulp.dest('./dist/public'));
 });
 

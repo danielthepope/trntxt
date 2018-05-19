@@ -40,7 +40,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "gulp": "^3.9.1",
-    "gulp-cssmin": "0.2.0",
+    "gulp-clean-css": "^3.9.4",
     "gulp-develop-server": "^0.5.2",
     "gulp-mocha": "^5.0.0",
     "gulp-pug": "^4.0.1",
