@@ -2,12 +2,11 @@ const cors = require('cors');
 const express = require('express');
 const extend = require('extend');
 const pug = require('pug');
-const config = require('./src/trntxtconfig.js');
-const iconGenerator = require('./src/icons/iconGenerator');
-const taskGenerator = require('./src/icons/taskGenerator');
-const Query = taskGenerator.Query;
-const nr = require('./src/nationalrail.js');
-const sumo = require('./src/sumo.js');
+const config = require('./trntxtconfig.js');
+const iconGenerator = require('./icons/iconGenerator');
+const taskGenerator = require('./icons/taskGenerator');
+const nr = require('./nationalrail.js');
+const sumo = require('./sumo.js');
 
 const app = express();
 
@@ -62,7 +61,7 @@ function getStationsFromRequest(request) {
 }
 
 app.get('/', (request, response) => {
-  response.sendFile('index.html', { root: './dist', maxAge: 3600000 });
+  response.sendFile('index.html', { root: './dist/public', maxAge: 3600000 });
   sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
 });
 
@@ -175,7 +174,7 @@ app.get('*/browserconfig.xml', (request, response) => {
   });
 });
 
-app.use(express.static('dist', {maxAge: 86400000}));
+app.use(express.static('dist/public', {maxAge: 86400000}));
 app.use(express.static('public'));
 
 let server = null;

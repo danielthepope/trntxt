@@ -4,7 +4,7 @@ const Browser = require('zombie');
 const crypto = require('crypto');
 const fs = require('fs');
 
-const server = require('../../server');
+const server = require('../../src/server');
 
 function urlFor(path) {
   if (!path.startsWith('/')) {
@@ -39,7 +39,7 @@ describe('Integration tests:', function() {
   });
   
   describe('Public files', function() {
-    ['public', 'dist'].forEach(function(folder) {
+    ['public', 'dist/public'].forEach(function(folder) {
       describe(`in ${folder}/`, function() {
         files = fs.readdirSync(folder);
         files.forEach(function(path) {

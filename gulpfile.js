@@ -10,7 +10,7 @@ var fs = require('fs');
 
 gulp.task('server:start', function() {
   server.listen( {
-    path: './app.js',
+    path: './src/app.js',
     successMessage: /listening on port \d+/
   });
 });
@@ -41,14 +41,14 @@ gulp.task('build', ['minifycss', 'minifyjs', 'staticpug', 'copy']);
 gulp.task('minifycss', function() {
   return gulp.src('./resources/*.css')
     .pipe(cssmin())
-    .pipe(gulp.dest('./dist'));
+    .pipe(gulp.dest('./dist/public'));
 });
 
 gulp.task('minifyjs', function(cb) {
   pump([
     gulp.src('./resources/static/*.js'),
     uglify(),
-    gulp.dest('./dist')
+    gulp.dest('./dist/public')
   ], cb);
 });
 
@@ -60,7 +60,7 @@ gulp.task('staticpug', ['minifycss'], function() {
         pageTitle: 'Train Text: a data-friendly UK train times site'
       }
     }))
-    .pipe(gulp.dest('./dist'));
+    .pipe(gulp.dest('./dist/public'));
 });
 
 gulp.task('test', ['build'], function() {
