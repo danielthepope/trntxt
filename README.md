@@ -25,9 +25,9 @@ Thanks for helping out! Please feel free to fork this repo, make your changes th
 
 If you want to run this program locally, you will need to register for a National Rail API key [here](http://www.nationalrail.co.uk/46391.aspx).
 
-Once you have a key, paste it into `./config/config.js`; this file is generated based on the template `./config/config.example.js` at build-time.
+Once you have a key, paste it into `./src/config/config.js`; this file is generated based on the template `./src/config/config.example.js` at build-time.
 
-*config/config.js should look like this*
+*src/config/config.js should look like this*
 ```javascript
 module.exports = {
   apiKey: 'your-api-key-here'
