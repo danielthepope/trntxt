@@ -21,17 +21,16 @@ gulp.task('watch', function() {
   gulp.watch('./resources/**/*.pug', ['build']);
   gulp.watch('./resources/**/*.js', ['build']);
   gulp.watch('./src/**/*.js', ['test', server.restart]);
-  gulp.watch('./config/**/*.js', server.restart);
   gulp.watch('./test/**/*.js', ['test']);
   gulp.watch('./*.js', ['test', server.restart]);
 });
 
 gulp.task('copy', function(){
-  fs.exists('./config/config.js', function (exists) {
+  fs.exists('./src/config/config.js', function (exists) {
     if (exists) return;
     else {
-      fs.createReadStream('./config/config.example.js')
-        .pipe(fs.createWriteStream('./config/config.js'));
+      fs.createReadStream('./src/config/config.example.js')
+        .pipe(fs.createWriteStream('./src/config/config.js'));
     }
   });
 });
