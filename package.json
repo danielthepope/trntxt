@@ -2,7 +2,7 @@
   "name": "trntxt",
   "version": "3.0.0",
   "description": "A data-friendly UK train times site",
-  "homepage": "http://trntxt.uk",
+  "homepage": "https://trntxt.uk",
   "scripts": {
     "start": "node src/app.js",
     "build": "gulp build",
@@ -17,7 +17,7 @@
   },
   "author": {
     "name": "Daniel Pope",
-    "url": "http://www.danielthepope.co.uk"
+    "url": "https://www.dpope.uk"
   },
   "engines": {
     "node": ">=6.0.0"
