@@ -23,20 +23,17 @@ Stations can be input using either their 3-letter codes or by their names (witho
 ## Contributing
 Thanks for helping out! Please feel free to fork this repo, make your changes then make a pull request.
 
-If you want to run this program locally, you will need to register for a National Rail API key [here](http://www.nationalrail.co.uk/46391.aspx).
+This program will run on Node 6 or 8.
 
-Once you have a key, paste it into `./src/config/config.js`; this file is generated based on the template `./src/config/config.example.js` at build-time.
+Install the required packages using `npm install` in the command line.
 
-*src/config/config.js should look like this*
-```javascript
-module.exports = {
-  apiKey: 'your-api-key-here'
-};
-```
+You will need to register for a National Rail API key [here](http://www.nationalrail.co.uk/46391.aspx).
 
-Install the required packages using `npm install` in the command line. You also need to install the gulp command line interface globally, if you haven't already done so: `npm install -g gulp-cli`.
+Once you have a key, paste it into `./src/config/config.js`, overwriting the default value for `apiKey`. `config.js` is created when you first run `npm install`.
 
-To run the server, just type `gulp`. The server runs, then restarts/rebuilds if any of the files are changed.
+You can run the program using `npm start`. This will lsten on port 3000 by default, so you can visit localhost:3000 on your browser. If you want to use a different port, set the environment variable `PORT`. You can do this in Bash by running `PORT=12345 npm start`. Otherwise you can overwrite the default value for `port` in `config.js`.
+
+While developing, you might find it useful to run `npm run develop`. The server runs, then restarts/rebuilds if any of the files are changed.
 
 ### To do
 There are still a few things I'd like to do with trntxt. Check out the [issues page](https://github.com/danielthepope/trntxt/issues) for things to do. If you want to tackle a particular issue, let me know first in a comment or on Twitter - I might be working on it already!

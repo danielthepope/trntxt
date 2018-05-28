@@ -4,11 +4,12 @@
   "description": "A data-friendly UK train times site",
   "homepage": "https://trntxt.uk",
   "scripts": {
-    "prebuild": "tsc",
+    "postinstall": "gulp copy",
     "build": "gulp build",
-    "prestart": "tsc",
+    "develop": "gulp",
+    "prestart": "gulp build",
     "start": "node dist/app.js",
-    "test": "mocha ./test/**/*.js -R spec"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
