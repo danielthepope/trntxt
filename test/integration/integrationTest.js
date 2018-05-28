@@ -4,7 +4,7 @@ const Browser = require('zombie');
 const crypto = require('crypto');
 const fs = require('fs');
 
-const server = require('../../src/server');
+const server = require('../../dist/server');
 
 function urlFor(path) {
   if (!path.startsWith('/')) {
