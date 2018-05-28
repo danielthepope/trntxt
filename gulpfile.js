@@ -3,14 +3,18 @@ var server = require('gulp-develop-server');
 var pug = require('gulp-pug');
 var cleanCSS = require('gulp-clean-css');
 var mocha = require('gulp-mocha');
+var ts = require('gulp-typescript');
+var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var pump = require('pump');
 var util = require('util');
 var fs = require('fs');
 
+var tsProject = ts.createProject('tsconfig.json');
+
 gulp.task('server:start', function() {
   server.listen( {
-    path: './src/app.js',
+    path: './dist/app.js',
     successMessage: /listening on port \d+/
   });
 });
@@ -20,7 +24,8 @@ gulp.task('watch', function() {
   gulp.watch('./resources/*.css', ['build']);
   gulp.watch('./resources/**/*.pug', ['build']);
   gulp.watch('./resources/**/*.js', ['build']);
-  gulp.watch('./src/**/*.js', ['test', server.restart]);
+  gulp.watch('./src/**/*.js', ['build', 'test', server.restart]);
+  gulp.watch('./src/**/*.ts', ['build', 'test', server.restart]);
   gulp.watch('./test/**/*.js', ['test']);
   gulp.watch('./*.js', ['test', server.restart]);
 });
@@ -35,7 +40,15 @@ gulp.task('copy', function(){
   });
 });
 
-gulp.task('build', ['minifycss', 'minifyjs', 'staticpug', 'copy']);
+gulp.task('build', ['compile', 'minifycss', 'minifyjs', 'staticpug', 'copy']);
+
+gulp.task('compile', function() {
+  return tsProject.src()
+    .pipe(sourcemaps.init())
+    .pipe(tsProject())
+    .pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: './' }))
+    .pipe(gulp.dest('./dist'));
+});
 
 gulp.task('minifycss', function() {
   return gulp.src('./resources/*.css')

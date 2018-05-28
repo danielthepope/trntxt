@@ -4,8 +4,9 @@
   "description": "A data-friendly UK train times site",
   "homepage": "https://trntxt.uk",
   "scripts": {
+    "prebuild": "tsc",
     "build": "gulp build",
-    "prestart": "./node_modules/.bin/tsc",
+    "prestart": "tsc",
     "start": "node dist/app.js",
     "test": "mocha ./test/**/*.js -R spec"
   },
@@ -46,6 +47,8 @@
     "gulp-develop-server": "^0.5.2",
     "gulp-mocha": "^5.0.0",
     "gulp-pug": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^3.0.0",
     "mocha": "^5.2.0",
     "pump": "^3.0.0",
