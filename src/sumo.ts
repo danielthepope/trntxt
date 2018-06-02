@@ -1,13 +1,13 @@
-const config = require('./trntxtconfig.js');
-const request = require('request');
+import * as config from './trntxtconfig';
+import * as request from 'request';
 
-function post(url, response_code, ip, user_agent, stations) {
-  if (config.sumoUrl) {
+function post(url, response_code, ip, user_agent, stations?) {
+  if (config.SUMO_URL) {
     if (!stations) stations = {};
     const line = createLogLine(url, response_code, ip, user_agent, stations.fromStation, stations.toStation);
     console.log(line);
     request.post({
-      url: config.sumoUrl,
+      url: config.SUMO_URL,
       body: line,
       headers: {'Content-Type': 'text/plain'}
     }, (error, response, body) => {
@@ -25,4 +25,4 @@ function createLogLine(url, response_code, ip, user_agent, fromStation, toStatio
   return output;
 }
 
-module.exports = { post };
+export { post };

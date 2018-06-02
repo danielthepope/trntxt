@@ -1,6 +1,9 @@
-const extend = require('extend');
+import * as extend from 'extend';
+import {Request} from 'express';
 
 class Query {
+  from: any;
+  to: any;
   constructor(from, to) {
     this.from = from;
     this.to = to;
@@ -12,13 +15,11 @@ class Query {
 }
 
 class IconTemplate {
-  /**
-   * @param {string} device 
-   * @param {number} width 
-   * @param {number} height 
-   * @param {string} filename 
-   */
-  constructor(device, width, height, filename) {
+  device: string;
+  width: number;
+  height: number;
+  filename: string;
+  constructor(device: string, width: number, height: number, filename: string) {
     this.device = device;
     this.width = width;
     this.height = height;
@@ -27,12 +28,13 @@ class IconTemplate {
 }
 
 class Task {
-  /**
-   * @param {IconTemplate} iconTemplate 
-   * @param {string} from 
-   * @param {string} to 
-   */
-  constructor(iconTemplate, from, to) {
+  width: number;
+  height: number;
+  device: string;
+  filename: string;
+  from: string;
+  to: string;
+  constructor(iconTemplate: IconTemplate, from: string, to: string) {
     this.width = iconTemplate.width;
     this.height = iconTemplate.height;
     this.device = iconTemplate.device;
@@ -98,16 +100,7 @@ function generateTasks(query) {
   return iconTemplates.map(template => new Task(template, query.from, query.to));
 }
 
-/**
- * 
- * @param {object} request An Express request
- * @param {object} request.params 
- * @param {string} request.params.from 
- * @param {string} request.params.to 
- * @param {string} request.params.filename 
- * @param {string} request.path
- */
-function deriveTaskFromRequest(request) {
+function deriveTaskFromRequest(request:Request) {
   const matches = iconTemplates.filter(template => template.filename === request.params.filename);
   if (matches.length === 0) return null;
   const iconTemplate = matches[0];
@@ -115,7 +108,7 @@ function deriveTaskFromRequest(request) {
   return new Task(iconTemplate, request.params.from, request.params.to);
 }
 
-module.exports = {
+export {
   deriveTaskFromRequest,
   generateTasks,
   Query,

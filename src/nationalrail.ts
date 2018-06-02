@@ -1,16 +1,17 @@
-const csv = require('csv-string');
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
-const soap = require('soap');
-const config = require('./trntxtconfig.js');
-const ignoreStations = require('../resources/ignore_stations.json');
+///<reference path="../types/index.d.ts" />
+import * as csv from 'csv-string';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as util from 'util';
+import * as soap from 'soap';
+import * as config from './trntxtconfig';
+const ignoreStations:[string] = require('../resources/ignore_stations.json');
 
 const stations = loadStations('../resources/station_codes.csv');
 
 const soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ver=2014-02-20';
-const soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.apiKey
-  || console.error("No API key provided. Received: " + config.apiKey));
+const soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.API_KEY
+  || console.error("No API key provided. Received: " + config.API_KEY));
 
 function loadStations(filePath) {
   const stationFile = fs.readFileSync(path.join(__dirname, filePath), { encoding: 'utf-8' });
@@ -98,7 +99,7 @@ function sanitise(input) {
 }
 
 function getDepartures(requestedStations, callback) {
-  if (config.apiKey === undefined) {
+  if (config.API_KEY === undefined) {
     console.error('No API key set!');
     const cb = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: No API key set.' };
     callback(cb);
@@ -114,7 +115,8 @@ function getDepartures(requestedStations, callback) {
     const pugResponse = {
       departureObject: departureObject,
       pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode,
-      fromStation: departureObject.fromStation.stationCode
+      fromStation: departureObject.fromStation.stationCode,
+      toStation: undefined
     };
     if (departureObject.toStation !== undefined) {
       pugResponse.pageTitle += ' > ' + departureObject.toStation.stationCode;
@@ -124,16 +126,32 @@ function getDepartures(requestedStations, callback) {
   });
 }
 
+type Station = {
+  stationName:string,
+  stationCode:string
+}
+
+type Service = {
+
+}
+
+type DepartureObject = {
+  fromStation?:Station,
+  toStation?:Station,
+  trainServices?:[Service],
+  busServices?:[Service],
+  nrccMessages?:[string]
+}
+
 function getDepartureObject(requestedStations, callback) {
-  const output = {};
+  const output:DepartureObject = {};
   output.fromStation = requestedStations.fromStation;
   if (requestedStations.toStation !== undefined) output.toStation = requestedStations.toStation;
-  output.trainServices = [];
-  output.busServices = [];
 
-  const options = {
+  const options:{[key:string]:any} = {
     numRows: 10,
-    crs: requestedStations.fromStation.stationCode
+    crs: requestedStations.fromStation.stationCode,
+    filterCrs: undefined
   };
   if (requestedStations.toStation !== undefined) {
     options.filterCrs = requestedStations.toStation.stationCode;
@@ -251,8 +269,15 @@ function processDarwinServices(aServices, requestedStations, callback) {
   });
 }
 
+type ArrivalTime = {
+  sta?:string,
+  eta?:string,
+  arrivalStation?:string,
+  correctStation?:boolean
+}
+
 function getArrivalTimeForService(service, toStation) {
-  const output = {};
+  const output:ArrivalTime = {};
   const callingPointArray = service.GetServiceDetailsResult.subsequentCallingPoints.callingPointList[0].callingPoint;
   for (let i = 0; i < callingPointArray.length; i++) {
     if (callingPointArray[i].crs === toStation.stationCode) {
@@ -345,7 +370,7 @@ function formatTime(mins) {
   else return m + 'm';
 }
 
-module.exports = {
+export {
   findStation,
   formatTime,
   getDepartures,

@@ -30,7 +30,7 @@ node_modules
 
 # trntxt repository specific
 public/lastrequest.txt
-src/config/config.js
+config/config.yaml
 dist
 
 \.vscode/

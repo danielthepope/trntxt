@@ -31,11 +31,11 @@ gulp.task('watch', function() {
 });
 
 gulp.task('copy', function(){
-  fs.exists('./src/config/config.js', function (exists) {
+  fs.exists('./config/config.yaml', function (exists) {
     if (exists) return;
     else {
-      fs.createReadStream('./src/config/config.example.js')
-        .pipe(fs.createWriteStream('./src/config/config.js'));
+      fs.createReadStream('./config/config.example.yaml')
+        .pipe(fs.createWriteStream('./config/config.yaml'));
     }
   });
 });

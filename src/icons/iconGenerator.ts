@@ -1,8 +1,9 @@
-const crypto = require('crypto');
-const images = require('images');
-const OptiPng = require('optipng');
-const streamifier = require('streamifier');
-const Task = require('./taskGenerator').Task;
+///<reference path="../../types/index.d.ts" />
+import { createHash } from "crypto";
+import * as images from "images";
+import * as optipng from "optipng";
+import { createReadStream } from "streamifier";
+import { Task } from "./taskGenerator";
 
 const resourcePath = 'resources/iconGenerator/';
 const characterWidths = {};
@@ -47,8 +48,8 @@ function generateIcon(task) {
   }
 
   const buffer = image.resize(task.width, task.height).encode('png');
-  const stream = streamifier.createReadStream(buffer);
-  return stream.pipe(new OptiPng());
+  const stream = createReadStream(buffer);
+  return stream.pipe(optipng());
 }
 
 /**
@@ -58,7 +59,7 @@ function generateIcon(task) {
 function generateFavicon(task) {
   const image = images(`${resourcePath}icon_touch_256.png`)
   const buffer = image.resize(task.width, task.height).encode('png');
-  return streamifier.createReadStream(buffer);
+  return createReadStream(buffer);
 }
 
 /**
@@ -72,8 +73,8 @@ function generateFavicon(task) {
 function backgroundColour(from, to, luminosity) {
   from = from || '';
   to = to || '';
-  var hue1 = parseInt(crypto.createHash('md5').update(from).digest('hex').substring(0, 2), 16);
-  var hue2 = parseInt(crypto.createHash('md5').update(to).digest('hex').substring(0, 2), 16);
+  var hue1 = parseInt(createHash('md5').update(from).digest('hex').substring(0, 2), 16);
+  var hue2 = parseInt(createHash('md5').update(to).digest('hex').substring(0, 2), 16);
   var hue = ((hue1 + hue2) % 256) / 256;
   return hslToRgb(hue, 0.6, luminosity);
 }
@@ -134,6 +135,6 @@ function setup() {
 setup();
 
 
-module.exports = {
+export {
   generateIcon, generateFavicon, themeColour
-}
+};

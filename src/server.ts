@@ -1,12 +1,13 @@
-const cors = require('cors');
-const express = require('express');
-const extend = require('extend');
-const pug = require('pug');
-const config = require('./trntxtconfig.js');
-const iconGenerator = require('./icons/iconGenerator');
-const taskGenerator = require('./icons/taskGenerator');
-const nr = require('./nationalrail.js');
-const sumo = require('./sumo.js');
+///<reference path="../types/index.d.ts" />
+import * as cors from 'cors';
+import * as express from 'express';
+import * as extend from 'extend';
+import * as pug from 'pug';
+import * as config from './trntxtconfig';
+import * as iconGenerator from './icons/iconGenerator';
+import * as taskGenerator from './icons/taskGenerator';
+import * as nr from './nationalrail';
+import * as sumo from './sumo';
 
 const app = express();
 
@@ -21,15 +22,15 @@ function compile(locals) {
 function getStationsFromRequest(request) {
   const output = {};
   const errors = [];
-  output.didYouMean = {
+  output['didYouMean'] = {
     from: [],
     to: []
   };
   if (request.params.from !== undefined) {
     const results = nr.findStation(request.params.from);
     if (results.length > 0) {
-      output.fromStation = results[0];
-      output.didYouMean.from = results.slice(1).filter(otherMatch => {
+      output['fromStation'] = results[0];
+      output['didYouMean'].from = results.slice(1).filter(otherMatch => {
         return results[0].biggestChunk === otherMatch.biggestChunk;
       });
     } else {
@@ -39,8 +40,8 @@ function getStationsFromRequest(request) {
   if (request.params.to !== undefined) {
     const results = nr.findStation(request.params.to);
     if (results.length > 0) {
-      output.toStation = results[0];
-      output.didYouMean.to = results.slice(1).filter(otherMatch => {
+      output['toStation'] = results[0];
+      output['didYouMean'].to = results.slice(1).filter(otherMatch => {
         return results[0].biggestChunk === otherMatch.biggestChunk;
       });
     } else {
@@ -93,11 +94,11 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
     return response.status(400).send(e);
   }
   const output = {};
-  output.stations = stations;
+  output['stations'] = stations;
 
   nr.getDepartures(stations, nrResponse => {
-    output.departures = nrResponse.departureObject.trainServices;
-    output.warnings = nrResponse.departureObject.nrccMessages;
+    output['departures'] = nrResponse.departureObject.trainServices;
+    output['warnings'] = nrResponse.departureObject.nrccMessages;
     return response.set('Cache-Control', 'public, max-age=20').send(output);
   });
 });
@@ -107,17 +108,17 @@ app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   let stations = {};
   const locals = {};
   const uaString = request.headers['user-agent'];
-  locals.url = request.originalUrl;
+  locals['url'] = request.originalUrl;
   try {
     stations = getStationsFromRequest(request);
   } catch (e) {
-    locals.errorMessage = e;
+    locals['errorMessage'] = e;
     return response.send(compile(locals));
   }
 
-  locals.stationCodePath = '/' + stations.fromStation.stationCode + '/';
-  if (stations.toStation) locals.stationCodePath += stations.toStation.stationCode + '/';
-  locals.didYouMean = stations.didYouMean;
+  locals['stationCodePath'] = '/' + stations['fromStation'].stationCode + '/';
+  if (stations['toStation']) locals['stationCodePath'] += stations['toStation'].stationCode + '/';
+  locals['didYouMean'] = stations['didYouMean'];
 
   nr.getDepartures(stations, output => {
     response.set('Cache-Control', 'public, max-age=20');
@@ -184,8 +185,8 @@ let server = null;
  * @param {number} port Optional. If not supplied it will use the port 
  * number defined in the config / PORT env variable
  */
-function start(port) {
-  const portToUse = port === undefined ? config.port : port;
+function start(port?:number) {
+  const portToUse = port === undefined ? config.PORT : port;
   server = app.listen(portToUse);
   console.log(`listening on port ${server.address().port}`);
 }
@@ -220,27 +221,27 @@ function respondWithIcon(request, response) {
 function generateManifest(prefix, stations, themeColour) {
   const manifest = {};
   
-  manifest.lang = 'en';
-  manifest.short_name = 'trntxt';
-  manifest.name = 'trntxt' +
+  manifest['lang'] = 'en';
+  manifest['short_name'] = 'trntxt';
+  manifest['name'] = 'trntxt' +
     (stations.fromStation ? `: ${stations.fromStation.stationName}` : '') +
     (stations.toStation ? ` to ${stations.toStation.stationName}` : '');
-  manifest.description = 'Train Text: a data-friendly UK train times service';
-  manifest.start_url = prefix;
-  manifest.background_color = '#fff';
-  manifest.theme_color = themeColour;
-  manifest.display = 'browser';
-  manifest.icons = [];
+  manifest['description'] = 'Train Text: a data-friendly UK train times service';
+  manifest['start_url'] = prefix;
+  manifest['background_color'] = '#fff';
+  manifest['theme_color'] = themeColour;
+  manifest['display'] = 'browser';
+  manifest['icons'] = [];
   const resolutions = ['36', '48', '72', '96', '144', '192'];
   resolutions.forEach(resolution => {
     const icon = {};
-    icon.src = `${prefix}android-chrome-${resolution}x${resolution}.png`;
-    icon.sizes = `${resolution}x${resolution}`;
-    icon.type = 'image/png';
-    manifest.icons.push(icon);
+    icon['src'] = `${prefix}android-chrome-${resolution}x${resolution}.png`;
+    icon['sizes'] = `${resolution}x${resolution}`;
+    icon['type'] = 'image/png';
+    manifest['icons'].push(icon);
   });
 
   return manifest;
 }
 
-module.exports = { port, start, stop }
+export { port, start, stop };
