@@ -8,6 +8,7 @@ import * as iconGenerator from './icons/iconGenerator';
 import * as taskGenerator from './icons/taskGenerator';
 import * as nr from './nationalrail';
 import * as sumo from './sumo';
+import { FromAndToStation, DepartureResponse } from './types';
 
 const app = express();
 
@@ -19,18 +20,18 @@ function compile(locals) {
   return fn(extend({}, pugGlobals, locals));
 }
 
-function getStationsFromRequest(request) {
-  const output = {};
+function getStationsFromRequest(request:express.Request) {
+  const output = new FromAndToStation();
   const errors = [];
-  output['didYouMean'] = {
+  output.didYouMean = {
     from: [],
     to: []
   };
   if (request.params.from !== undefined) {
     const results = nr.findStation(request.params.from);
     if (results.length > 0) {
-      output['fromStation'] = results[0];
-      output['didYouMean'].from = results.slice(1).filter(otherMatch => {
+      output.fromStation = results[0];
+      output.didYouMean.from = results.slice(1).filter(otherMatch => {
         return results[0].biggestChunk === otherMatch.biggestChunk;
       });
     } else {
@@ -40,8 +41,8 @@ function getStationsFromRequest(request) {
   if (request.params.to !== undefined) {
     const results = nr.findStation(request.params.to);
     if (results.length > 0) {
-      output['toStation'] = results[0];
-      output['didYouMean'].to = results.slice(1).filter(otherMatch => {
+      output.toStation = results[0];
+      output.didYouMean.to = results.slice(1).filter(otherMatch => {
         return results[0].biggestChunk === otherMatch.biggestChunk;
       });
     } else {
@@ -61,9 +62,15 @@ function getStationsFromRequest(request) {
   }
 }
 
+app.get('*', (request, response, next) => {
+  const uaHeader = request.headers['user-agent'];
+  response.locals.userAgent = (typeof uaHeader === 'string') ? uaHeader : uaHeader[0];
+  next();
+})
+
 app.get('/', (request, response) => {
   response.sendFile('index.html', { root: './dist/public', maxAge: 3600000 });
-  sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent']);
+  sumo.post(request.url, response.statusCode, request.ip, response.locals.userAgent);
 });
 
 app.get('/d', (request, response) => {
@@ -87,7 +94,7 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
   // if (!secret) return response.status(401).send('Header X-Mashape-Proxy-Secret is not present');
   // if (secret !== config.mashapeProxySecret) return response.status(401).send('Invalid X-Mashape-Proxy-Secret');
   // User would be authenticated if I uncomment the bit above.
-  let stations = {};
+  let stations = new FromAndToStation();
   try {
     stations = getStationsFromRequest(request);
   } catch (e) {
@@ -96,7 +103,7 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
   const output = {};
   output['stations'] = stations;
 
-  nr.getDepartures(stations, nrResponse => {
+  nr.getDepartures(stations, (err, nrResponse) => {
     output['departures'] = nrResponse.departureObject.trainServices;
     output['warnings'] = nrResponse.departureObject.nrccMessages;
     return response.set('Cache-Control', 'public, max-age=20').send(output);
@@ -105,7 +112,7 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
 
 // Regex matches letters (no dots), ? means 'to' is optional
 app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
-  let stations = {};
+  let stations = new FromAndToStation();
   const locals = {};
   const uaString = request.headers['user-agent'];
   locals['url'] = request.originalUrl;
@@ -120,17 +127,10 @@ app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   if (stations['toStation']) locals['stationCodePath'] += stations['toStation'].stationCode + '/';
   locals['didYouMean'] = stations['didYouMean'];
 
-  nr.getDepartures(stations, output => {
+  nr.getDepartures(stations, (error, departureResponse) => {
     response.set('Cache-Control', 'public, max-age=20');
-    response.send(compile(extend({}, locals, output)));
-    sumo.post(request.url, response.statusCode, request.ip, request.headers['user-agent'], stations);
-  });
-});
-
-app.get('/details/:serviceId', (request, response) => {
-  nr.getServiceDetails(request.params.serviceId, data => {
-    console.log(data);
-    response.send(data);
+    response.send(compile(extend({}, locals, error, departureResponse)));
+    sumo.post(request.url, response.statusCode, request.ip, response.locals.userAgent, stations);
   });
 });
 

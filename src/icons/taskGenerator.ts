@@ -1,18 +1,4 @@
-import * as extend from 'extend';
 import {Request} from 'express';
-
-class Query {
-  from: any;
-  to: any;
-  constructor(from, to) {
-    this.from = from;
-    this.to = to;
-  }
-
-  toJson() {
-    return JSON.stringify(extend({type: 'query'}, this));
-  }
-}
 
 class IconTemplate {
   device: string;
@@ -28,28 +14,19 @@ class IconTemplate {
 }
 
 class Task {
+  device: string;
   width: number;
   height: number;
-  device: string;
   filename: string;
   from: string;
   to: string;
   constructor(iconTemplate: IconTemplate, from: string, to: string) {
+    this.device = iconTemplate.device;
     this.width = iconTemplate.width;
     this.height = iconTemplate.height;
-    this.device = iconTemplate.device;
     this.filename = iconTemplate.filename;
     this.from = from;
     this.to = to;
-  }
-
-  get s3Key() {
-    const toPath = this.to ? `${this.to}/` : '';
-    return `${this.from}/${toPath}${this.filename}`;
-  }
-
-  toJson() {
-    return JSON.stringify(extend({type: 'task'}, this));
   }
 }
 
@@ -96,10 +73,6 @@ const iconTemplates = [
   // new IconTemplate('windows',1240,1240,'Square310x310Logo.Scale400.png'),
 ]
 
-function generateTasks(query) {
-  return iconTemplates.map(template => new Task(template, query.from, query.to));
-}
-
 function deriveTaskFromRequest(request:Request) {
   const matches = iconTemplates.filter(template => template.filename === request.params.filename);
   if (matches.length === 0) return null;
@@ -110,8 +83,6 @@ function deriveTaskFromRequest(request:Request) {
 
 export {
   deriveTaskFromRequest,
-  generateTasks,
-  Query,
   IconTemplate,
   Task
 };

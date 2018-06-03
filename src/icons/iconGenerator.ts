@@ -8,10 +8,7 @@ import { Task } from "./taskGenerator";
 const resourcePath = 'resources/iconGenerator/';
 const characterWidths = {};
 
-/**
- * @param {Task} task
- */
-function generateIcon(task) {
+function generateIcon(task: Task) {
   const from = task.from;
   const to = task.to || '';
   const baseImage = `${resourcePath}trntxt_logo.png`;
@@ -56,7 +53,7 @@ function generateIcon(task) {
  * Create an app icon without text
  * @param {Task} task 
  */
-function generateFavicon(task) {
+function generateFavicon(task: Task) {
   const image = images(`${resourcePath}icon_touch_256.png`)
   const buffer = image.resize(task.width, task.height).encode('png');
   return createReadStream(buffer);
@@ -68,9 +65,9 @@ function generateFavicon(task) {
  * @param {string} from 3 characters
  * @param {string} to 3 characters
  * @param {number} luminosity 0-1, percentage
- * @return {Array} RGB values
+ * @return {number[]} RGB values
  */
-function backgroundColour(from, to, luminosity) {
+function backgroundColour(from: string, to: string, luminosity: number): number[] {
   from = from || '';
   to = to || '';
   var hue1 = parseInt(createHash('md5').update(from).digest('hex').substring(0, 2), 16);
@@ -79,11 +76,11 @@ function backgroundColour(from, to, luminosity) {
   return hslToRgb(hue, 0.6, luminosity);
 }
 
-function themeColour(from, to) {
+function themeColour(from:string, to:string): string {
   return rgbToHex(backgroundColour(from, to, 0.8));
 }
 
-function rgbToHex(rgbArray) {
+function rgbToHex(rgbArray:number[]): string {
   return `#${rgbArray[0].toString(16)}${rgbArray[1].toString(16)}${rgbArray[2].toString(16)}`;
 }
 
@@ -94,13 +91,8 @@ function rgbToHex(rgbArray) {
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
  * Assumes h, s, and l are contained in the set [0, 1] and
  * returns r, g, and b in the set [0, 255].
- *
- * @param   {number}  h       The hue
- * @param   {number}  s       The saturation
- * @param   {number}  l       The lightness
- * @return  {Array}           The RGB representation
  */
-function hslToRgb(h, s, l) {
+function hslToRgb(h: number, s: number, l: number): number[] {
   var r, g, b;
 
   if (s == 0) {
@@ -117,7 +109,7 @@ function hslToRgb(h, s, l) {
   return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
-function hue2rgb(p, q, t) {
+function hue2rgb(p:number, q:number, t:number):number {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
   if (t < 1 / 6) return p + (q - p) * 6 * t;

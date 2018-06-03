@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as util from 'util';
 import * as soap from 'soap';
 import * as config from './trntxtconfig';
+import {FromAndToStation, Station, NrService, DepartureObject, ErrorResponse, DepartureResponse, TrntxtService, ArrivalAndDepartureTimes, ArrivalTime} from './types';
 const ignoreStations:[string] = require('../resources/ignore_stations.json');
 
 const stations = loadStations('../resources/station_codes.csv');
@@ -13,13 +14,13 @@ const soapUrl = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/wsdl.aspx?ve
 const soapHeader = util.format('<AccessToken><TokenValue>%s</TokenValue></AccessToken>', config.API_KEY
   || console.error("No API key provided. Received: " + config.API_KEY));
 
-function loadStations(filePath) {
+function loadStations(filePath): Station[] {
   const stationFile = fs.readFileSync(path.join(__dirname, filePath), { encoding: 'utf-8' });
   let csvArray = csv.parse(stationFile);
   csvArray = csvArray.filter(arr => {
     return (ignoreStations.indexOf(arr[1]) < 0);
   })
-  const output = csvArray.map(arr => {
+  const output:Station[] = csvArray.map(arr => {
     return {
       stationName: arr[0],
       stationCode: arr[1]
@@ -28,8 +29,8 @@ function loadStations(filePath) {
   return output;
 }
 
-function findStation(input) {
-  let results = [];
+function findStation(input:string): Station[] {
+  let results:Station[] = [];
   input = sanitise(input);
   if (!input || input.length < 3) return results;
 
@@ -72,7 +73,7 @@ function findStation(input) {
   return results;
 }
 
-function getStationNameFromCrs(crs) {
+function getStationNameFromCrs(crs:string):string {
   crs = crs.toUpperCase();
   const results = stations.filter(station => {
     return station.stationCode === crs;
@@ -81,14 +82,14 @@ function getStationNameFromCrs(crs) {
   else return results[0].stationName;
 }
 
-function biggestChunk(stationName, input) {
+function biggestChunk(stationName:string, input:string):number {
   for (let i = input.length; i > 0; i--) {
     if (stationName.indexOf(input.substring(0, i - 1)) > -1) return i;
   }
   return 0;
 }
 
-function sanitise(input) {
+function sanitise(input:string):string {
   if (input || input === '') {
     return input
       .toUpperCase()
@@ -98,11 +99,11 @@ function sanitise(input) {
   else return null;
 }
 
-function getDepartures(requestedStations, callback) {
+function getDepartures(requestedStations:FromAndToStation, callback:(error:ErrorResponse, departureResponse?:DepartureResponse) => void) {
   if (config.API_KEY === undefined) {
     console.error('No API key set!');
-    const cb = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: No API key set.' };
-    callback(cb);
+    const error = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: No API key set.' };
+    callback(error);
     return;
   }
 
@@ -112,7 +113,7 @@ function getDepartures(requestedStations, callback) {
       const errorObject = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: Getting departures failed.' };
       return callback(errorObject);
     }
-    const pugResponse = {
+    const pugResponse:DepartureResponse = {
       departureObject: departureObject,
       pageTitle: 'trntxt: ' + departureObject.fromStation.stationCode,
       fromStation: departureObject.fromStation.stationCode,
@@ -122,36 +123,20 @@ function getDepartures(requestedStations, callback) {
       pugResponse.pageTitle += ' > ' + departureObject.toStation.stationCode;
       pugResponse.toStation = departureObject.toStation.stationCode;
     }
-    callback(pugResponse);
+    callback(null, pugResponse);
   });
 }
 
-type Station = {
-  stationName:string,
-  stationCode:string
-}
-
-type Service = {
-
-}
-
-type DepartureObject = {
-  fromStation?:Station,
-  toStation?:Station,
-  trainServices?:[Service],
-  busServices?:[Service],
-  nrccMessages?:[string]
-}
-
-function getDepartureObject(requestedStations, callback) {
+function getDepartureObject(requestedStations:FromAndToStation, callback:(err:any, departureObject?:DepartureObject) => void) {
   const output:DepartureObject = {};
   output.fromStation = requestedStations.fromStation;
   if (requestedStations.toStation !== undefined) output.toStation = requestedStations.toStation;
 
-  const options:{[key:string]:any} = {
+  const options = {
     numRows: 10,
     crs: requestedStations.fromStation.stationCode,
-    filterCrs: undefined
+    filterCrs: undefined,
+    timeOffset: undefined
   };
   if (requestedStations.toStation !== undefined) {
     options.filterCrs = requestedStations.toStation.stationCode;
@@ -221,14 +206,14 @@ function getDepartureObject(requestedStations, callback) {
   });
 }
 
-function removeHtmlTagsExceptA(input) {
+function removeHtmlTagsExceptA(input:string):string {
   if (!input) return '';
   return input.replace(/<\/?((([^\/a>]|a[^> ])[^>]*)|)>/ig, '');
 }
 
-function processDarwinServices(aServices, requestedStations, callback) {
+function processDarwinServices(aServices:[NrService], requestedStations:FromAndToStation, callback:(error:Error, services:TrntxtService[]) => void) {
   const aPromises = [];
-  const output = [];
+  const output:TrntxtService[] = [];
   for (let i = 0; i < aServices.length; i++) {
     output[i] = {};
     output[i].originStation = {
@@ -269,13 +254,6 @@ function processDarwinServices(aServices, requestedStations, callback) {
   });
 }
 
-type ArrivalTime = {
-  sta?:string,
-  eta?:string,
-  arrivalStation?:string,
-  correctStation?:boolean
-}
-
 function getArrivalTimeForService(service, toStation) {
   const output:ArrivalTime = {};
   const callingPointArray = service.GetServiceDetailsResult.subsequentCallingPoints.callingPointList[0].callingPoint;
@@ -296,7 +274,7 @@ function getArrivalTimeForService(service, toStation) {
   return output;
 }
 
-function makePromiseForService(serviceId) {
+function makePromiseForService(serviceId:string):Promise<NrService> {
   const options = { serviceID: serviceId };
   return new Promise((resolve, reject) => {
     soap.createClient(soapUrl, (err, client) => {
@@ -309,21 +287,10 @@ function makePromiseForService(serviceId) {
   });
 }
 
-function getServiceDetails(serviceId, callback) {
-  return soap.createClient(soapUrl, (err, client) => {
-    client.addSoapHeader(soapHeader);
-    if (err) throw err;
-    const options = { serviceID: serviceId };
-    return client.GetServiceDetails(options, result => {
-      return callback(result);
-    });
-  });
-}
-
 /**
  * Takes a string in hh:mm format and returns the number of minutes
  */
-function toMins(time) {
+function toMins(time:string):number {
   if (!time) return -1;
   time = time.replace(/([^0-9:])/, '');
   const array = time.split(':');
@@ -338,11 +305,12 @@ function toMins(time) {
 }
 
 /**
- * Takes an object with eta, sta, etd and std properties
+ * Takes an object with eta, sta, etd and std properties.
+ * 
  * Returns the number of minutes a service should take,
  *   giving preference to the estimated timings
  */
-function getServiceTime(timings) {
+function getServiceTime(timings:ArrivalAndDepartureTimes):number {
   let arrival = toMins(timings.eta);
   if (arrival < 0) {
     arrival = toMins(timings.sta);
@@ -362,7 +330,7 @@ function getServiceTime(timings) {
 /**
  * Turns minutes into something like 1h 5m
  */
-function formatTime(mins) {
+function formatTime(mins:number):string {
   if (mins < 0) return null;
   const h = Math.floor(mins / 60);
   const m = mins % 60;
@@ -374,7 +342,6 @@ export {
   findStation,
   formatTime,
   getDepartures,
-  getServiceDetails,
   getServiceTime,
   removeHtmlTagsExceptA,
   sanitise,
