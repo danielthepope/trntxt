@@ -15,12 +15,12 @@ const app = express();
 const pugOptions = { doctype: 'html' };
 const pugGlobals = { pageTitle: 'trntxt' };
 
-function compile(locals) {
+function compile(locals: { [key: string]: any }) {
   const fn = pug.compileFile('resources/template.pug', pugOptions);
   return fn(extend({}, pugGlobals, locals));
 }
 
-function getStationsFromRequest(request:express.Request) {
+function getStationsFromRequest(request: express.Request) {
   const output = new FromAndToStation();
   const errors = [];
   output.didYouMean = {
@@ -100,7 +100,7 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
   } catch (e) {
     return response.status(400).send(e);
   }
-  const output = {};
+  const output: { [key: string]: any } = {};
   output['stations'] = stations;
 
   nr.getDepartures(stations, (err, nrResponse) => {
@@ -113,7 +113,7 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
 // Regex matches letters (no dots), ? means 'to' is optional
 app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   let stations = new FromAndToStation();
-  const locals = {};
+  const locals: { [key: string]: any } = {};
   const uaString = request.headers['user-agent'];
   locals['url'] = request.originalUrl;
   try {
@@ -175,20 +175,20 @@ app.get('*/browserconfig.xml', (request, response) => {
   });
 });
 
-app.use(express.static('dist/public', {maxAge: 86400000}));
+app.use(express.static('dist/public', { maxAge: 86400000 }));
 app.use(express.static('public'));
 
-let server = null;
+let server: any = null;
 
 /**
  * Start the server.
- * @param {number} port Optional. If not supplied it will use the port 
+ * @param {number} desiredPort Optional. If not supplied it will use the port 
  * number defined in the config / PORT env variable
  */
-function start(port?:number) {
-  const portToUse = port === undefined ? config.PORT : port;
+function start(desiredPort?: number) {
+  const portToUse = desiredPort === undefined ? config.PORT : desiredPort;
   server = app.listen(portToUse);
-  console.log(`listening on port ${server.address().port}`);
+  console.log(`listening on port ${port()}`);
 }
 
 function stop() {
@@ -197,7 +197,7 @@ function stop() {
   }
 }
 
-function port() {
+function port(): number {
   if (server) {
     return server.address().port;
   } else {
@@ -205,7 +205,7 @@ function port() {
   }
 }
 
-function respondWithIcon(request, response) {
+function respondWithIcon(request: express.Request, response: express.Response) {
   console.log(request.path);
   const task = taskGenerator.deriveTaskFromRequest(request);
   if (!task) return response.sendStatus(400);
@@ -218,9 +218,9 @@ function respondWithIcon(request, response) {
   image.pipe(response);
 }
 
-function generateManifest(prefix, stations, themeColour) {
-  const manifest = {};
-  
+function generateManifest(prefix: string, stations: FromAndToStation, themeColour: string) {
+  const manifest: { [key: string]: any } = {};
+
   manifest['lang'] = 'en';
   manifest['short_name'] = 'trntxt';
   manifest['name'] = 'trntxt' +
@@ -234,7 +234,7 @@ function generateManifest(prefix, stations, themeColour) {
   manifest['icons'] = [];
   const resolutions = ['36', '48', '72', '96', '144', '192'];
   resolutions.forEach(resolution => {
-    const icon = {};
+    const icon: { [key: string]: string } = {};
     icon['src'] = `${prefix}android-chrome-${resolution}x${resolution}.png`;
     icon['sizes'] = `${resolution}x${resolution}`;
     icon['type'] = 'image/png';

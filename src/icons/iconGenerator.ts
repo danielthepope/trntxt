@@ -6,13 +6,13 @@ import { createReadStream } from "streamifier";
 import { Task } from "./taskGenerator";
 
 const resourcePath = 'resources/iconGenerator/';
-const characterWidths = {};
+const characterWidths: { [letter: string]: number } = {};
 
 function generateIcon(task: Task) {
   const from = task.from;
   const to = task.to || '';
   const baseImage = `${resourcePath}trntxt_logo.png`;
-  const image = images(1024,1024);
+  const image = images(1024, 1024);
   const background = backgroundColour(from, to, 0.5);
   const paddingX = 96;
   const paddingY = 64;
@@ -76,11 +76,11 @@ function backgroundColour(from: string, to: string, luminosity: number): number[
   return hslToRgb(hue, 0.6, luminosity);
 }
 
-function themeColour(from:string, to:string): string {
+function themeColour(from: string, to: string): string {
   return rgbToHex(backgroundColour(from, to, 0.8));
 }
 
-function rgbToHex(rgbArray:number[]): string {
+function rgbToHex(rgbArray: number[]): string {
   return `#${rgbArray[0].toString(16)}${rgbArray[1].toString(16)}${rgbArray[2].toString(16)}`;
 }
 
@@ -109,7 +109,7 @@ function hslToRgb(h: number, s: number, l: number): number[] {
   return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
-function hue2rgb(p:number, q:number, t:number):number {
+function hue2rgb(p: number, q: number, t: number): number {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
   if (t < 1 / 6) return p + (q - p) * 6 * t;
