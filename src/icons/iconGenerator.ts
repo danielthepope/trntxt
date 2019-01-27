@@ -13,7 +13,7 @@ function generateIcon(task: Task) {
   const to = task.to || '';
   const baseImage = `${resourcePath}trntxt_logo.png`;
   const image = images(1024, 1024);
-  const background = backgroundColour(from, to, 0.5);
+  const background = backgroundColour(from, to);
   const paddingX = 96;
   const paddingY = 64;
   const charHeight = 224;
@@ -59,25 +59,40 @@ function generateFavicon(task: Task) {
   return createReadStream(buffer);
 }
 
+function backgroundHue(from: string, to: string): number {
+  from = from || '';
+  to = to || '';
+  const hue1 = parseInt(createHash('md5').update(from).digest('hex').substring(0, 2), 16);
+  const hue2 = parseInt(createHash('md5').update(to).digest('hex').substring(0, 2), 16);
+  return ((hue1 + hue2) % 256) / 256;
+}
+
+// Constants used for generating the backgound colours
+const SAT_SHIFT = 0.3;
+const SAT_RANGE = 0.1;
+const SAT_BASE = 0.47;
+const SAT_NODES = 4;
+const LUM_SHIFT = 0.3;
+const LUM_RANGE = 0.05;
+const LUM_BASE = 0.35;
+const LUM_NODES = 2;
+
+function backgroundColourFromHue(hue: number): number[] {
+  const sat = (SAT_RANGE * Math.cos((hue + SAT_SHIFT) * SAT_NODES * Math.PI)) + SAT_BASE;
+  const lum = (LUM_RANGE * Math.cos((hue + LUM_SHIFT) * LUM_NODES * Math.PI)) + LUM_BASE;
+  return hslToRgb(hue, sat, lum);
+}
+
 /**
  * Generate a colour based on the hash of the From station plus the hash of the To station.
  * That way, the same colour is produced if the From and To stations are swapped.
  * @param {string} from 3 characters
  * @param {string} to 3 characters
- * @param {number} luminosity 0-1, percentage
  * @return {number[]} RGB values
  */
-function backgroundColour(from: string, to: string, luminosity: number): number[] {
-  from = from || '';
-  to = to || '';
-  var hue1 = parseInt(createHash('md5').update(from).digest('hex').substring(0, 2), 16);
-  var hue2 = parseInt(createHash('md5').update(to).digest('hex').substring(0, 2), 16);
-  var hue = ((hue1 + hue2) % 256) / 256;
-  return hslToRgb(hue, 0.6, luminosity);
-}
-
-function themeColour(from: string, to: string): string {
-  return rgbToHex(backgroundColour(from, to, 0.8));
+function backgroundColour(from: string, to: string): number[] {
+  const hue = backgroundHue(from, to);
+  return backgroundColourFromHue(hue);
 }
 
 function rgbToHex(rgbArray: number[]): string {
@@ -128,5 +143,5 @@ setup();
 
 
 export {
-  generateIcon, generateFavicon, themeColour
+  generateIcon, generateFavicon
 };

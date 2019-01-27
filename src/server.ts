@@ -137,8 +137,7 @@ app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
 app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/manifest.json', (request, response) => {
   const stations = getStationsFromRequest(request);
   const path = request.originalUrl.split('manifest.json')[0];
-  const themeColour = request.params.from ? iconGenerator.themeColour(request.params.from, request.params.to) : '#59bcd8';
-  const manifest = generateManifest(path, stations, themeColour);
+  const manifest = generateManifest(path, stations);
 
   response.format({
     json: () => {
@@ -218,7 +217,7 @@ function respondWithIcon(request: express.Request, response: express.Response) {
   image.pipe(response);
 }
 
-function generateManifest(prefix: string, stations: FromAndToStation, themeColour: string) {
+function generateManifest(prefix: string, stations: FromAndToStation) {
   const manifest: { [key: string]: any } = {};
 
   manifest['lang'] = 'en';
@@ -229,7 +228,7 @@ function generateManifest(prefix: string, stations: FromAndToStation, themeColou
   manifest['description'] = 'Train Text: a data-friendly UK train times service';
   manifest['start_url'] = prefix;
   manifest['background_color'] = '#fff';
-  manifest['theme_color'] = themeColour;
+  manifest['theme_color'] = '#59bcd8';
   manifest['display'] = 'browser';
   manifest['icons'] = [];
   const resolutions = ['36', '48', '72', '96', '144', '192'];
