@@ -11,7 +11,7 @@ const characterWidths: { [letter: string]: number } = {};
 function generateIcon(task: Task) {
   const from = task.from;
   const to = task.to || '';
-  const baseImage = `${resourcePath}trntxt_logo.png`;
+  const baseImage = `${resourcePath}trntxt_logo_half.png`;
   const image = images(1024, 1024);
   const background = backgroundColour(from, to);
   const paddingX = 96;
@@ -24,7 +24,7 @@ function generateIcon(task: Task) {
   } else {
     image.draw(images(resourcePath + 'gradient-darkright.png'), 0, 0);
   }
-  image.draw(images(baseImage), 0, 0);
+  image.draw(images(baseImage), 0, (2 * charHeight) + 3 * paddingY);
   let x = paddingX;
   let y = paddingY;
   for (let i = 0; i < 3 && from[i]; i++) {
@@ -33,7 +33,7 @@ function generateIcon(task: Task) {
     x += 32 + characterWidths[from[i]];
   }
   x = 1024 - paddingX;
-  y = 1024 - paddingY - charHeight;
+  y = (2 * paddingY) + charHeight;
   for (let i = 0; i < 3 && to[i]; i++) {
     x -= characterWidths[to[i]];
     x -= 32;
