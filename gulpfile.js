@@ -7,7 +7,6 @@ var ts = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var pump = require('pump');
-var util = require('util');
 var fs = require('fs');
 
 var tsProject = ts.createProject('tsconfig.json');
@@ -21,26 +20,24 @@ gulp.task('server:start', function() {
 
 // Watch files for changes
 gulp.task('watch', function() {
-  gulp.watch('./resources/*.css', ['build']);
-  gulp.watch('./resources/**/*.pug', ['build']);
-  gulp.watch('./resources/**/*.js', ['build']);
-  gulp.watch('./src/**/*.js', ['build', 'test', server.restart]);
-  gulp.watch('./src/**/*.ts', ['build', 'test', server.restart]);
-  gulp.watch('./test/**/*.js', ['test']);
-  gulp.watch('./*.js', ['test', server.restart]);
+  gulp.watch('./resources/*.css', gulp.series('build'));
+  gulp.watch('./resources/**/*.pug', gulp.series('build'));
+  gulp.watch('./resources/**/*.js', gulp.series('build'));
+  gulp.watch('./src/**/*.js', gulp.series('build', 'test', server.restart));
+  gulp.watch('./src/**/*.ts', gulp.series('build', 'test', server.restart));
+  gulp.watch('./test/**/*.js', gulp.series('test'));
+  gulp.watch('./*.js', gulp.series('test', server.restart));
 });
 
-gulp.task('copy', function(){
+gulp.task('copy', function(cb) {
   fs.exists('./config/config.yaml', function (exists) {
-    if (exists) return;
-    else {
+    if (!exists) {
       fs.createReadStream('./config/config.example.yaml')
         .pipe(fs.createWriteStream('./config/config.yaml'));
     }
+    cb();
   });
 });
-
-gulp.task('build', ['compile', 'minifycss', 'minifyjs', 'staticpug', 'copy']);
 
 gulp.task('compile', function() {
   return tsProject.src()
@@ -52,8 +49,8 @@ gulp.task('compile', function() {
 
 gulp.task('minifycss', function() {
   return gulp.src('./resources/*.css')
-    .pipe(cleanCSS({compatibility: 'ie8'}))
-    .pipe(gulp.dest('./dist/public'));
+  .pipe(cleanCSS({compatibility: 'ie8'}))
+  .pipe(gulp.dest('./dist/public'));
 });
 
 gulp.task('minifyjs', function(cb) {
@@ -64,7 +61,7 @@ gulp.task('minifyjs', function(cb) {
   ], cb);
 });
 
-gulp.task('staticpug', ['minifycss'], function() {
+gulp.task('staticpug', gulp.series('minifycss', function() {
   return gulp.src('./resources/static/*.pug')
     .pipe(pug({
       doctype: 'html',
@@ -73,11 +70,13 @@ gulp.task('staticpug', ['minifycss'], function() {
       }
     }))
     .pipe(gulp.dest('./dist/public'));
-});
+}));
 
-gulp.task('test', ['build'], function() {
+gulp.task('build', gulp.series('compile', 'minifycss', 'minifyjs', 'staticpug', 'copy'));
+
+gulp.task('test', gulp.series('build', function() {
   return gulp.src(['test/**/*.js']).pipe(mocha());
-});
+}));
 
 // Default task
-gulp.task('default', ['build', 'watch', 'test', 'server:start']);
+gulp.task('default', gulp.parallel('watch', gulp.series('build', 'test', 'server:start')));

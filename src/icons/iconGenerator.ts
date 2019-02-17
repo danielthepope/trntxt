@@ -1,12 +1,13 @@
 ///<reference path="../../types/index.d.ts" />
 import { createHash } from "crypto";
 import * as images from "images";
-import * as optipng from "optipng";
+import * as OptiPng from "optipng";
 import { createReadStream } from "streamifier";
 import { Task } from "./taskGenerator";
 
 const resourcePath = 'resources/iconGenerator/';
 const characterWidths: { [letter: string]: number } = {};
+const pngOptimiser = new OptiPng();
 
 function generateIcon(task: Task) {
   const from = task.from;
@@ -46,7 +47,7 @@ function generateIcon(task: Task) {
 
   const buffer = image.resize(task.width, task.height).encode('png');
   const stream = createReadStream(buffer);
-  return stream.pipe(optipng());
+  return stream.pipe(pngOptimiser);
 }
 
 /**
