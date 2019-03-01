@@ -7,7 +7,6 @@ import { Task } from "./taskGenerator";
 
 const resourcePath = 'resources/iconGenerator/';
 const characterWidths: { [letter: string]: number } = {};
-const pngOptimiser = new OptiPng();
 
 function generateIcon(task: Task) {
   const from = task.from;
@@ -47,7 +46,7 @@ function generateIcon(task: Task) {
 
   const buffer = image.resize(task.width, task.height).encode('png');
   const stream = createReadStream(buffer);
-  return stream.pipe(pngOptimiser);
+  return stream.pipe(new OptiPng());
 }
 
 /**
