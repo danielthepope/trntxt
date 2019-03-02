@@ -7,8 +7,7 @@ import * as config from './trntxtconfig';
 import * as iconGenerator from './icons/iconGenerator';
 import * as taskGenerator from './icons/taskGenerator';
 import * as nr from './nationalrail';
-import * as sumo from './sumo';
-import { FromAndToStation, DepartureResponse } from './types';
+import { FromAndToStation } from './types';
 
 const app = express();
 
@@ -62,15 +61,8 @@ function getStationsFromRequest(request: express.Request) {
   }
 }
 
-app.get('*', (request, response, next) => {
-  const uaHeader = request.headers['user-agent'];
-  response.locals.userAgent = (typeof uaHeader === 'string') ? uaHeader : uaHeader[0];
-  next();
-})
-
 app.get('/', (request, response) => {
   response.sendFile('index.html', { root: './dist/public', maxAge: 3600000 });
-  sumo.post(request.url, response.statusCode, request.ip, response.locals.userAgent);
 });
 
 app.get('/d', (request, response) => {
@@ -114,7 +106,6 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
 app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   let stations = new FromAndToStation();
   const locals: { [key: string]: any } = {};
-  const uaString = request.headers['user-agent'];
   locals['url'] = request.originalUrl;
   try {
     stations = getStationsFromRequest(request);
@@ -130,7 +121,6 @@ app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   nr.getDepartures(stations, (error, departureResponse) => {
     response.set('Cache-Control', 'public, max-age=20');
     response.send(compile(extend({}, locals, error, departureResponse)));
-    sumo.post(request.url, response.statusCode, request.ip, response.locals.userAgent, stations);
   });
 });
 

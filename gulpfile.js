@@ -23,7 +23,7 @@ gulp.task('watch', function() {
   gulp.watch('./resources/*.css', gulp.series('build'));
   gulp.watch('./resources/**/*.pug', gulp.series('build'));
   gulp.watch('./resources/**/*.js', gulp.series('build'));
-  gulp.watch('./src/**/*.js', gulp.series('build', 'test', server.restart));
+  gulp.watch('./types/**/*.ts', gulp.series('build', 'test', server.restart));
   gulp.watch('./src/**/*.ts', gulp.series('build', 'test', server.restart));
   gulp.watch('./test/**/*.js', gulp.series('test'));
   gulp.watch('./*.js', gulp.series('test', server.restart));
