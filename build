@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-sudo docker build $(dirname $0) -t trntxt:$(date +"%Y-%m-%d_%H-%M-%S") -t trntxt
+docker build $(dirname $0) -t trntxt:$(date +"%Y-%m-%d_%H-%M-%S") -t trntxt
