@@ -100,7 +100,7 @@ describe('Integration tests:', function() {
           'name': 'trntxt',
           'short_name': 'trntxt',
           'start_url': '/',
-          'description': 'Train Text: a data-friendly UK train times service'
+          'description': 'Train Text: a data-friendly train times site for Great Britain'
         };
         Object.keys(expectations).forEach(key => {
           it(`has '${key}' equal to '${expectations[key]}'`, function() {
