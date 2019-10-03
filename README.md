@@ -4,7 +4,7 @@
 
 ![trntxt icon](trntxtheader.png)
 
-Pronounced "train text" and currently live at [trntxt.uk](https://trntxt.uk), this is a GPRS-friendly UK train times web service.
+Pronounced "train text" and currently live at [trntxt.uk](https://trntxt.uk), this is a GPRS-friendly web service that provides train times for stations across Great Britain.
 
 *(Also lives at [traintext.uk](https://traintext.uk), but that's not as cool)*
 
@@ -23,7 +23,7 @@ Stations can be input using either their 3-letter codes or by their names (witho
 ## Contributing
 Thanks for helping out! Please feel free to fork this repo, make your changes then make a pull request.
 
-This program will run on Node 6 or 8.
+This program will run on Node 8.
 
 Install the required packages using `npm install` in the command line.
 
