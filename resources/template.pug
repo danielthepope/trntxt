@@ -34,13 +34,12 @@ html
     strong= header
     br
     each service in serviceArray
-      if service.correctStation
-        if service.etd == 'Cancelled'
-          div.g
-            +serviceDetails(service, fromStation, toStation)
-        else
-          div
-            +serviceDetails(service, fromStation, toStation)
+      if service.etd == 'Cancelled'
+        div.g
+          +serviceDetails(service, fromStation, toStation)
+      else
+        div
+          +serviceDetails(service, fromStation, toStation)
 
   head
     include head.pug

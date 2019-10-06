@@ -132,8 +132,7 @@ function getDepartureObject(requestedStations: FromAndToStation, callback: (err:
   output.fromStation = requestedStations.fromStation;
   if (requestedStations.toStation !== undefined) output.toStation = requestedStations.toStation;
 
-  const options: { numRows: number, crs: string, filterCrs?: string, timeOffset?: number } = {
-    numRows: 10,
+  const options: { numRows?: number, crs: string, filterCrs?: string, timeOffset?: number } = {
     crs: requestedStations.fromStation.stationCode
   };
   if (requestedStations.toStation !== undefined) {
@@ -157,39 +156,27 @@ function getDepartureObject(requestedStations: FromAndToStation, callback: (err:
       }
       let aTrainServices = result.GetStationBoardResult.trainServices ? result.GetStationBoardResult.trainServices.service : [];
       let aBusServices = result.GetStationBoardResult.busServices ? result.GetStationBoardResult.busServices.service : [];
-      if (aTrainServices.length < 10 || aBusServices.length < 10) {
-        // Get another page of departures
-        const nextPageOptions = Object.assign({}, options);
-        nextPageOptions.timeOffset = 119;
-        client.GetDepartureBoard(nextPageOptions, (err: Error, nextPageResult: any) => {
-          if (err) {
-            // Ignore error, use empty object
-            console.error(err);
-            nextPageResult = {
-              GetStationBoardResult: {
-                trainServices: [],
-                busServices: []
-              }
-            };
-          }
-          if (nextPageResult.GetStationBoardResult.trainServices) {
-            aTrainServices = aTrainServices.concat(nextPageResult.GetStationBoardResult.trainServices.service).slice(0, 10);
-          }
-          if (nextPageResult.GetStationBoardResult.busServices) {
-            aBusServices = aBusServices.concat(nextPageResult.GetStationBoardResult.busServices.service).slice(0, 10);
-          }
-          processDarwinServices(aTrainServices, requestedStations, (err, trainServices) => {
-            if (err) return callback(err);
-            output.trainServices = trainServices;
-            processDarwinServices(aBusServices, requestedStations, (err, busServices) => {
-              if (err) return callback(err);
-              output.busServices = busServices;
-              return callback(null, output);
-            });
-          });
-        });
-      } else {
-        // Just process those ones
+
+      // Get another page of departures
+      const nextPageOptions = Object.assign({}, options);
+      nextPageOptions.timeOffset = 119;
+      client.GetDepartureBoard(nextPageOptions, (err: Error, nextPageResult: any) => {
+        if (err) {
+          // Ignore error, use empty object
+          console.error(err);
+          nextPageResult = {
+            GetStationBoardResult: {
+              trainServices: [],
+              busServices: []
+            }
+          };
+        }
+        if (nextPageResult.GetStationBoardResult.trainServices) {
+          aTrainServices = aTrainServices.concat(nextPageResult.GetStationBoardResult.trainServices.service);
+        }
+        if (nextPageResult.GetStationBoardResult.busServices) {
+          aBusServices = aBusServices.concat(nextPageResult.GetStationBoardResult.busServices.service);
+        }
         processDarwinServices(aTrainServices, requestedStations, (err, trainServices) => {
           if (err) return callback(err);
           output.trainServices = trainServices;
@@ -199,7 +186,7 @@ function getDepartureObject(requestedStations: FromAndToStation, callback: (err:
             return callback(null, output);
           });
         });
-      }
+      });
     });
   });
 }
@@ -211,7 +198,7 @@ function removeHtmlTagsExceptA(input: string): string {
 
 function processDarwinServices(aServices: [NrService], requestedStations: FromAndToStation, callback: (error: Error, services: TrntxtService[]) => void) {
   const aPromises = [];
-  const output: TrntxtService[] = [];
+  let output: TrntxtService[] = [];
   for (let i = 0; i < aServices.length; i++) {
     output[i] = {};
     output[i].originStation = {
@@ -244,6 +231,10 @@ function processDarwinServices(aServices: [NrService], requestedStations: FromAn
       output[i].correctStation = arrival.correctStation;
       const mins = getServiceTime(output[i]);
       output[i].time = formatTime(mins);
+    }
+    if (requestedStations.toStation) {
+      // Remove "phantom" trains: ones that do not provide an arrival time
+      output = output.filter((s: TrntxtService) => s.correctStation);
     }
     return callback(null, output);
   }, error => {
