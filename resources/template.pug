@@ -1,6 +1,5 @@
 - var urlArr = url.split('/')
 - var path = { from: urlArr[1] }
-- var incorrectArrivals = false
 - if (urlArr.length > 2) path.to = urlArr[2]
 html
   mixin time(scheduled, estimated)
@@ -21,12 +20,11 @@ html
     = service.operator
     if toStation
       br
-      if service.correctStation
-        = 'Arrives at ' + service.arrivalStation + ' at '
-        strong
-          +time(service.sta, service.eta)
-        if service.time
-          = ', ' + service.time
+      = 'Arrives at ' + service.arrivalStation + ' at '
+      strong
+        +time(service.sta, service.eta)
+      if service.time
+        = ', ' + service.time
     br
     br
 
@@ -36,12 +34,13 @@ html
     strong= header
     br
     each service in serviceArray
-      if service.etd == 'Cancelled'
-        div.g
-          +serviceDetails(service, fromStation, toStation)
-      else
-        div
-          +serviceDetails(service, fromStation, toStation)
+      if service.correctStation
+        if service.etd == 'Cancelled'
+          div.g
+            +serviceDetails(service, fromStation, toStation)
+        else
+          div
+            +serviceDetails(service, fromStation, toStation)
 
   head
     include head.pug
