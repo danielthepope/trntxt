@@ -2,8 +2,6 @@
 import { createHash } from "crypto";
 import * as gm from "gm";
 import * as tmp from "tmp";
-// import * as OptiPng from "optipng";
-// import { createReadStream } from "streamifier";
 import { Task } from "./taskGenerator";
 
 const resourcePath = 'resources/iconGenerator/';

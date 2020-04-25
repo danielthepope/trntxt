@@ -68,8 +68,8 @@ app.get('/', (request, response) => {
 app.get('/d', (request, response) => {
   let from = request.query.from;
   let to = request.query.to;
-  if (from) from = from.replace(/\W/g, '');
-  if (to) to = to.replace(/\W/g, '');
+  if (from) from = from.toString().replace(/\W/g, '');
+  if (to) to = to.toString().replace(/\W/g, '');
   if (from) {
     if (to) {
       response.redirect('/' + from + '/' + to);
@@ -199,7 +199,6 @@ function respondWithIcon(request: express.Request, response: express.Response) {
   const task = taskGenerator.deriveTaskFromRequest(request);
   if (!task) return response.sendStatus(400);
   console.log('generating image from http request');
-  // generate requested image immediately
   const callback = function (err: Error, buffer: Buffer) {
     if (err) {
       response.sendStatus(500).send(err);

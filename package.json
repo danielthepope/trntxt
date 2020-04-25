@@ -37,7 +37,6 @@
     "pug": "^2.0.4",
     "request": "^2.88.2",
     "soap": "^0.26.0",
-    "streamifier": "^0.1.1",
     "tmp": "^0.2.0",
     "typescript": "^2.9.2",
     "yamljs": "^0.3.0"
