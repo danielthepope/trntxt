@@ -8,7 +8,6 @@
     "build": "gulp build",
     "compile": "tsc",
     "develop": "gulp",
-    "prestart": "gulp build",
     "start": "node dist/app.js",
     "test": "gulp test"
   },

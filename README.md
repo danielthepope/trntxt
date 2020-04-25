@@ -27,6 +27,8 @@ This program will run on Node 8.
 
 Install the required packages using `npm install` in the command line.
 
+Transpile the source code using `npm run build`.
+
 You will need to register for a National Rail API key [here](http://www.nationalrail.co.uk/46391.aspx).
 
 Once you have a key, paste it into `./config/config.yaml`, overwriting the default value for `API_KEY`. `config.yaml` is created when you first run `npm install`.
