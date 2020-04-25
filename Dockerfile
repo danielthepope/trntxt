@@ -1,4 +1,6 @@
-FROM node:8
+FROM node:12-alpine
+RUN apk update
+RUN apk add graphicsmagick-dev
 
 WORKDIR /usr/src/app
 

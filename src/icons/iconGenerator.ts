@@ -1,35 +1,36 @@
 ///<reference path="../../types/index.d.ts" />
 import { createHash } from "crypto";
-import * as images from "images";
-import * as OptiPng from "optipng";
-import { createReadStream } from "streamifier";
+import * as gm from "gm";
+import * as tmp from "tmp";
+// import * as OptiPng from "optipng";
+// import { createReadStream } from "streamifier";
 import { Task } from "./taskGenerator";
 
 const resourcePath = 'resources/iconGenerator/';
 const characterWidths: { [letter: string]: number } = {};
 
-function generateIcon(task: Task) {
+function generateIcon(task: Task, callback: (error: Error, buffer: Buffer) => void): void {
   const from = task.from;
   const to = task.to || '';
   const baseImage = `${resourcePath}trntxt_logo_half.png`;
-  const image = images(1024, 1024);
   const background = backgroundColour(from, to);
+  const image = gm(1024, 1024, rgbToHex(background));
   const paddingX = 96;
   const paddingY = 64;
   const charHeight = 224;
 
-  image.fill(background[0], background[1], background[2]);
+  image.in('-page', '+0+0');
   if (from < to) {
-    image.draw(images(resourcePath + 'gradient-darkleft.png'), 0, 0);
+    image.in(resourcePath + 'gradient-darkleft.png');
   } else {
-    image.draw(images(resourcePath + 'gradient-darkright.png'), 0, 0);
+    image.in(resourcePath + 'gradient-darkright.png');
   }
-  image.draw(images(baseImage), 0, (2 * charHeight) + 3 * paddingY);
+  image.in('-page', `+0+${(2 * charHeight) + 3 * paddingY}`).in(baseImage);
   let x = paddingX;
   let y = paddingY;
   for (let i = 0; i < 3 && from[i]; i++) {
     const letterImagePath = `${resourcePath}${from[i]}.png`;
-    image.draw(images(letterImagePath), x, y);
+    image.in('-page', `+${x}+${y}`).in(letterImagePath);
     x += 32 + characterWidths[from[i]];
   }
   x = 1024 - paddingX;
@@ -40,23 +41,31 @@ function generateIcon(task: Task) {
   }
   for (let i = 0; i < 3 && to[i]; i++) {
     const letterImagePath = `${resourcePath}${to[i]}.png`;
-    image.draw(images(letterImagePath), x, y);
+    image.in('-page', `+${x}+${y}`).in(letterImagePath);
     x += 32 + characterWidths[to[i]];
   }
-
-  const buffer = image.resize(task.width, task.height).encode('png');
-  const stream = createReadStream(buffer);
-  return stream.pipe(new OptiPng());
+  image.flatten();
+  tmp.file({ mode: 0o644, postfix: '.png' }, function (err, tempFile, fd, removeTempFile) {
+    if (err) return callback(err, null);
+    image.write(tempFile, function (err) {
+      if (err) return callback(err, null);
+      gm(tempFile).resize(task.width, task.height).toBuffer('PNG', function (err, buffer) {
+        callback(err, buffer);
+        removeTempFile();
+      });
+    });
+  });
 }
 
 /**
  * Create an app icon without text
  * @param {Task} task 
  */
-function generateFavicon(task: Task) {
-  const image = images(`${resourcePath}icon_touch_256.png`)
-  const buffer = image.resize(task.width, task.height).encode('png');
-  return createReadStream(buffer);
+function generateFavicon(task: Task, callback: (error: Error, buffer: Buffer) => void): void {
+  const image = gm(`${resourcePath}icon_touch_256.png`)
+  image.resize(task.width, task.height).toBuffer('PNG', function (err, buffer) {
+    return callback(err, buffer);
+  });
 }
 
 function backgroundHue(from: string, to: string): number {
@@ -135,7 +144,10 @@ function hue2rgb(p: number, q: number, t: number): number {
 
 function setup() {
   'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(char => {
-    characterWidths[char] = images(resourcePath + char + '.png').size().width;
+    const filename = `${resourcePath}${char}.png`;
+    gm(filename).size(function (err, size) {
+      if (!err) characterWidths[char] = size.width;
+    });
   });
 }
 
