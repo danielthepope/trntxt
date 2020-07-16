@@ -34,3 +34,4 @@ config/config.yaml
 dist
 .node-version
 .vscode/
+*.tar.gz
