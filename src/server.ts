@@ -201,7 +201,7 @@ function respondWithIcon(request: express.Request, response: express.Response) {
   console.log('generating image from http request');
   const callback = function (err: Error, buffer: Buffer) {
     if (err) {
-      response.sendStatus(500).send(err);
+      response.status(500).send(err);
     } else {
       response.type('png');
       response.set('Cache-Control', 'public, max-age=86400');

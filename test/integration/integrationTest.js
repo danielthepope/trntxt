@@ -132,7 +132,7 @@ describe('Integration tests:', function() {
               expect(icon.type).to.not.be.empty;
               expect(icon.src).to.contain(icon.sizes);
               browser.visit(urlFor(icon.src), function() {
-                browser.assert.success();
+                browser.assert.success(`Browser failed for ${icon.src}`);
                 if (++count === length) {
                   done();
                 }

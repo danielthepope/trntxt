@@ -76,7 +76,7 @@ html
         each message in departureObject.nrccMessages
           p.e!= message
       if (departureObject.trainServices.length + departureObject.busServices.length === 0)
-        p No services found. Trntxt currently does not display information for routes requiring changes.
+        p No services found. Trntxt only gives information for direct services.
       if (departureObject.trainServices.length > 0)
         +services('Train services', departureObject.trainServices, departureObject.fromStation, departureObject.toStation)
       
