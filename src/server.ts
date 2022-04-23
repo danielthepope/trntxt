@@ -57,6 +57,7 @@ function getStationsFromRequest(request: express.Request) {
       errorMessage += name + ", ";
     });
     errorMessage = errorMessage.replace(/, $/, "");
+    console.log(`Request failed: ${errorMessage}`);
     throw errorMessage;
   }
 }
@@ -82,6 +83,7 @@ app.get('/d', (request, response) => {
 });
 
 app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) => {
+  console.log(request.path);
   // var secret = request.headers['x-mashape-proxy-secret'];
   // if (!secret) return response.status(401).send('Header X-Mashape-Proxy-Secret is not present');
   // if (secret !== config.mashapeProxySecret) return response.status(401).send('Invalid X-Mashape-Proxy-Secret');
@@ -96,6 +98,11 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
   output['stations'] = stations;
 
   nr.getDepartures(stations, (err, nrResponse) => {
+    if (stations['toStation']) {
+      console.log(`API request for departures from ${stations['fromStation'].stationName} (${stations['fromStation'].stationCode}) to ${stations['toStation'].stationName} (${stations['toStation'].stationCode}) returned ${nrResponse.departureObject.trainServices?.length} train services and ${nrResponse.departureObject.busServices?.length} bus services`);
+    } else {
+      console.log(`API request for departures from ${stations['fromStation'].stationName} (${stations['fromStation'].stationCode}) returned ${nrResponse.departureObject.trainServices?.length} train services and ${nrResponse.departureObject.busServices?.length} bus services`);
+    }
     output['departures'] = nrResponse.departureObject.trainServices;
     output['warnings'] = nrResponse.departureObject.nrccMessages;
     return response.set('Cache-Control', 'public, max-age=20').send(output);
@@ -104,6 +111,7 @@ app.get('/api/departures/:from(\\w+)/:to(\\w+)?', cors(), (request, response) =>
 
 // Regex matches letters (no dots), ? means 'to' is optional
 app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
+  console.log(request.path);
   let stations = new FromAndToStation();
   const locals: { [key: string]: any } = {};
   locals['url'] = request.originalUrl;
@@ -119,12 +127,18 @@ app.get('/:from(\\w+)/:to(\\w+)?', (request, response) => {
   locals['didYouMean'] = stations['didYouMean'];
 
   nr.getDepartures(stations, (error, departureResponse) => {
+    if (stations['toStation']) {
+      console.log(`HTML request for departures from ${stations['fromStation'].stationName} (${stations['fromStation'].stationCode}) to ${stations['toStation'].stationName} (${stations['toStation'].stationCode}) returned ${departureResponse.departureObject.trainServices?.length} train services and ${departureResponse.departureObject.busServices?.length} bus services`);
+    } else {
+      console.log(`HTML request for departures from ${stations['fromStation'].stationName} (${stations['fromStation'].stationCode}) returned ${departureResponse.departureObject.trainServices?.length} train services and ${departureResponse.departureObject.busServices?.length} bus services`);
+    }
     response.set('Cache-Control', 'public, max-age=20');
     response.send(compile(extend({}, locals, error, departureResponse)));
   });
 });
 
 app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/manifest.json', (request, response) => {
+  console.log(request.path);
   const stations = getStationsFromRequest(request);
   const path = request.originalUrl.split('manifest.json')[0];
   const manifest = generateManifest(path, stations);
@@ -141,10 +155,12 @@ app.get('/favicon-32x32.png', (request, response) => {
 });
 
 app.get('(/:from([A-Z]{3})/:to([A-Z]{3})?)?/:filename(*.png)', (request, response) => {
+  console.log(request.path);
   respondWithIcon(request, response);
 });
 
 app.get('*/browserconfig.xml', (request, response) => {
+  console.log(request.path);
   const pugOptions = { pretty: true };
   const fn = pug.compileFile('resources/browserconfig.pug', pugOptions);
   const locals = { path: '/' };
@@ -195,10 +211,8 @@ function port(): number {
 }
 
 function respondWithIcon(request: express.Request, response: express.Response) {
-  console.log(request.path);
   const task = taskGenerator.deriveTaskFromRequest(request);
   if (!task) return response.sendStatus(400);
-  console.log('generating image from http request');
   const callback = function (err: Error, buffer: Buffer) {
     if (err) {
       response.status(500).send(err);
