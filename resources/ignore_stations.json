@@ -1,1 +1,5 @@
-["stationCode", "ASI", "LEB", "SPX"]
+[
+    "stationCode",
+    "ASI",
+    "SPX"
+]
