@@ -23,7 +23,7 @@ Stations can be input using either their 3-letter codes or by their names (witho
 ## Contributing
 Thanks for helping out! Please feel free to fork this repo, make your changes then make a pull request.
 
-This program will run on Node 8.
+This program will run on Node 16.
 
 Install the required packages using `npm install` in the command line.
 

@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:16-alpine
 RUN apk update
 RUN apk add graphicsmagick-dev
 
@@ -6,7 +6,8 @@ WORKDIR /usr/src/app
 
 # Install dependencies.
 COPY package*.json ./
-
+COPY config ./config
+COPY gulpfile.js ./
 RUN npm install
 
 # Copy project directory.
