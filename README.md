@@ -35,6 +35,17 @@ You can run the program using `npm start`. This will lsten on port 3000 by defau
 
 While developing, you might find it useful to run `npm run develop`. The server runs, then restarts/rebuilds if any of the files are changed.
 
+### Update the list of stations
+
+There is a script that takes the data from the autocomplete feature of the National Rail Enquiries website:
+
+```bash
+cd resources/stationFetcher
+./stationFetcher.sh
+```
+
+That will update the file `stations.csv`. If it looks good, copy it to `resources/station_codes.csv`.
+
 ### To do
 There are still a few things I'd like to do with trntxt. Check out the [issues page](https://github.com/danielthepope/trntxt/issues) for things to do. If you want to tackle a particular issue, let me know first in a comment or on Twitter - I might be working on it already!
 

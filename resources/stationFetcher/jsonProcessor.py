@@ -2,11 +2,8 @@
 
 import csv
 import json
-import os
 import re
-import sys
 
-os.chdir(os.path.dirname(sys.argv[0]))
 CRS_RE = re.compile(r'[A-Z]{3}')
 
 
