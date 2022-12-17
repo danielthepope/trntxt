@@ -18,22 +18,29 @@ Stations can be input using either their 3-letter codes or by their names (witho
 * [/swindon](https://trntxt.uk/swindon): Departure board for Swindon
 * [/bth/cardiffcentral](https://trntxt.uk/bth/cardiffcentral): List of trains from Bath Spa that call at Cardiff Central
 
-## Contributing
-Thanks for helping out! Please feel free to fork this repo, make your changes then make a pull request.
-
+## Development
 This program will run on Node 16.
 
 Install the required packages using `npm install` in the command line.
 
 Transpile the source code using `npm run build`.
 
-You will need to register for a National Rail API key [here](http://www.nationalrail.co.uk/46391.aspx).
+Tests are run with `npm run test`.
+
+You will need to register for a National Rail API key [here](https://www.nationalrail.co.uk/46391.aspx).
 
 Once you have a key, paste it into `./config/config.yaml`, overwriting the default value for `API_KEY`. `config.yaml` is created when you first run `npm install`.
 
 You can run the program using `npm start`. This will lsten on port 3000 by default, so you can visit localhost:3000 on your browser. If you want to use a different port, set the environment variable `PORT`. You can do this in Bash by running `PORT=12345 npm start`. Otherwise you can overwrite the default value for `PORT` in `config.yaml`.
 
 While developing, you might find it useful to run `npm run develop`. The server runs, then restarts/rebuilds if any of the files are changed.
+
+### Build and run with Docker
+
+```
+docker-compose build
+docker-compose up
+```
 
 ### Update the list of stations
 

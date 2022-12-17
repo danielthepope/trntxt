@@ -151,7 +151,7 @@ function getDepartureObject(requestedStations: FromAndToStation, callback: (err:
       if (result.GetStationBoardResult.nrccMessages) {
         output.nrccMessages = result.GetStationBoardResult.nrccMessages.message;
         for (let i = 0; i < output.nrccMessages.length; i++) {
-          output.nrccMessages[i] = removeHtmlTagsExceptA(output.nrccMessages[i]);
+          output.nrccMessages[i] = reformatNrccMessage(output.nrccMessages[i]);
         }
       }
       let aTrainServices = result.GetStationBoardResult.trainServices ? result.GetStationBoardResult.trainServices.service : [];
@@ -189,6 +189,11 @@ function getDepartureObject(requestedStations: FromAndToStation, callback: (err:
       });
     });
   });
+}
+
+function reformatNrccMessage(input: string): string {
+  const sanitised = removeHtmlTagsExceptA(input);
+  return sanitised.replace('"http://nationalrail.', '"https://www.nationalrail.');
 }
 
 function removeHtmlTagsExceptA(input: string): string {
@@ -332,7 +337,7 @@ export {
   formatTime,
   getDepartures,
   getServiceTime,
-  removeHtmlTagsExceptA,
+  reformatNrccMessage,
   sanitise,
   stations,
   toMins
