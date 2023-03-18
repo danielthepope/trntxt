@@ -35,3 +35,4 @@ dist
 .node-version
 .vscode/
 *.tar.gz
+resources/stationFetcher/tmp

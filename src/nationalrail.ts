@@ -109,9 +109,9 @@ function getDepartures(requestedStations: FromAndToStation, callback: (error: Er
 
   getDepartureObject(requestedStations, (err, departureObject) => {
     if (err) {
-      console.error(JSON.stringify(err));
+      console.error(err);
       const errorObject = { pageTitle: 'trntxt: ERROR', errorMessage: 'Error: Getting departures failed.' };
-      return callback(errorObject);
+      return callback(errorObject, null);
     }
     const pugResponse: DepartureResponse = {
       departureObject: departureObject,
