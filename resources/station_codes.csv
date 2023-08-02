@@ -330,6 +330,7 @@ Branksome,BSM
 Braystones,BYS
 Bredbury,BDY
 Breich,BRC
+Brent Cross West,BCZ
 Brentford,BFD
 Brentwood,BRE
 Bricket Wood,BWO
@@ -580,7 +581,6 @@ Coombe Junction Halt,COE
 Copplestone,COP
 Corbridge,CRB
 Corby,COR
-Corfe Castle,CFC
 Corkerhill,CKH
 Corkickle,CKL
 Corpach,CPA
@@ -730,7 +730,6 @@ Drumchapel,DMC
 Drumfrochar,DFR
 Drumgelloch,DRU
 Drumry,DMY
-Dublin Ferryport,DFP
 Duddeston,DUD
 Dudley Port,DDP
 Duffield,DFI
@@ -1531,6 +1530,7 @@ Marks Tey,MKT
 Marlow,MLW
 Marple,MPL
 Marsden (Yorks),MSN
+Marsh Barton,MBT
 Marske,MSK
 Marston Green,MGN
 Martin Mill,MTM
@@ -1875,7 +1875,7 @@ Queenborough,QBR
 Queens Park (Glasgow),QPK
 Queens Park (London),QPW
 Queens Road (Peckham),QRP
-Queenstown Road,QRB
+Queenstown Road (Battersea),QRB
 Quintrell Downs,QUI
 Radcliffe (Nottinghamshire),RDF
 Radlett,RDT

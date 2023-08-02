@@ -26,9 +26,9 @@ stations = set()
 
 for letter in ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']:
     data = json.load(open(f'tmp/{letter}.json'))
-    for station in data:
-        if CRS_RE.match(station[0]) and station[10] != '':
-            stations.add(Station(station[0], station[1]))
+    for station in data['payload']['stations']:
+        if CRS_RE.match(station['crsCode']) and station['operator'] != '':
+            stations.add(Station(station['crsCode'], station['name']))
 
 with open('stations.csv', 'w', newline='') as out_file:
     writer = csv.DictWriter(out_file, fieldnames=['stationName', 'stationCode'])
