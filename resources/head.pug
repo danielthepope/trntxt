@@ -11,6 +11,15 @@ link(rel="apple-touch-icon" sizes="167x167" href=stationCodePath+"apple-touch-ic
 link(rel="apple-touch-icon" sizes="180x180" href=stationCodePath+"apple-touch-icon-180x180.png") 
 meta(name="apple-mobile-web-app-title" content="trntxt")
 meta(name="application-name" content=" ")
+if fromStation == undefined
+  meta(property="og:title" content="Train Text")
+else if toStation == undefined
+  meta(property="og:title" content="Train Text: " + departureObject.fromStation.stationName)
+else
+  meta(property="og:title" content="Train Text: " + departureObject.fromStation.stationName + " to " + departureObject.toStation.stationName)
+meta(property="og:description" content="A data-friendly train times service for Great Britain.")
+meta(property="og:type" content="website")
+meta(property="og:image" content=stationCodePath+"android-chrome-192x192.png")
 
 title= pageTitle
 style

@@ -36,6 +36,21 @@ describe('Integration tests:', function() {
         expect(browser.text()).to.contain('Train Text');
       });
     });
+
+    describe('social sharing headers', function() {
+      it('should have a title', function() {
+        expect(browser.querySelector("head meta[property='og:title']").content).to.equal('Train Text');
+      });
+      it('should have a description', function() {
+        expect(browser.querySelector("head meta[property='og:description']").content).to.equal('A data-friendly train times service for Great Britain.');
+      });
+      it('should have a type', function() {
+        expect(browser.querySelector("head meta[property='og:type']").content).to.equal('website');
+      });
+      it('should have an image', function() {
+        expect(browser.querySelector("head meta[property='og:image']").content).to.equal('/android-chrome-192x192.png');
+      });
+    });
   });
   
   describe('Public files', function() {
@@ -100,7 +115,7 @@ describe('Integration tests:', function() {
           'name': 'trntxt',
           'short_name': 'trntxt',
           'start_url': '/',
-          'description': 'Train Text: a data-friendly train times site for Great Britain'
+          'description': 'Train Text: a data-friendly train times service for Great Britain'
         };
         Object.keys(expectations).forEach(key => {
           it(`has '${key}' equal to '${expectations[key]}'`, function() {

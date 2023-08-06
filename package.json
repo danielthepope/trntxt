@@ -1,7 +1,7 @@
 {
   "name": "trntxt",
   "version": "3.1.0",
-  "description": "A data-friendly train times site for Great Britain",
+  "description": "A data-friendly train times service for Great Britain",
   "homepage": "https://trntxt.uk",
   "scripts": {
     "postinstall": "gulp copy",
