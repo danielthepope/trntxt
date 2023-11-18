@@ -53,8 +53,8 @@ cd resources/stationFetcher
 
 That will update the file `stations.csv`. If it looks good, copy it to `resources/station_codes.csv`.
 
-### To do
-There are still a few things I'd like to do with trntxt. Check out the [issues page](https://github.com/danielthepope/trntxt/issues) for things to do. If you want to tackle a particular issue, let me know first in a comment or on Twitter - I might be working on it already!
+### Contributing
+Apart from updating the list of stations periodically, trntxt doesn't get many functional updates anymore. Test coverage isn't great so I'm unlikely to accept PRs.
 
 ## Acknowledgements
 There are a number of people I'd like to thank for helping me out throughout the development of this project. The [contributors](https://github.com/danielthepope/trntxt/graphs/contributors) page doesn't tell the whole story, so here we go.

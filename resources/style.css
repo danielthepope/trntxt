@@ -1,26 +1,42 @@
 body {
   /* normal height, 1.3 line spacing */
+  background-color: #F5F7FA;
   font: 1em/1.4 sans-serif;
-  color: #333;
+  color: #323133;
   max-width: 600px;
   padding: 8px;
   margin: auto;
 }
 
+a {
+  color: #184ee7;
+}
+
 /* Error message */
 .e {
-  color: red;
+  color: #D8334A;
 }
 
 .g {
-  color: #bbb;
+  color: #AAB2BD;
 }
 
 hr {
-  border: 1px solid #ddd;
+  border: 1px solid #CCD1D9;
 }
 
 input {
-    padding: 3px;
-    margin: 4px 0;
+  padding: 5px;
+  margin: 5px 0;
+  border: 2px solid #CCD1D9;
+  border-radius: 4px;
+  font-size: medium;
+  color: #323133;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #202021;
+    filter: invert();
+  }
 }

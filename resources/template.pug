@@ -1,7 +1,7 @@
 - var urlArr = url.split('/')
 - var path = { from: urlArr[1] }
 - if (urlArr.length > 2) path.to = urlArr[2]
-html
+html(lang="en")
   mixin time(scheduled, estimated)
     if estimated === 'On time'
       = scheduled
