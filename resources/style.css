@@ -34,6 +34,11 @@ input {
   color: #323133;
 }
 
+input[type=submit] {
+  color: #FFF;
+  background-color: #184ee7;
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     background: #202021;
