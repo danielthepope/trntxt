@@ -50,16 +50,16 @@
     "@types/tmp": "^0.2.3",
     "@types/yamljs": "^0.2.31",
     "chai": "^4.3.7",
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-develop-server": "^0.5.2",
-    "gulp-mocha": "^8.0.0",
+    "gulp-mocha": "^10.0.1",
     "gulp-pug": "^5.0.0",
-    "gulp-sourcemaps": "^3.0.0",
+    "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-uglify": "^3.0.2",
     "mocha": "^10.2.0",
     "pump": "^3.0.0",
-    "puppeteer": "^21.5.0"
+    "puppeteer": "^24.7.2"
   }
 }
