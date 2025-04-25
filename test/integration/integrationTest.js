@@ -21,16 +21,47 @@ describe('Integration tests:', function() {
   this.timeout(10000);
 
   before(async function() {
+    // Start server first
     server.start(0);
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    
+    // Add a small delay to ensure server is ready
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    try {
+      // Launch browser with more options for stability
+      browser = await puppeteer.launch({
+        headless: 'new',
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--disable-gpu'
+        ],
+        timeout: 30000
+      });
+    } catch (err) {
+      console.error('Failed to launch browser:', err);
+      throw err;
+    }
   });
 
   after(async function() {
-    await browser.close();
-    server.stop();
+    // Make sure we have a browser to close
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (err) {
+        console.error('Error closing browser:', err);
+      }
+    }
+    
+    // Make sure server is running before stopping
+    if (server && server.port()) {
+      server.stop();
+    }
   });
   
   describe('User visits homepage', function() {
@@ -98,14 +129,23 @@ describe('Integration tests:', function() {
   async function checkFile(folder, filename) {
     const page = await browser.newPage();
     try {
-      const response = await page.goto(urlFor(filename), { waitUntil: 'networkidle0' });
+      // Add timeout and more reliable wait strategy
+      const response = await page.goto(urlFor(filename), { 
+        waitUntil: 'networkidle2',
+        timeout: 10000
+      });
+      
       expect(response.status()).to.equal(200);
       
+      // Get response as buffer
       const buffer = await response.buffer();
       const expectedBody = fs.readFileSync(`${folder}/${filename}`);
       const responseHash = crypto.createHash('md5').update(buffer).digest('hex');
       const expectedHash = crypto.createHash('md5').update(expectedBody).digest('hex');
       expect(responseHash).to.equal(expectedHash);
+    } catch (err) {
+      console.error(`Error checking file ${filename}:`, err);
+      throw err;
     } finally {
       await page.close();
     }
