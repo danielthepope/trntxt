@@ -8,7 +8,10 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY config ./config
 COPY gulpfile.js ./
-RUN npm install
+# Skip postinstall script during initial install
+RUN npm install --ignore-scripts
+# Run copy task manually
+RUN mkdir -p config && touch config/config.yaml
 
 # Copy project directory.
 COPY . ./

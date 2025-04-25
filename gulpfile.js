@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 var pug = require('gulp-pug');
 var cleanCSS = require('gulp-clean-css');
-var mocha = require('gulp-mocha');
 var ts = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
@@ -99,7 +98,8 @@ gulp.task('staticpug', gulp.series('minifycss', function() {
 
 gulp.task('build', gulp.series('compile', 'minifycss', 'minifyjs', 'staticpug', 'copy'));
 
-gulp.task('test', gulp.series('build', function() {
+gulp.task('test', gulp.series('build', async function() {
+  const { default: mocha } = await import('gulp-mocha');
   return gulp.src(['test/**/*.js']).pipe(mocha());
 }));
 
