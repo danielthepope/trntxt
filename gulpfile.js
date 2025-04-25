@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var server = require('gulp-develop-server');
 var pug = require('gulp-pug');
 var cleanCSS = require('gulp-clean-css');
 var mocha = require('gulp-mocha');
@@ -8,25 +7,51 @@ var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var pump = require('pump');
 var fs = require('fs');
+var spawn = require('child_process').spawn;
+var path = require('path');
+
+// Server management replacement for gulp-develop-server
+var serverProcess = null;
 
 var tsProject = ts.createProject('tsconfig.json');
 
-gulp.task('server:start', function() {
-  server.listen( {
-    path: './dist/app.js',
-    successMessage: /listening on port \d+/
+gulp.task('server:start', function(done) {
+  if (serverProcess) {
+    serverProcess.kill();
+  }
+  
+  serverProcess = spawn('node', [path.join(__dirname, 'dist/app.js')], {
+    stdio: 'inherit'
   });
+  
+  serverProcess.on('close', function(code) {
+    if (code === 8) {
+      console.log('Error detected, waiting for changes...');
+    }
+  });
+  
+  done();
 });
+
+// Function to restart the server
+function serverRestart(done) {
+  if (serverProcess) {
+    serverProcess.kill();
+    serverProcess = null;
+  }
+  
+  gulp.series('server:start')(done);
+}
 
 // Watch files for changes
 gulp.task('watch', function() {
   gulp.watch('./resources/*.css', gulp.series('build'));
   gulp.watch('./resources/**/*.pug', gulp.series('build'));
   gulp.watch('./resources/**/*.js', gulp.series('build'));
-  gulp.watch('./types/**/*.ts', gulp.series('build', 'test', server.restart));
-  gulp.watch('./src/**/*.ts', gulp.series('build', 'test', server.restart));
+  gulp.watch('./types/**/*.ts', gulp.series('build', 'test', serverRestart));
+  gulp.watch('./src/**/*.ts', gulp.series('build', 'test', serverRestart));
   gulp.watch('./test/**/*.js', gulp.series('test'));
-  gulp.watch('./*.js', gulp.series('test', server.restart));
+  gulp.watch('./*.js', gulp.series('test', serverRestart));
 });
 
 gulp.task('copy', function(cb) {
@@ -77,6 +102,13 @@ gulp.task('build', gulp.series('compile', 'minifycss', 'minifyjs', 'staticpug', 
 gulp.task('test', gulp.series('build', function() {
   return gulp.src(['test/**/*.js']).pipe(mocha());
 }));
+
+// Clean up server process on exit
+process.on('exit', function() {
+  if (serverProcess) {
+    serverProcess.kill();
+  }
+});
 
 // Default task
 gulp.task('default', gulp.parallel('watch', gulp.series('build', 'test', 'server:start')));
