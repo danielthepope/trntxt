@@ -97,7 +97,9 @@ Ashchurch for Tewkesbury,ASC
 Ashfield,ASF
 Ashford (Surrey),AFS
 Ashford International,AFK
+Ashington,ASL
 Ashley,ASY
+Ashley Down,ASD
 Ashtead,AHD
 Ashton-under-Lyne,AHN
 Ashurst (Kent),AHS
@@ -196,6 +198,7 @@ Beckenham Junction,BKJ
 Bedford,BDM
 Bedford St Johns,BSJ
 Bedhampton,BDH
+Bedlington,BEJ
 Bedminster,BMT
 Bedworth,BEH
 Bedwyn,BDW
@@ -285,6 +288,7 @@ Bletchley,BLY
 Bloxwich,BLX
 Bloxwich North,BWN
 Blundellsands & Crosby,BLN
+Blyth Bebside,BLI
 Blythe Bridge,BYB
 Bodmin Parkway,BOD
 Bodorgan,BOR
@@ -431,6 +435,7 @@ Cambridge North,CMB
 Cambuslang,CBL
 Camden Road,CMD
 Camelon,CMO
+Cameron Bridge,CBX
 Canada Water,ZCW
 Canary Wharf (Elizabeth line),CWX
 Canley,CNL
@@ -770,6 +775,7 @@ East Farleigh,EFL
 East Garforth,EGF
 East Grinstead,EGR
 East Kilbride,EKL
+East Linton,ELT
 East Malling,EML
 East Midlands Parkway,EMD
 East Tilbury,ETL
@@ -1100,6 +1106,7 @@ Hayle,HYL
 Haymarket,HYM
 Haywards Heath,HHE
 Hazel Grove,HAZ
+Headbolt Lane,HBL
 Headcorn,HCN
 Headingley,HDY
 Headstone Lane,HDL
@@ -1107,9 +1114,9 @@ Heald Green,HDG
 Healing,HLI
 Heath High Level,HHL
 Heath Low Level,HLL
-Heathrow Terminal 4 (Rail Station Only),HAF
-Heathrow Terminal 5 (Rail Station Only),HWV
-Heathrow Terminals 2 & 3 (Rail Station only),HXX
+Heathrow Terminal 4,HAF
+Heathrow Terminal 5,HWV
+Heathrow Terminals 2 & 3,HXX
 Heaton Chapel,HTC
 Hebden Bridge,HBD
 Heckington,HEC
@@ -1242,7 +1249,7 @@ Ivybridge,IVY
 James Cook University Hospital,JCH
 Jewellery Quarter,JEQ
 Johnston (Pembs),JOH
-Johnstone (Strathclyde),JHN
+Johnstone (Renfrewshire),JHN
 Jordanhill,JOR
 Kearsley (Manchester),KSL
 Kearsney (Kent),KSN
@@ -1375,6 +1382,7 @@ Lenzie,LNZ
 Leominster,LEO
 Letchworth Garden City,LET
 Leuchars,LEU
+Leven,LEV
 Levenshulme,LVM
 Lewes,LWS
 Lewisham,LEW
@@ -1672,6 +1680,7 @@ Newmarket,NMK
 Newport (Essex),NWE
 Newport (South Wales),NWP
 Newquay,NQY
+Newsham,NWH
 Newstead,NSD
 Newton (Lanark),NTN
 Newton Abbot,NTA
@@ -1705,6 +1714,7 @@ Northfield,NFD
 Northfleet,NFL
 Northolt Park,NLT
 Northumberland Park (London),NUM
+Northumberland Park (T&W),NOP
 Northwich,NWI
 Norwich,NRW
 Norwood Junction,NWD
@@ -1769,7 +1779,7 @@ Pemberton,PEM
 Pembrey & Burry Port,PBY
 Pembroke,PMB
 Pembroke Dock,PMD
-Pen-y-Bont,PNY
+Pen-y-Bont (Mid Wales),PNY
 Penally,PNA
 Penarth,PEN
 Pencoed,PCD
@@ -1856,7 +1866,7 @@ Prestbury,PRB
 Preston (Lancs),PRE
 Preston Park,PRP
 Prestonpans,PST
-Prestwick International Airport,PRA
+Prestwick International,PRA
 Prestwick Town,PTW
 Priesthill & Darnley,PTL
 Princes Risborough,PRR
@@ -1966,6 +1976,7 @@ Ruskington,RKT
 Ruswarp,RUS
 Rutherglen,RUT
 Ryde Esplanade,RYD
+Ryde Hoverport,XRD
 Ryde Pier Head,RYP
 Ryde St Johns Road,RYR
 Ryder Brow,RRB
@@ -2012,6 +2023,7 @@ Seaham,SEA
 Seamer,SEM
 Seascale,SSC
 Seaton Carew,SEC
+Seaton Delaval,SEJ
 Seer Green & Jordans,SRG
 Selby,SBY
 Selhurst,SRS
@@ -2054,7 +2066,7 @@ Shipton,SIP
 Shirebrook,SHB
 Shirehampton,SHH
 Shireoaks,SRO
-Shirley,SRL
+Shirley (West Midlands),SRL
 Shoeburyness,SRY
 Sholing,SHO
 Shoreditch High Street,SDC
@@ -2120,6 +2132,7 @@ Southend East,SOE
 Southend Victoria,SOV
 Southminster,SMN
 Southport,SOP
+Southsea Hoverport,SHV
 Southwick,SWK
 Sowerby Bridge,SOW
 Spalding,SPA
