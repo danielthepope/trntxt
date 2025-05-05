@@ -9,7 +9,8 @@
     "compile": "tsc",
     "develop": "gulp",
     "start": "node dist/app.js",
-    "test": "gulp test"
+    "test": "mocha test/**/*.js",
+    "test:unit": "mocha test/unit/**/*.js"
   },
   "engines": {
     "node": ">=22.0.0"
