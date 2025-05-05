@@ -18,7 +18,7 @@ describe('Integration tests:', function() {
   let page;
 
   // Increase timeout for Puppeteer operations
-  this.timeout(10000);
+  this.timeout(20000);
 
   before(async function() {
     // Start server first
