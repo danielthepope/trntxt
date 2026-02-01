@@ -37,7 +37,7 @@
     "jstransformer-uglify-js": "^1.2.0",
     "pug": "^3.0.2",
     "soap": "^1.0.0",
-    "tmp": "^0.2.1",
+    "tmp": "^0.2.4",
     "typescript": "^5.1.6",
     "yamljs": "^0.3.0"
   },
