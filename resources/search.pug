@@ -1,0 +1,15 @@
+- fromText = (departureObject && departureObject.fromStation && departureObject.fromStation.stationName) ? departureObject.fromStation.stationName : ""
+- toText = (departureObject && departureObject.toStation && departureObject.toStation.stationName) ? departureObject.toStation.stationName : ""
+mixin textField(name, placeholder, value)
+  div.text-field
+    input(name=name,type="text",placeholder=placeholder,value=value)
+    button.hidden(type="button", class="clear-btn", aria-label="Clear " + placeholder + " field") &times;
+nav(role='navigation')
+  form(method="GET",action="/d")
+    +textField("from","From",fromText)
+    br
+    +textField("to","To",toText)
+    br
+    input(type="submit",value="Get train times")
+  script
+      include:uglify-js search.js

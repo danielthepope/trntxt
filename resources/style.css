@@ -46,6 +46,37 @@ input[type=submit]:hover {
   cursor: pointer;
 }
 
+.text-field {
+  display: inline-block;
+  position: relative;
+}
+
+.text-field input {
+  padding-right: 2em;
+}
+
+.clear-btn {
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: #CCD1D9;
+  cursor: pointer;
+  display: flex;
+  font-size: larger;
+  font-weight: bold;
+  justify-content: center;
+  margin: 0;
+  padding: 5px 15px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.clear-btn[hidden] {
+  display: none;
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     background: #141414;
