@@ -1,20 +1,19 @@
 body {
-  /* normal height, 1.3 line spacing */
-  background-color: #F5F7FA;
+  background: #F5F7FA;
   font: 1em/1.4 sans-serif;
-  color: #323133;
+  color: #050505;
   max-width: 600px;
   padding: 8px;
   margin: auto;
 }
 
 a {
-  color: #184ee7;
+  color: #1b6b93;
 }
 
 /* Error message */
 .e {
-  color: #D8334A;
+  color: #bd322a;
 }
 
 .g {
@@ -26,22 +25,51 @@ hr {
 }
 
 input {
-  padding: 5px;
+  padding: 5px 10px;
   margin: 5px 0;
+  background-color: #FFF;
   border: 2px solid #CCD1D9;
   border-radius: 4px;
   font-size: medium;
-  color: #323133;
+  color: #050505;
 }
 
 input[type=submit] {
+  background-color: #0974aa;
+  border: none;
   color: #FFF;
-  background-color: #184ee7;
+}
+
+input[type=submit]:hover {
+  background-color: #096389;
+  cursor: pointer;
 }
 
 @media (prefers-color-scheme: dark) {
   body {
-    background: #202021;
-    filter: invert();
+    background: #141414;
+    color: #F5F7FA;
+  }
+
+  a {
+    color: #3fa6da;
+  }
+
+  .e {
+    color: #e15856;
+  }
+
+  .g {
+    color: #656D78;
+  }
+
+  hr {
+    border-color: #434A54;
+  }
+
+  input {
+    background-color: #3C3B3D;
+    border-color: #434A54;
+    color: #F5F7FA;
   }
 }
