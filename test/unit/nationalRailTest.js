@@ -35,14 +35,14 @@ describe('Valid inputs for findStation()', function() {
     'hayesharlington':'HAY',
     'hayes&harlington':'HAY',
     'harrowhill':'HOH', // Harrow-on-the-Hill
-    'Heathrow Terminals 2 and 3':'HXX',
+    'Heathrow Terminal 2 and 3':'HXX',
     'heathrow2':'HXX',
     'heathrow3':'HXX',
     'heathrow4':'HAF',
     'heathrowterminal4':'HAF',
     'heathrow5':'HWV',
     'heathrowterminal5':'HWV',
-    'heathrow23':'HXX', // "Heathrow Terminals 2 & 3"
+    'heathrow23':'HXX', // "Heathrow Terminal 2 & 3"
     'waterloo':'WLO',
     'lonwat':'WAT',
     'waterlooeast':'WAE'

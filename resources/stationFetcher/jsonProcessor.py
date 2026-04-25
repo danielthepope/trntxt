@@ -30,7 +30,7 @@ for letter in ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
         if CRS_RE.match(station['crsCode']) and station['darwinState'] == 4 and station['operator'] != '':
             stations.add(Station(station['crsCode'], station['name']))
 
-with open('stations.csv', 'w', newline='') as out_file:
+with open('station_codes.csv', 'w', newline='') as out_file:
     writer = csv.DictWriter(out_file, fieldnames=['stationName', 'stationCode'])
     writer.writeheader()
     sorted_stations = sorted(list(stations), key=lambda s: s['stationName'])

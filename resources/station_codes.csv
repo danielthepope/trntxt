@@ -189,6 +189,7 @@ Bearley,BER
 Bearsden,BRN
 Bearsted,BSD
 Beasdale,BSL
+Beaulieu Park,BPA
 Beaulieu Road,BEU
 Beauly,BEL
 Bebington,BEB
@@ -666,6 +667,7 @@ Dalwhinnie,DLW
 Danby,DNY
 Danescourt,DCT
 Danzey,DZY
+Darlaston,DAS
 Darlington,DAR
 Darnall,DAN
 Darsham,DSM
@@ -766,8 +768,8 @@ Ealing Broadway,EAL
 Earlestown,ERL
 Earley,EAR
 Earlsfield,EAD
-Earlswood (Surrey),ELD
-Earlswood (West Midlands),EWD
+Earlswood Surrey,ELD
+Earlswood West Midlands,EWD
 East Croydon,ECR
 East Didsbury,EDY
 East Dulwich,EDW
@@ -838,7 +840,7 @@ Evesham,EVE
 Ewell East,EWE
 Ewell West,EWW
 Exeter Central,EXC
-Exeter St David's,EXD
+Exeter St Davids,EXD
 Exeter St Thomas,EXT
 Exhibition Centre (Glasgow),EXG
 Exmouth,EXM
@@ -946,7 +948,7 @@ Giggleswick,GIG
 Gilberdyke,GBD
 Gilfach Fargoed,GFF
 Gillingham (Dorset),GIL
-Gillingham (Kent),GLM
+Gillingham Kent,GLM
 Gilshochill,GSC
 Gipsy Hill,GIP
 Girvan,GIR
@@ -964,7 +966,7 @@ Glossop,GLO
 Gloucester,GCR
 Glynde,GLY
 Gobowen,GOB
-Godalming,GOD
+Godalming(Surrey),GOD
 Godley,GDL
 Godstone,GDN
 Goldthorpe,GOE
@@ -1082,7 +1084,7 @@ Hartlepool,HPL
 Hartwood,HTW
 Harwich International,HPQ
 Harwich Town,HWC
-Haslemere,HSL
+Haslemere(Surrey),HSL
 Hassocks,HSK
 Hastings,HGS
 Hatch End,HTE
@@ -1114,9 +1116,9 @@ Heald Green,HDG
 Healing,HLI
 Heath High Level,HHL
 Heath Low Level,HLL
-Heathrow Terminal 4,HAF
-Heathrow Terminal 5,HWV
-Heathrow Terminals 2 & 3,HXX
+Heathrow Terminal 2 & 3 Rail,HXX
+Heathrow Terminal 4 Rail,HAF
+Heathrow Terminal 5 Rail,HWV
 Heaton Chapel,HTC
 Hebden Bridge,HBD
 Heckington,HEC
@@ -1181,8 +1183,8 @@ Honley,HOY
 Honor Oak Park,HPA
 Hook,HOK
 Hooton,HOO
-Hope (Derbyshire),HOP
-Hope (Flintshire),HPE
+Hope Derbyshire,HOP
+Hope Flintshire,HPE
 Hopton Heath,HPT
 Horden,HRE
 Horley,HOR
@@ -1295,6 +1297,7 @@ Kilwinning,KWN
 Kinbrace,KBC
 Kingham,KGM
 Kinghorn,KGH
+Kings Heath,KIH
 Kings Langley,KGL
 Kings Lynn,KLN
 Kings Norton,KNN
@@ -1614,6 +1617,7 @@ Morley,MLY
 Morpeth,MPT
 Mortimer,MOR
 Mortlake,MTL
+Moseley Village,MOV
 Moses Gate,MSS
 Moss Side,MOS
 Mossley (Manchester),MSL
@@ -1713,8 +1717,8 @@ Northampton,NMP
 Northfield,NFD
 Northfleet,NFL
 Northolt Park,NLT
-Northumberland Park (London),NUM
-Northumberland Park (T&W),NOP
+Northumberland Park (Tyne and Wear),NOP
+Northumberland Park London,NUM
 Northwich,NWI
 Norwich,NRW
 Norwood Junction,NWD
@@ -1812,6 +1816,7 @@ Pevensey & Westham,PEV
 Pevensey Bay,PEB
 Pewsey,PEW
 Pilning,PIL
+Pineapple Road,PIR
 Pinhoe,PIN
 Pitlochry,PIT
 Pitsea,PSE
@@ -1866,7 +1871,7 @@ Prestbury,PRB
 Preston (Lancs),PRE
 Preston Park,PRP
 Prestonpans,PST
-Prestwick International,PRA
+Prestwick International Airport,PRA
 Prestwick Town,PTW
 Priesthill & Darnley,PTL
 Princes Risborough,PRR
@@ -2016,7 +2021,7 @@ Scotscalder,SCT
 Scotstounhill,SCH
 Scunthorpe,SCU
 Sea Mills,SML
-Seaford (Sussex),SEF
+Seaford Sussex,SEF
 Seaforth & Litherland,SFL
 Seaham,SEA
 Seamer,SEM
@@ -2223,7 +2228,7 @@ Streethouse,SHC
 Strines,SRN
 Stromeferry,STF
 Strood (Kent),SOO
-Stroud (Gloucs),STD
+Stroud (Glos),STD
 Sturry,STU
 Styal,SYA
 Sudbury & Harrow Road,SUD
@@ -2510,6 +2515,7 @@ Wigan North Western,WGN
 Wigan Wallgate,WGW
 Wigton,WGT
 Wildmill,WMI
+Willenhall,WIA
 Willesden Junction,WIJ
 Williamwood,WLM
 Willington,WIL
@@ -2528,6 +2534,7 @@ Windsor & Eton Riverside,WNR
 Winnersh,WNS
 Winnersh Triangle,WTI
 Winsford,WSF
+Winslow,WNO
 Wishaw,WSH
 Witham,WTM
 Witley,WTY
