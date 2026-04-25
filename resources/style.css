@@ -1,10 +1,10 @@
 body {
   background: #F5F7FA;
-  font: 1em/1.4 sans-serif;
   color: #050505;
+  font: 1em/1.4 sans-serif;
+  margin: auto;
   max-width: 600px;
   padding: 8px;
-  margin: auto;
 }
 
 a {
@@ -16,6 +16,7 @@ a {
   color: #bd322a;
 }
 
+/* Cancellations */
 .g {
   color: #AAB2BD;
 }
@@ -25,13 +26,13 @@ hr {
 }
 
 input {
-  padding: 5px 10px;
-  margin: 5px 0;
   background-color: #FFF;
-  border: 2px solid #CCD1D9;
   border-radius: 4px;
-  font-size: medium;
+  border: 2px solid #CCD1D9;
   color: #050505;
+  font-size: medium;
+  margin: 5px 0;
+  padding: 5px 10px;
 }
 
 input[type=submit] {
