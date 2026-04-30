@@ -10,11 +10,9 @@ html(lang="en")
     = ' (' + estimated + ')'
 
   mixin serviceDetails(service, fromStation, toStation)
-    br
-    strong
+    h3
       +time(service.std, service.etd)
       = ' to ' + service.destinationStation.stationName
-    br
     = 'Platform ' + (service.platform ? service.platform : 'unavailable')
     br
     = service.operator
@@ -25,20 +23,16 @@ html(lang="en")
         +time(service.sta, service.eta)
       if service.time
         = ', ' + service.time
-    br
-    br
 
   mixin services(header, serviceArray, fromStation, toStation)
     hr
-    br
-    strong= header
-    br
+    h2= header
     each service in serviceArray
       if service.etd == 'Cancelled'
-        div.g
+        div.g.j
           +serviceDetails(service, fromStation, toStation)
       else
-        div
+        div.j
           +serviceDetails(service, fromStation, toStation)
 
   head
@@ -59,7 +53,7 @@ html(lang="en")
           p
             - var clearUrl = '/' + departureObject.fromStation.stationCode
             - if (path.to) clearUrl += '/' + path.to
-            a(href=clearUrl) &times;
+            a(href=clearUrl, aria-label="Close notification") &times;
             =' Did you mean from '
             each station in didYouMean.from
               - var newUrl = '/'+station.stationCode
@@ -69,14 +63,16 @@ html(lang="en")
         if didYouMean && didYouMean.to &&didYouMean.to.length > 0
           p
             - var clearUrl = '/' + path.from + '/' + departureObject.toStation.stationCode
-            a(href=clearUrl) &times;
+            a(href=clearUrl, aria-label="Close notification") &times;
             = ' Did you mean to '
             each station in didYouMean.to
               a(href='/'+path.from +'/'+ station.stationCode)= station.stationName
               = '? '
         if departureObject.nrccMessages
           each message in departureObject.nrccMessages
-            p.e!= message
+            p.e
+              span(aria-label='Warning: ')
+              != message
         if (departureObject.trainServices.length + departureObject.busServices.length === 0)
           p No services found. Trntxt only gives information for direct services.
         if (departureObject.trainServices.length > 0)

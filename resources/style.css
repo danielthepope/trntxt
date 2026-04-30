@@ -7,6 +7,19 @@ body {
   padding: 8px;
 }
 
+h1 {
+  font-size: x-large;
+}
+
+h2 {
+  font-size: large;
+}
+
+h3 {
+  font-size: medium;
+  margin-bottom: 0;
+}
+
 a {
   color: #1b6b93;
 }
@@ -19,6 +32,10 @@ a {
 /* Cancellations */
 .g {
   color: #AAB2BD;
+}
+
+.j {
+  margin: 2em 0;
 }
 
 hr {

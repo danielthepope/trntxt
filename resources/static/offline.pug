@@ -2,8 +2,10 @@ html(lang="en")
   head
     include ../head.pug
   body
-    include ../header.pug
-    p It looks like you're offline. Try again when you get reconnected.
+    header(role='banner')
+      include ../header.pug
+    main(role='main')
+      p It looks like you're offline. Try again when you get reconnected.
     
     hr
     include ../search.pug

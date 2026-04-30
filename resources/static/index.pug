@@ -7,13 +7,13 @@ html(lang="en")
       p Welcome to Train Text: a data-friendly train times service for Great Britain.
     include ../search.pug
     main(role='main')
-      h3 Usage
+      h2 Usage
       p Either use the boxes above or add to this page's URL to search for stations. Station names can be entered using either their 3 letter station codes, or their name e.g. 'bristolparkway', 'bristolp' or 'bpw' will get you times for Bristol Parkway.
-      h4 /from
+      h3 /from
       p For example, 
         a(href="/bathspa") trntxt.uk/bathspa
         |  will show the full departure board for Bath Spa.
-      h4 /from/to
+      h3 /from/to
       p For example, 
         a(href="/paddington/reading") trntxt.uk/paddington/reading
         |  will find trains departing Paddington, calling at Reading. You can then swap the journey's direction with the link at the top of the page.

@@ -4,7 +4,7 @@ mixin textField(name, placeholder, value)
   div.text-field
     input(name=name,type="text",placeholder=placeholder,value=value)
     button.hidden(type="button", class="clear-btn", aria-label="Clear " + placeholder + " field") &times;
-nav(role='navigation')
+nav(role='search')
   form(method="GET",action="/d")
     +textField("from","From",fromText)
     br
