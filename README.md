@@ -19,7 +19,7 @@ Stations can be input using either their 3-letter codes or by their names (witho
 * [/bth/cardiffcentral](https://trntxt.uk/bth/cardiffcentral): List of trains from Bath Spa that call at Cardiff Central
 
 ## Development
-This program will run on Node 22.
+This program requires Node 26 or later.
 
 Install the required packages using `npm install` in the command line.
 

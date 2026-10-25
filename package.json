@@ -12,7 +12,7 @@
     "test:unit": "mocha test/unit/**/*.js"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=26.0.0"
   },
   "repository": {
     "type": "git",
@@ -44,14 +44,14 @@
     "@types/express": "^4.17.17",
     "@types/extend": "^3.0.1",
     "@types/gm": "^1.18.13",
-    "@types/node": "^18.16.0",
+    "@types/node": "^26.0.0",
     "@types/pug": "^2.0.6",
     "@types/sax": "^1.2.4",
     "@types/tmp": "^0.2.3",
     "@types/yamljs": "^0.2.31",
     "chai": "^4.3.7",
     "clean-css": "^4.2.4",
-    "mocha": "^10.2.0",
+    "mocha": "^11.8.0",
     "puppeteer": "^24.7.2",
     "uglify-js": "^3.19.3"
   }
