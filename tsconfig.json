@@ -4,6 +4,7 @@
     "module": "commonjs",
     "noImplicitAny": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "sourceMap": true,
     "target": "es6",
     "typeRoots": [
