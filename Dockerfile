@@ -7,7 +7,6 @@ WORKDIR /usr/src/app
 # Install dependencies.
 COPY package*.json ./
 COPY config ./config
-COPY gulpfile.js ./
 # Skip postinstall script during initial install
 RUN npm install --ignore-scripts
 # Run copy task manually

@@ -23,7 +23,7 @@ This program will run on Node 22.
 
 Install the required packages using `npm install` in the command line.
 
-Transpile the source code using `npm run build`.
+Build the application using `npm run build`.
 
 Tests are run with `npm run test`.
 

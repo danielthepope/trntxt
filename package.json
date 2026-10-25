@@ -5,7 +5,7 @@
   "homepage": "https://trntxt.uk",
   "scripts": {
     "postinstall": "make copy",
-    "build": "gulp build",
+    "build": "node scripts/build.js",
     "compile": "tsc",
     "start": "node dist/app.js",
     "test": "mocha test/**/*.js",
@@ -50,15 +50,9 @@
     "@types/tmp": "^0.2.3",
     "@types/yamljs": "^0.2.31",
     "chai": "^4.3.7",
-    "gulp": "^5.0.0",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-mocha": "^10.0.1",
-    "gulp-pug": "^5.0.0",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-typescript": "^6.0.0-alpha.1",
-    "gulp-uglify": "^3.0.2",
+    "clean-css": "^4.2.4",
     "mocha": "^10.2.0",
-    "pump": "^3.0.0",
-    "puppeteer": "^24.7.2"
+    "puppeteer": "^24.7.2",
+    "uglify-js": "^3.19.3"
   }
 }
