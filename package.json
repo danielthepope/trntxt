@@ -4,10 +4,9 @@
   "description": "A data-friendly train times service for Great Britain",
   "homepage": "https://trntxt.uk",
   "scripts": {
-    "postinstall": "gulp copy",
+    "postinstall": "make copy",
     "build": "gulp build",
     "compile": "tsc",
-    "develop": "gulp",
     "start": "node dist/app.js",
     "test": "mocha test/**/*.js",
     "test:unit": "mocha test/unit/**/*.js"
