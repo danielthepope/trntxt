@@ -51,7 +51,7 @@
     "@types/yamljs": "^0.2.31",
     "chai": "^4.3.7",
     "clean-css": "^4.2.4",
-    "mocha": "^11.8.0",
+    "mocha": "^12.0.3",
     "puppeteer": "^24.7.2",
     "uglify-js": "^3.19.3"
   }
